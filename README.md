@@ -20,7 +20,7 @@ Lists the numbers of the encounter groups and stages of every boss fight in the 
 
 `SLPS-25450_B4EC196F.pnach` includes a cheat for 8 arte slots, miscellaneous cheats, and cheats to re-fight every boss and unique encounter.
 
-## Legendia (Japanese)
+## Legendia (Japan)
 
 `SLPS-25533_1F8640E0.pnach` includes a cheat for 60 FPS battles.
 

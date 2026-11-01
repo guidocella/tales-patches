@@ -1,0 +1,24 @@
+32 Leon
+98 123 Batista
+113 Orgus Queen
+124 Kraken
+138 Tiberus
+160 Dalis
+179 Ice Golem
+180 Greybum
+196 Leon
+245 Rembrant
+258 Ilene
+274 Baruk
+283 Hugo
+342 Lion
+343 Miktran
+344 Neo Miktran
+353 Kongman
+362 369 371 Baldios
+370 Wyvern
+391 Quox
+392 Silver Dragon
+393 Black Dragon
+401 Druaga
+402 Fake Ishtar

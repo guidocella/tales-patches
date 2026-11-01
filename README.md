@@ -4,6 +4,10 @@
 
 Disable the spell pause in Phantasia PS1, GBA and FVE and all of versions of Destiny PS1.
 
+## Destiny bosses.txt
+
+Lists the numbers of the encounter groups of every boss fight in the game to be selected in the debug mode menu.
+
 ## Eternia bosses.txt
 
 Lists the numbers of the encounter groups and stages of every boss fight in the game to be selected in the debug mode menu, and which music plays.

@@ -12,7 +12,7 @@ Lists the numbers of the encounter groups of every boss fight in the game to be 
 
 Lists the numbers of the encounter groups and stages of every boss fight in the game to be selected in the debug mode menu, and which music plays.
 
-## Destiny PS2, original release
+## Destiny 2 PS2, original release
 
 `SLPS-25172_A86BA5E4.pnach` includes miscellaneous cheats, ucuckic's cheat for 4 extra arte slots, and cheats to re-fight every boss.
 

@@ -34,7 +34,7 @@ See https://github.com/lifebottle/Tales-of-Phantasia-Full-Voice-Edition/releases
 
 ## Phantasia Cross Edition
 
-`ULJS00293-TOPX.ini` includes cheats for 32 arte slots using PPSSPP's extended controls, uncropping the world map restoring the PS1 zoom level, and cheats with the encounter group and stage of every boss.
+`ULJS00293-TOPX.ini` includes cheats for 32 arte slots, uncropping the world map restoring the PS1 zoom level, and cheats with the encounter group and stage of every boss.
 
 The arte slots cheat uses PPSSPP's extended controls. You navigate the menu pages with L2 and R2, and use the new slots with right stick, L2, R2, or L2+R2. This is compatible with the multiplayer patch.
 

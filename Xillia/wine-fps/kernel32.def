@@ -1,0 +1,12 @@
+LIBRARY kernel32.dll
+EXPORTS
+CreateSemaphoreExW
+CloseHandle
+WaitForSingleObject
+AcquireSRWLockExclusive
+ReleaseSRWLockExclusive
+GetModuleHandleW
+LoadLibraryW
+GetProcAddress
+GetSystemDirectoryW
+VirtualProtect

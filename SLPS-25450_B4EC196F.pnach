@@ -1,0 +1,718 @@
+gametitle=Tales of Rebirth
+
+; Source: https://github.com/Sora3100/Tales_of_Cheat_Tables
+[Increase field speed]
+author=Sora3100
+description=Increases field run speed while holding R1, affects NPCs as well.
+patch=1,EE,D0237070,extended,03010005 //Checks if game is in 2dMap
+patch=1,EE,20322144,extended,00021303 //Vanilla game code
+patch=1,EE,D0242643,extended,01410008 //Checks if R1
+patch=1,EE,20322144,extended,00021283
+
+; Source: https://ds-cheat.boy.jp/ps2/tor.html
+
+[No random encounters]
+description=Hold □ while moving to start an encounter. Can't be disabled at runtime.
+patch=1,EE,0012D29C,word,001F200B
+patch=1,EE,0012D2A0,word,3C020024
+patch=1,EE,0012D2A4,word,944225C2
+patch=1,EE,0012D2A8,word,30428000
+
+[Max grade]
+patch=1,EE,00235AC0,word,0098961C
+; I modified this to give 99999 grade instead of 9999.
+
+; Source: https://discord.com/channels/818214215365427320/897239185986031666/1460741665496105133
+
+[Ougi usable at low rush gauge]
+description=Gives the effect of the Esoteric amulet.
+patch=1,EE,D02FECE6,extended,00005440
+patch=1,EE,202FECE4,extended,57E0000D
+; ritz code's version of this doesn't work - this may be a bug in ps2par-react.
+; [奥義 usable at low rush gauge]
+; patch=1,EE,002FECE6,word,00005440
+; patch=1,EE,002FECE4,word,57E0000D
+
+[Max smash points]
+patch=1,EE,201AB3F4,extended,0803C0C0
+patch=1,EE,200F0300,extended,3C090023
+patch=1,EE,200F0304,extended,35292E10
+patch=1,EE,200F0308,extended,240A0006
+patch=1,EE,200F030C,extended,240C2706
+patch=1,EE,200F0310,extended,240B0008
+patch=1,EE,200F0314,extended,A52C0000
+patch=1,EE,200F0318,extended,25290006
+patch=1,EE,200F031C,extended,256BFFFF
+patch=1,EE,200F032C,extended,1560FFF9
+patch=1,EE,200F0334,extended,25290168
+patch=1,EE,200F0338,extended,254AFFFF
+patch=1,EE,200F033C,extended,1540FFF4
+patch=1,EE,200F0344,extended,03E00008
+
+[Max force cube uses]
+patch=1,EE,40232EA8,extended,00040001
+patch=1,EE,27062706,extended,00000000
+patch=1,EE,40233040,extended,00040001
+patch=1,EE,27062706,extended,00000000
+patch=1,EE,402331D8,extended,00040001
+patch=1,EE,27062706,extended,00000000
+patch=1,EE,40233370,extended,00040001
+patch=1,EE,27062706,extended,00000000
+patch=1,EE,40233508,extended,00040001
+patch=1,EE,27062706,extended,00000000
+patch=1,EE,402336A0,extended,00040001
+patch=1,EE,27062706,extended,00000000
+
+; Source: https://ritzcode.web.fc2.com/tor.html
+
+; The original version of this worked in battles but broke moving in fields
+; which I had to fix.
+[Veigue altered force]
+description=Gives the effect of the 魂 amulets.
+patch=1,EE,E0021A7E,extended,002F9994
+patch=1,EE,202F999C,extended,10400001
+patch=1,EE,202F99A8,extended,16820005
+
+[Max Hi-Ougi counter]
+description=Maxes the counter of how many latent abilities must activate to use Hi-Ougi.
+patch=1,EE,00235B1C,word,00000064
+
+[Remove Hi-Ougi battle number restriction]
+description=Remove the restriction of using a Hi-Ougi at most once every six random battles.
+patch=1,EE,00235B84,word,00000000
+
+[Hi-Ougi always usable]
+patch=1,EE,00357D48,word,00000258
+patch=1,EE,00357D4A,word,00000001
+patch=1,EE,0030C3BA,word,00001043
+patch=1,EE,0030C3B8,word,10000003
+patch=1,EE,0030CE28,word,00000027
+patch=1,EE,0030CE28,word,14430001
+
+[Automatic Blue Earth]
+description=Activate Dual the Sun with Mao in the party. Works even on the 1st playthrough. Also extends enemy Hi-Ougi if Eugene Mao and Hilda are in the party, which may make the party transparent.
+; You do not need to control Hilda like ritz code says.
+patch=1,EE,00145C64,word,00000008
+patch=1,EE,00145C64,word,00000000
+patch=1,EE,00145C70,word,00000006
+patch=1,EE,00145C70,word,24150000
+patch=1,EE,00145D2E,word,10400006
+patch=1,EE,00145D2C,word,13E00006
+
+[Automatic Blue Earth if available]
+description=Activate Dual the Sun with Mao in the party. Only works on New Game+. Also extends enemy Hi-Ougi if Eugene Mao and Hilda are in the party, which may make the party transparent.
+author=Sora3100
+patch=1,EE,20145D10,extended,1000000A
+
+; Original cheat
+
+[Double arte slots]
+description=L3 in the arte menu swaps to a second page of arte shortcuts. Hold L2 in battle to use it.
+patch=1,EE,000FE000,word,27BDFFC0
+patch=1,EE,000FE004,word,FFBF0000
+patch=1,EE,000FE008,word,FFB00008
+patch=1,EE,000FE00C,word,FFB10010
+patch=1,EE,000FE010,word,FFB20018
+patch=1,EE,000FE014,word,FFB30020
+patch=1,EE,000FE018,word,FFB40028
+patch=1,EE,000FE01C,word,FFB50030
+patch=1,EE,000FE020,word,0C0423C8
+patch=1,EE,000FE024,word,00000000
+patch=1,EE,000FE028,word,3C10000F
+patch=1,EE,000FE02C,word,3610E800
+patch=1,EE,000FE030,word,00009025
+patch=1,EE,000FE034,word,00009825
+patch=1,EE,000FE038,word,AE000064
+patch=1,EE,000FE03C,word,AE000068
+patch=1,EE,000FE040,word,AE00006C
+patch=1,EE,000FE044,word,AE000070
+patch=1,EE,000FE048,word,AE000074
+patch=1,EE,000FE04C,word,AE000078
+patch=1,EE,000FE050,word,8FAB0040
+patch=1,EE,000FE054,word,3C0C0017
+patch=1,EE,000FE058,word,358C28FC
+patch=1,EE,000FE05C,word,156C0021
+patch=1,EE,000FE060,word,8FAC00B0
+patch=1,EE,000FE064,word,3C0E002D
+patch=1,EE,000FE068,word,35CE88D8
+patch=1,EE,000FE06C,word,018E6023
+patch=1,EE,000FE070,word,2D8C7128
+patch=1,EE,000FE074,word,1180001B
+patch=1,EE,000FE078,word,3C0C002E
+patch=1,EE,000FE07C,word,8D8CCEEC
+patch=1,EE,000FE080,word,3C0E9042
+patch=1,EE,000FE084,word,35CE00FD
+patch=1,EE,000FE088,word,158E0016
+patch=1,EE,000FE08C,word,00000000
+patch=1,EE,000FE090,word,AE000004
+patch=1,EE,000FE094,word,92110001
+patch=1,EE,000FE098,word,3C08002E
+patch=1,EE,000FE09C,word,91090D64
+patch=1,EE,000FE0A0,word,920A0050
+patch=1,EE,000FE0A4,word,112A0006
+patch=1,EE,000FE0A8,word,A2090050
+patch=1,EE,000FE0AC,word,12200004
+patch=1,EE,000FE0B0,word,00000000
+patch=1,EE,000FE0B4,word,00008825
+patch=1,EE,000FE0B8,word,A2000001
+patch=1,EE,000FE0BC,word,24120001
+patch=1,EE,000FE0C0,word,3C080024
+patch=1,EE,000FE0C4,word,950A2DE0
+patch=1,EE,000FE0C8,word,314A0200
+patch=1,EE,000FE0CC,word,1140005A
+patch=1,EE,000FE0D0,word,00000000
+patch=1,EE,000FE0D4,word,3A310001
+patch=1,EE,000FE0D8,word,A2110001
+patch=1,EE,000FE0DC,word,10000056
+patch=1,EE,000FE0E0,word,24120001
+patch=1,EE,000FE0E4,word,3C0C0017
+patch=1,EE,000FE0E8,word,358C28FC
+patch=1,EE,000FE0EC,word,156C0005
+patch=1,EE,000FE0F0,word,00000000
+patch=1,EE,000FE0F4,word,A2000001
+patch=1,EE,000FE0F8,word,00008825
+patch=1,EE,000FE0FC,word,1000004E
+patch=1,EE,000FE100,word,92130002
+patch=1,EE,000FE104,word,3C0C002F
+patch=1,EE,000FE108,word,358CBDFC
+patch=1,EE,000FE10C,word,156C0039
+patch=1,EE,000FE110,word,3C0C0030
+patch=1,EE,000FE114,word,8D8CBDC0
+patch=1,EE,000FE118,word,3C0E27BD
+patch=1,EE,000FE11C,word,35CEFF70
+patch=1,EE,000FE120,word,158E0034
+patch=1,EE,000FE124,word,00000000
+patch=1,EE,000FE128,word,A2000001
+patch=1,EE,000FE12C,word,00008825
+patch=1,EE,000FE130,word,3C080035
+patch=1,EE,000FE134,word,35083700
+patch=1,EE,000FE138,word,240A0004
+patch=1,EE,000FE13C,word,8D0C0000
+patch=1,EE,000FE140,word,11800027
+patch=1,EE,000FE144,word,8D890344
+patch=1,EE,000FE148,word,3C0D0023
+patch=1,EE,000FE14C,word,35AD2C08
+patch=1,EE,000FE150,word,012D4823
+patch=1,EE,000FE154,word,240D0198
+patch=1,EE,000FE158,word,012D001B
+patch=1,EE,000FE15C,word,00005810
+patch=1,EE,000FE160,word,00004812
+patch=1,EE,000FE164,word,1560001E
+patch=1,EE,000FE168,word,2529FFFF
+patch=1,EE,000FE16C,word,2D2B0006
+patch=1,EE,000FE170,word,1160001B
+patch=1,EE,000FE174,word,25290001
+patch=1,EE,000FE178,word,00095880
+patch=1,EE,000FE17C,word,01705821
+patch=1,EE,000FE180,word,AD6C0060
+patch=1,EE,000FE184,word,8D8B0090
+patch=1,EE,000FE188,word,3C0D0035
+patch=1,EE,000FE18C,word,35AD3828
+patch=1,EE,000FE190,word,016D5823
+patch=1,EE,000FE194,word,240D004C
+patch=1,EE,000FE198,word,016D001B
+patch=1,EE,000FE19C,word,00007010
+patch=1,EE,000FE1A0,word,00005812
+patch=1,EE,000FE1A4,word,15C0000E
+patch=1,EE,000FE1A8,word,2D6E0004
+patch=1,EE,000FE1AC,word,11C0000C
+patch=1,EE,000FE1B0,word,240D01C0
+patch=1,EE,000FE1B4,word,016D0019
+patch=1,EE,000FE1B8,word,00005812
+patch=1,EE,000FE1BC,word,3C0D0024
+patch=1,EE,000FE1C0,word,35AD2DDC
+patch=1,EE,000FE1C4,word,016D5821
+patch=1,EE,000FE1C8,word,956B0000
+patch=1,EE,000FE1CC,word,316B0001
+patch=1,EE,000FE1D0,word,11600003
+patch=1,EE,000FE1D4,word,240D0001
+patch=1,EE,000FE1D8,word,012D6804
+patch=1,EE,000FE1DC,word,026D9825
+patch=1,EE,000FE1E0,word,254AFFFF
+patch=1,EE,000FE1E4,word,1540FFD5
+patch=1,EE,000FE1E8,word,25080004
+patch=1,EE,000FE1EC,word,10000012
+patch=1,EE,000FE1F0,word,00000000
+patch=1,EE,000FE1F4,word,8E0C0004
+patch=1,EE,000FE1F8,word,92110000
+patch=1,EE,000FE1FC,word,92130002
+patch=1,EE,000FE200,word,2D8A0006
+patch=1,EE,000FE204,word,11400003
+patch=1,EE,000FE208,word,258C0001
+patch=1,EE,000FE20C,word,1000000A
+patch=1,EE,000FE210,word,AE0C0004
+patch=1,EE,000FE214,word,A2000001
+patch=1,EE,000FE218,word,00008825
+patch=1,EE,000FE21C,word,00009825
+patch=1,EE,000FE220,word,26080080
+patch=1,EE,000FE224,word,2409001C
+patch=1,EE,000FE228,word,AD000000
+patch=1,EE,000FE22C,word,2529FFFF
+patch=1,EE,000FE230,word,1520FFFD
+patch=1,EE,000FE234,word,25080004
+patch=1,EE,000FE238,word,92080000
+patch=1,EE,000FE23C,word,11110003
+patch=1,EE,000FE240,word,A2110000
+patch=1,EE,000FE244,word,0C03F8B3
+patch=1,EE,000FE248,word,02202025
+patch=1,EE,000FE24C,word,92140002
+patch=1,EE,000FE250,word,A2130002
+patch=1,EE,000FE254,word,0293A026
+patch=1,EE,000FE258,word,1280000D
+patch=1,EE,000FE25C,word,24150001
+patch=1,EE,000FE260,word,02B44006
+patch=1,EE,000FE264,word,31080001
+patch=1,EE,000FE268,word,11000005
+patch=1,EE,000FE26C,word,00154880
+patch=1,EE,000FE270,word,01304821
+patch=1,EE,000FE274,word,02A02025
+patch=1,EE,000FE278,word,0C03F8E3
+patch=1,EE,000FE27C,word,8D250060
+patch=1,EE,000FE280,word,26B50001
+patch=1,EE,000FE284,word,2AA80007
+patch=1,EE,000FE288,word,1500FFF5
+patch=1,EE,000FE28C,word,00000000
+patch=1,EE,000FE290,word,12400005
+patch=1,EE,000FE294,word,3C08002E
+patch=1,EE,000FE298,word,91040D64
+patch=1,EE,000FE29C,word,A1000D64
+patch=1,EE,000FE2A0,word,0C0B78DA
+patch=1,EE,000FE2A4,word,00002825
+patch=1,EE,000FE2A8,word,DFBF0000
+patch=1,EE,000FE2AC,word,DFB00008
+patch=1,EE,000FE2B0,word,DFB10010
+patch=1,EE,000FE2B4,word,DFB20018
+patch=1,EE,000FE2B8,word,DFB30020
+patch=1,EE,000FE2BC,word,DFB40028
+patch=1,EE,000FE2C0,word,DFB50030
+patch=1,EE,000FE2C4,word,03E00008
+patch=1,EE,000FE2C8,word,27BD0040
+patch=1,EE,000FE2CC,word,27BDFFE0
+patch=1,EE,000FE2D0,word,FFBF0000
+patch=1,EE,000FE2D4,word,FFB00008
+patch=1,EE,000FE2D8,word,FFB10010
+patch=1,EE,000FE2DC,word,00808825
+patch=1,EE,000FE2E0,word,12200003
+patch=1,EE,000FE2E4,word,24040000
+patch=1,EE,000FE2E8,word,0C03F8CC
+patch=1,EE,000FE2EC,word,00000000
+patch=1,EE,000FE2F0,word,24100001
+patch=1,EE,000FE2F4,word,0C03F93F
+patch=1,EE,000FE2F8,word,02002025
+patch=1,EE,000FE2FC,word,26100001
+patch=1,EE,000FE300,word,2A080007
+patch=1,EE,000FE304,word,1500FFFB
+patch=1,EE,000FE308,word,00000000
+patch=1,EE,000FE30C,word,16200003
+patch=1,EE,000FE310,word,00000000
+patch=1,EE,000FE314,word,0C03F8CC
+patch=1,EE,000FE318,word,24040001
+patch=1,EE,000FE31C,word,DFBF0000
+patch=1,EE,000FE320,word,DFB00008
+patch=1,EE,000FE324,word,DFB10010
+patch=1,EE,000FE328,word,03E00008
+patch=1,EE,000FE32C,word,27BD0020
+patch=1,EE,000FE330,word,3C080023
+patch=1,EE,000FE334,word,35082DAE
+patch=1,EE,000FE338,word,3C09000F
+patch=1,EE,000FE33C,word,3529E820
+patch=1,EE,000FE340,word,240A0006
+patch=1,EE,000FE344,word,240B0004
+patch=1,EE,000FE348,word,01006025
+patch=1,EE,000FE34C,word,14800004
+patch=1,EE,000FE350,word,00000000
+patch=1,EE,000FE354,word,958D0000
+patch=1,EE,000FE358,word,10000003
+patch=1,EE,000FE35C,word,A52D0000
+patch=1,EE,000FE360,word,952D0000
+patch=1,EE,000FE364,word,A58D0000
+patch=1,EE,000FE368,word,258C0002
+patch=1,EE,000FE36C,word,256BFFFF
+patch=1,EE,000FE370,word,1560FFF6
+patch=1,EE,000FE374,word,25290002
+patch=1,EE,000FE378,word,254AFFFF
+patch=1,EE,000FE37C,word,1540FFF1
+patch=1,EE,000FE380,word,25080198
+patch=1,EE,000FE384,word,03E00008
+patch=1,EE,000FE388,word,00000000
+patch=1,EE,000FE38C,word,27BDFFC0
+patch=1,EE,000FE390,word,FFBF0000
+patch=1,EE,000FE394,word,FFB00008
+patch=1,EE,000FE398,word,FFB10010
+patch=1,EE,000FE39C,word,00A08025
+patch=1,EE,000FE3A0,word,24080198
+patch=1,EE,000FE3A4,word,00880019
+patch=1,EE,000FE3A8,word,00004012
+patch=1,EE,000FE3AC,word,3C110023
+patch=1,EE,000FE3B0,word,36312BE8
+patch=1,EE,000FE3B4,word,02288821
+patch=1,EE,000FE3B8,word,96280036
+patch=1,EE,000FE3BC,word,96290038
+patch=1,EE,000FE3C0,word,962A003A
+patch=1,EE,000FE3C4,word,962B003C
+patch=1,EE,000FE3C8,word,A7A80018
+patch=1,EE,000FE3CC,word,A7A9001A
+patch=1,EE,000FE3D0,word,A7AA001C
+patch=1,EE,000FE3D4,word,A7AB001E
+patch=1,EE,000FE3D8,word,00047900
+patch=1,EE,000FE3DC,word,3C0D000F
+patch=1,EE,000FE3E0,word,35ADE880
+patch=1,EE,000FE3E4,word,01ED7821
+patch=1,EE,000FE3E8,word,AFAF0030
+patch=1,EE,000FE3EC,word,16000006
+patch=1,EE,000FE3F0,word,00000000
+patch=1,EE,000FE3F4,word,ADE00000
+patch=1,EE,000FE3F8,word,ADE00004
+patch=1,EE,000FE3FC,word,ADE00008
+patch=1,EE,000FE400,word,1000000D
+patch=1,EE,000FE404,word,ADE0000C
+patch=1,EE,000FE408,word,260E02EC
+patch=1,EE,000FE40C,word,27B80020
+patch=1,EE,000FE410,word,24190004
+patch=1,EE,000FE414,word,C5C00000
+patch=1,EE,000FE418,word,C5E10000
+patch=1,EE,000FE41C,word,46010000
+patch=1,EE,000FE420,word,E7000000
+patch=1,EE,000FE424,word,25CE0004
+patch=1,EE,000FE428,word,25EF0004
+patch=1,EE,000FE42C,word,2739FFFF
+patch=1,EE,000FE430,word,1720FFF8
+patch=1,EE,000FE434,word,27180004
+patch=1,EE,000FE438,word,0C03F93F
+patch=1,EE,000FE43C,word,00000000
+patch=1,EE,000FE440,word,12000029
+patch=1,EE,000FE444,word,8E0C0340
+patch=1,EE,000FE448,word,240D0004
+patch=1,EE,000FE44C,word,27AE0018
+patch=1,EE,000FE450,word,262F0036
+patch=1,EE,000FE454,word,85C80000
+patch=1,EE,000FE458,word,85E90000
+patch=1,EE,000FE45C,word,11000005
+patch=1,EE,000FE460,word,858A0024
+patch=1,EE,000FE464,word,01490018
+patch=1,EE,000FE468,word,00005012
+patch=1,EE,000FE46C,word,0148001A
+patch=1,EE,000FE470,word,00004812
+patch=1,EE,000FE474,word,A5890024
+patch=1,EE,000FE478,word,25ADFFFF
+patch=1,EE,000FE47C,word,25CE0002
+patch=1,EE,000FE480,word,25EF0002
+patch=1,EE,000FE484,word,15A0FFF3
+patch=1,EE,000FE488,word,258C0002
+patch=1,EE,000FE48C,word,258CFFF8
+patch=1,EE,000FE490,word,260E02EC
+patch=1,EE,000FE494,word,8FAF0030
+patch=1,EE,000FE498,word,27B80020
+patch=1,EE,000FE49C,word,24190004
+patch=1,EE,000FE4A0,word,C7000000
+patch=1,EE,000FE4A4,word,85880024
+patch=1,EE,000FE4A8,word,44880800
+patch=1,EE,000FE4AC,word,46800860
+patch=1,EE,000FE4B0,word,46010034
+patch=1,EE,000FE4B4,word,00000000
+patch=1,EE,000FE4B8,word,45010002
+patch=1,EE,000FE4BC,word,46000086
+patch=1,EE,000FE4C0,word,46000886
+patch=1,EE,000FE4C4,word,460200C1
+patch=1,EE,000FE4C8,word,E5C20000
+patch=1,EE,000FE4CC,word,E5E30000
+patch=1,EE,000FE4D0,word,258C0002
+patch=1,EE,000FE4D4,word,25CE0004
+patch=1,EE,000FE4D8,word,25EF0004
+patch=1,EE,000FE4DC,word,2739FFFF
+patch=1,EE,000FE4E0,word,1720FFEF
+patch=1,EE,000FE4E4,word,27180004
+patch=1,EE,000FE4E8,word,DFBF0000
+patch=1,EE,000FE4EC,word,DFB00008
+patch=1,EE,000FE4F0,word,DFB10010
+patch=1,EE,000FE4F4,word,03E00008
+patch=1,EE,000FE4F8,word,27BD0040
+patch=1,EE,000FE4FC,word,27BDFFD0
+patch=1,EE,000FE500,word,FFBF0000
+patch=1,EE,000FE504,word,FFB00008
+patch=1,EE,000FE508,word,FFB10010
+patch=1,EE,000FE50C,word,00808025
+patch=1,EE,000FE510,word,24080198
+patch=1,EE,000FE514,word,00880019
+patch=1,EE,000FE518,word,00004012
+patch=1,EE,000FE51C,word,3C110023
+patch=1,EE,000FE520,word,36312BE8
+patch=1,EE,000FE524,word,02288821
+patch=1,EE,000FE528,word,262200FC
+patch=1,EE,000FE52C,word,24030004
+patch=1,EE,000FE530,word,00004825
+patch=1,EE,000FE534,word,90460000
+patch=1,EE,000FE538,word,90470001
+patch=1,EE,000FE53C,word,01264825
+patch=1,EE,000FE540,word,01274825
+patch=1,EE,000FE544,word,A0470000
+patch=1,EE,000FE548,word,A0460001
+patch=1,EE,000FE54C,word,2463FFFF
+patch=1,EE,000FE550,word,1460FFF8
+patch=1,EE,000FE554,word,24420009
+patch=1,EE,000FE558,word,11200016
+patch=1,EE,000FE55C,word,9628002E
+patch=1,EE,000FE560,word,96290030
+patch=1,EE,000FE564,word,962A0032
+patch=1,EE,000FE568,word,962B0034
+patch=1,EE,000FE56C,word,A7A80018
+patch=1,EE,000FE570,word,A7A9001A
+patch=1,EE,000FE574,word,A7AA001C
+patch=1,EE,000FE578,word,A7AB001E
+patch=1,EE,000FE57C,word,02002025
+patch=1,EE,000FE580,word,2405FFFF
+patch=1,EE,000FE584,word,2406FFFF
+patch=1,EE,000FE588,word,2407FFFF
+patch=1,EE,000FE58C,word,0C05BCA6
+patch=1,EE,000FE590,word,2408FFFF
+patch=1,EE,000FE594,word,97A80018
+patch=1,EE,000FE598,word,97A9001A
+patch=1,EE,000FE59C,word,97AA001C
+patch=1,EE,000FE5A0,word,97AB001E
+patch=1,EE,000FE5A4,word,A628002E
+patch=1,EE,000FE5A8,word,A6290030
+patch=1,EE,000FE5AC,word,A62A0032
+patch=1,EE,000FE5B0,word,A62B0034
+patch=1,EE,000FE5B4,word,DFBF0000
+patch=1,EE,000FE5B8,word,DFB00008
+patch=1,EE,000FE5BC,word,DFB10010
+patch=1,EE,000FE5C0,word,03E00008
+patch=1,EE,000FE5C4,word,27BD0030
+patch=1,EE,0010FA34,word,0C03F800
+
+; Re-fight bosses and unique encounters.
+
+[01 Mao]
+patch=1,EE,00236FE0,word,00000002
+patch=1,EE,00236FE2,word,0000000D
+patch=1,EE,00236638,word,00001003
+
+[02 Tohma]
+patch=1,EE,00236FE0,word,00000004
+patch=1,EE,00236FE2,word,00000027
+patch=1,EE,00236638,word,00001003
+
+[03 Dark Wings]
+patch=1,EE,00236FE0,word,00000026
+patch=1,EE,00236FE2,word,00000046
+patch=1,EE,00236638,word,00001000
+
+[04 Dark Wings]
+patch=1,EE,00236FE0,word,00000036
+patch=1,EE,00236FE2,word,0000005A
+patch=1,EE,00236638,word,00001000
+
+[05 Leg Tight]
+patch=1,EE,00236FE0,word,00000005
+patch=1,EE,00236FE2,word,00000038
+patch=1,EE,00236638,word,00001003
+
+[06 Annie]
+patch=1,EE,00236FE0,word,00000007
+patch=1,EE,00236FE2,word,0000004F
+patch=1,EE,00236638,word,00001003
+
+[07 Grand Bask]
+patch=1,EE,00236FE0,word,0000000A
+patch=1,EE,00236FE2,word,00000052
+patch=1,EE,00236638,word,00001003
+
+[08 Tytree]
+patch=1,EE,00236FE0,word,0000000B
+patch=1,EE,00236FE2,word,00000073
+patch=1,EE,00236638,word,00001003
+
+[09 Mountain thieves]
+patch=1,EE,00236FE0,word,0000000C
+patch=1,EE,00236FE2,word,00000013
+patch=1,EE,00236638,word,00001000
+
+[10 Hilda + soldiers]
+patch=1,EE,00236FE0,word,0000000D
+patch=1,EE,00236FE2,word,0000002D
+patch=1,EE,00236638,word,00001003
+
+[11 Hilda]
+patch=1,EE,00236FE0,word,0000000E
+patch=1,EE,00236FE2,word,0000002D
+patch=1,EE,00236638,word,00001003
+
+[12 Militsa]
+patch=1,EE,00236FE0,word,0000000F
+patch=1,EE,00236FE2,word,00000030
+patch=1,EE,00236638,word,00005000
+
+[13 Militsa]
+patch=1,EE,00236FE0,word,00000010
+patch=1,EE,00236FE2,word,00000011
+patch=1,EE,00236638,word,00001009
+
+[14 Donnell]
+patch=1,EE,00236FE0,word,00000012
+patch=1,EE,00236FE2,word,00000034
+patch=1,EE,00236638,word,00001003
+
+[15 Walto + Militsa]
+patch=1,EE,00236FE0,word,00000013
+patch=1,EE,00236FE2,word,00000011
+patch=1,EE,00236638,word,00001009
+
+[16 King's Shield soldiers]
+patch=1,EE,00236FE0,word,0000002E
+patch=1,EE,00236FE2,word,0000005B
+patch=1,EE,00236638,word,00005000
+
+[17 Saleh + Tohma]
+patch=1,EE,00236FE0,word,00000014
+patch=1,EE,00236FE2,word,0000005C
+patch=1,EE,00236638,word,00001009
+
+[18 Geyorkias]
+patch=1,EE,00236FE0,word,00000015
+patch=1,EE,00236FE2,word,0000005D
+patch=1,EE,00236638,word,00001004
+
+[19 Eugene]
+patch=1,EE,00236FE0,word,00000016
+patch=1,EE,00236FE2,word,0000005E
+patch=1,EE,00236638,word,00001003
+
+[20 Eephon]
+patch=1,EE,00236FE0,word,00000017
+patch=1,EE,00236FE2,word,0000004B
+patch=1,EE,00236638,word,00001005
+
+[21 Thieves]
+patch=1,EE,00236FE0,word,00000032
+patch=1,EE,00236FE2,word,00000009
+patch=1,EE,00236638,word,00001001
+
+[22 Nereg minibosses 1]
+patch=1,EE,00236FE0,word,00000018
+patch=1,EE,00236FE2,word,0000005F
+patch=1,EE,00236638,word,00001003
+
+[23 Nereg minibosses 2]
+patch=1,EE,00236FE0,word,00000019
+patch=1,EE,00236FE2,word,0000005F
+patch=1,EE,00236638,word,00001003
+
+[24 Nereg minibosses 3]
+patch=1,EE,00236FE0,word,0000001A
+patch=1,EE,00236FE2,word,0000005F
+patch=1,EE,00236638,word,00001003
+
+[25 Berserk Dark Wings]
+patch=1,EE,00236FE0,word,0000001B
+patch=1,EE,00236FE2,word,00000060
+patch=1,EE,00236638,word,00001003
+
+[26 Shaorune]
+patch=1,EE,00236FE0,word,0000001C
+patch=1,EE,00236FE2,word,0000004A
+patch=1,EE,00236638,word,00001005
+
+[27 Tohma]
+patch=1,EE,00236FE0,word,0000002F
+patch=1,EE,00236FE2,word,0000000A
+patch=1,EE,00236638,word,00001009
+
+[28 Hilda]
+patch=1,EE,00236FE0,word,0000001E
+patch=1,EE,00236FE2,word,0000004C
+patch=1,EE,00236638,word,00001005
+
+[29 Veigue]
+patch=1,EE,00236FE0,word,0000001F
+patch=1,EE,00236FE2,word,0000004E
+patch=1,EE,00236638,word,00001003
+
+[30 Milhaust]
+patch=1,EE,00236FE0,word,00000020
+patch=1,EE,00236FE2,word,0000005A
+patch=1,EE,00236638,word,00001007
+
+[31 Tytree]
+patch=1,EE,00236FE0,word,00000030
+patch=1,EE,00236FE2,word,00000071
+patch=1,EE,00236638,word,00008006
+
+[32 Four Stars]
+patch=1,EE,00236FE0,word,00000021
+patch=1,EE,00236FE2,word,00000062
+patch=1,EE,00236638,word,0000100A
+
+[33 Milhaust]
+patch=1,EE,00236FE0,word,00000022
+patch=1,EE,00236FE2,word,00000010
+patch=1,EE,00236638,word,00001007
+
+[34 Zilva]
+patch=1,EE,00236FE0,word,00000023
+patch=1,EE,00236FE2,word,00000063
+patch=1,EE,00236638,word,00001008
+
+[35 Gale Embryon 1]
+patch=1,EE,00236FE0,word,00000029
+patch=1,EE,00236FE2,word,00000065
+patch=1,EE,00236638,word,00001003
+
+[35 Gale Embryon 2]
+patch=1,EE,00236FE0,word,0000002A
+patch=1,EE,00236FE2,word,00000065
+patch=1,EE,00236638,word,00001003
+
+[36 Gale Embryon 3]
+patch=1,EE,00236FE0,word,0000002B
+patch=1,EE,00236FE2,word,00000065
+patch=1,EE,00236638,word,00001003
+
+[37 Yuris]
+patch=1,EE,00236FE0,word,00000024
+patch=1,EE,00236FE2,word,00000068
+patch=1,EE,00236638,word,00001006
+
+[38 Crownell + Mao + Eugene]
+patch=1,EE,00236FE0,word,00000006
+patch=1,EE,00236FE2,word,0000006b
+patch=1,EE,00236638,word,00001003
+
+[39 Crownell + Veigue + Annie]
+patch=1,EE,00236FE0,word,0000001D
+patch=1,EE,00236FE2,word,0000006b
+patch=1,EE,00236638,word,00001003
+
+[40 Crownell + Tytree + Hilda]
+patch=1,EE,00236FE0,word,00000025
+patch=1,EE,00236FE2,word,0000006b
+patch=1,EE,00236638,word,00001003
+
+[41 Shaorune & Eephon]
+patch=1,EE,00236FE0,word,00000033
+patch=1,EE,00236FE2,word,00000067
+patch=1,EE,00236638,word,00001005
+
+[42 Geyorkias + Zilva]
+patch=1,EE,00236FE0,word,00000034
+patch=1,EE,00236FE2,word,00000067
+patch=1,EE,00236638,word,00001008
+
+[43 Four Stars x2]
+patch=1,EE,00236FE0,word,00000035
+patch=1,EE,00236FE2,word,00000067
+patch=1,EE,00236638,word,0000100A
+
+[Restore the 1st battle theme]
+description=You need to enter 1 battle with this enabled after setting a boss music.
+patch=1,EE,00236638,word,00001000
+
+[Restore the 2nd battle theme]
+description=You need to enter 1 battle with this enabled after setting a boss music.
+patch=1,EE,00236638,word,00001001
+
+[Restore the 3rd battle theme]
+description=You need to enter 1 battle with this enabled after setting a boss music.
+patch=1,EE,00236638,word,00001002
+
+[Battle BGM = The edge of an oath]
+patch=1,EE,00236638,word,00001007

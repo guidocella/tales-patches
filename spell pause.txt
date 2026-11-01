@@ -1,0 +1,46 @@
+ToP No Spell Pause Cheats
+
+PSX
+D01246BC 7B8B
+801246BC 0000
+D01246BE A062
+801246BE 0000
+
+GBA
+USA 6002D702 000046C0
+PAL 6002F22C 000046C0
+JP 6002E554 000046C0
+
+FVE PSP
+_C1 No Spell Pause
+_L 0x200AAC20 0x00000000
+_L 0x200AAC58 0x00000000
+
+
+ToD PSX No Spell Pause Cheats
+
+USA
+D00E7DD0 5E71
+800E7DD0 0000
+D00E7DD2 A062
+800E7DD2 0000
+
+JP original
+D00E84C8 5E71
+800E84C8 0000
+D00E84CA A062
+800E84CA 0000
+
+JP Rev 1
+D00E7CC4 5E71
+800E7CC4 0000
+D00E7CC6 A062
+800E7CC6 0000
+
+
+Source: https://discord.com/channels/818214215365427320/830549426518622208/1396730299785936987
+
+These were originally based on
+https://mikosans.web.fc2.com/code/tales-of-phantasia.html and
+https://mikosans.web.fc2.com/code/tales-of-destiny.html and updated by Ethanol
+and Meebo.

@@ -1,0 +1,24 @@
+1 VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEOS 0x40004
+FILETYPE 2
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", "Tales of Xillia FPS fix"
+      VALUE "FileDescription", "version.dll proxy that pools UnityPlayer lock semaphores"
+      VALUE "FileVersion", "1.0.0.0"
+      VALUE "InternalName", "version"
+      VALUE "OriginalFilename", "version.dll"
+      VALUE "ProductName", "Tales of Xillia FPS fix"
+      VALUE "ProductVersion", "1.0.0.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END

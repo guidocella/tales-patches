@@ -1,0 +1,60 @@
+Mid Boss 1:
+Hyades 13 55
+Insect Plant 197 25
+Undine 6 28
+Sylph 8 41
+Efreet 15 44
+Rassius 10 47
+
+Mid Boss 2:
+Gnome 5 99
+Guardian 23 96
+Celsius 4 116
+Hyades 16 94
+Volt 7 103
+Spiral 28 106
+
+Sadness Battle:
+Shizel 12 107 (unbeatable)
+
+Mid Boss 1:
+Siren 36 54
+
+Crisis:
+Shadow 11 105
+
+Mid boss 1:
+Maxwell 3 58
+
+Mid Boss 2:
+Hyades 21 108
+
+Rem Theme:
+Rem 14 53
+
+Mid Boss 1:
+Valkyrie 9 49
+
+Mid Boss 2:
+Elementler 30-35 20
+
+Sadness Battle:
+Shizel 12 118
+
+Strange Battle:
+Nereid 20 114
+
+Time Battle:
+Sekundes 17 119
+
+Ability Test:
+Cress 18 100
+Cress and Arche 19 100
+
+Inferia Battle:
+Elementler 85-87 109
+Living Armor 88 109
+Hyades 89 109
+
+Heroic Shadow:
+(Nereid) 39 110

@@ -104,7 +104,7 @@ description=Activate Dual the Sun with Mao in the party. Only works on New Game+
 author=Sora3100
 patch=1,EE,20145D10,extended,1000000A
 
-; Original cheat
+; Original cheats
 
 [Double arte slots]
 description=L3 in the arte menu swaps to a second page of arte shortcuts. Hold L2 in battle to use it.
@@ -479,6 +479,15 @@ patch=1,EE,000FE5BC,word,DFB10010
 patch=1,EE,000FE5C0,word,03E00008
 patch=1,EE,000FE5C4,word,27BD0030
 patch=1,EE,0010FA34,word,0C03F800
+
+[99 item capacity]
+patch=1,EE,00169E24,word,24020063 //Inventory cap
+patch=1,EE,00125C6C,word,24030063 //Items given by events
+patch=1,EE,D02E0554,extended,0400A70E //Checks if the menu overlay is loaded
+patch=1,EE,202DDFDC,extended,24040063 //Shop: item is full
+patch=1,EE,202E06A4,extended,24060063 //Shop: quantity cap, stock mode
+patch=1,EE,202E06B4,extended,28430064
+patch=1,EE,202E07C4,extended,24040063 //Shop: quantity cap
 
 ; Re-fight bosses and unique encounters.
 

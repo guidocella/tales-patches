@@ -11,14 +11,14 @@ patch=1,EE,2011DB90,extended,24020000
 [Fewer random encounters]
 patch=1,EE,2011DB34,extended,24030001
 
-[Learn all titles]
+[All titles]
 patch=1,EE,200F028C,extended,240200FF
 patch=1,EE,200F0290,extended,26A30014
 patch=1,EE,200F0294,extended,A0620020
 patch=1,EE,200F0298,extended,16A3FFFE
 patch=1,EE,200F029C,extended,2463FFFF
 
-[Learn all artes]
+[All artes]
 patch=1,EE,200F0318,extended,26A300C8
 patch=1,EE,200F031C,extended,906200D7
 patch=1,EE,200F0320,extended,34420001

@@ -1,11 +1,46 @@
 gametitle=Tales of Destiny 2
 
-; Source: https://ritzcode.web.fc2.com/tod2.html and https://chaos-file.jp/?z=t2&tid=666
+; Source: https://chaos-file.jp/?z=t2&tid=666
 
-; In https://chaos-file.jp/?z=t2&tid=666 the No encounters, Unlock all skits, Unlock all titles and Learn all artes cheats don't work - this may be a bug in ps2par-react.
+[No random encounters]
+description=Hold L1+R1 while moving to start an encounter.
+patch=1,EE,2011DB90,extended,24020001
+patch=1,EE,D023C342,extended,0000F3FF
+patch=1,EE,2011DB90,extended,24020000
 
 [Fewer random encounters]
-patch=1,EE,0011DB34,word,24030001
+patch=1,EE,2011DB34,extended,24030001
+
+[Learn all titles]
+patch=1,EE,200F028C,extended,240200FF
+patch=1,EE,200F0290,extended,26A30014
+patch=1,EE,200F0294,extended,A0620020
+patch=1,EE,200F0298,extended,16A3FFFE
+patch=1,EE,200F029C,extended,2463FFFF
+
+[Learn all artes]
+patch=1,EE,200F0318,extended,26A300C8
+patch=1,EE,200F031C,extended,906200D7
+patch=1,EE,200F0320,extended,34420001
+patch=1,EE,200F0324,extended,A06200D7
+patch=1,EE,200F0330,extended,16A3FFFA
+patch=1,EE,200F0334,extended,2463FFF6
+
+[Unlock all skits]
+patch=1,EE,200F0378,extended,3C03001C
+patch=1,EE,200F037C,extended,2478004E
+patch=1,EE,200F0380,extended,3402FFFF
+patch=1,EE,200F0384,extended,A702B0A8
+patch=1,EE,200F0398,extended,1478FFFA
+patch=1,EE,200F039C,extended,2718FFFE
+
+[Majin Rengokusatsu (真神煉獄刹) always usable]
+description=You still need to hold the attack button to do the extension.
+patch=1,EE,E0020005,extended,002CED98
+patch=1,EE,202CED98,extended,24030001
+patch=1,EE,202CEDC4,extended,10400001
+
+; Source: https://ritzcode.web.fc2.com/tod2.html
 
 [Base arte extensions (追加特技) always usable]
 patch=1,EE,D02CEC18,extended,00000214
@@ -21,12 +56,6 @@ patch=1,EE,D02CEF1C,extended,00000153
 patch=1,EE,202CEF1C,extended,00000000
 patch=1,EE,D02CEED4,extended,00000009
 patch=1,EE,202CEED4,extended,54400001
-
-[Majin Rengokusatsu (真神煉獄刹) always usable]
-description=You still need to hold the attack button to do the extension.
-patch=1,EE,E0020005,extended,002CED98
-patch=1,EE,202CED98,extended,24030001
-patch=1,EE,202CEDC4,extended,10400001
 
 [Wild Geese always usable]
 patch=1,EE,D02CAAD8,extended,00000034

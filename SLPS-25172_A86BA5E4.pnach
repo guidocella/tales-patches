@@ -98,115 +98,96 @@ patch=1,EE,001BB20C,short,00000040
 ; Re-fight bosses. Each cheat sets the encounter group, the stage and the
 ; boss's BGM.
 [01 Buel]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020003
 patch=1,EE,0011DBFC,word,2403002D
 patch=1,EE,001BB20C,short,0000003B
 
 [02 Vassago]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020006
 patch=1,EE,0011DBFC,word,24030038
 patch=1,EE,001BB20C,short,0000003B
 
 [03 Barbatos 1]
-description=BGM = Coup de Grâce
 patch=1,EE,0011DBF8,word,2402000A
 patch=1,EE,0011DBFC,word,24030039
 patch=1,EE,001BB20C,short,00000041
 
 [04 Forneus tails]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020007
 patch=1,EE,0011DBFC,word,24030013
 patch=1,EE,001BB20C,short,0000003B
 
 [05 Forneus + Forneus tails]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020007
 patch=1,EE,0011DBFC,word,2403003A
 patch=1,EE,001BB20C,short,0000003B
 
 [06 Sabnock + Ose]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020005
 patch=1,EE,0011DBFC,word,24030016
 patch=1,EE,001BB20C,short,0000003B
 
 [07 Vepar]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,2402000C
 patch=1,EE,0011DBFC,word,2403003C
 patch=1,EE,001BB20C,short,0000003B
 
 [08 Elraine]
-description=BGM = Zealot
 patch=1,EE,0011DBF8,word,2402000B
 patch=1,EE,0011DBFC,word,24030039
 patch=1,EE,001BB20C,short,00000042
 
 [09 Glasya-Labolas]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020009
 patch=1,EE,0011DBFC,word,2403003E
 patch=1,EE,001BB20C,short,0000003B
 
 [10 Dantalion]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020010
 patch=1,EE,0011DBFC,word,2403003F
 patch=1,EE,001BB20C,short,0000003B
 
 [11 Halphas]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020002
 patch=1,EE,0011DBFC,word,2403001E
 patch=1,EE,001BB20C,short,0000003B
 
 [12 Barbatos 2]
-description=BGM = Coup de Grâce
 patch=1,EE,0011DBF8,word,2402000E
 patch=1,EE,0011DBFC,word,24030040
 patch=1,EE,001BB20C,short,00000041
 
 [13 Tiamat]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,2402001D
 patch=1,EE,0011DBFC,word,24030053
 patch=1,EE,001BB20C,short,0000003B
 
 [14 Barbatos 3]
-description=BGM = Coup de Grâce
 patch=1,EE,0011DBF8,word,2402000F
 patch=1,EE,0011DBFC,word,24030043
 patch=1,EE,001BB20C,short,00000041
 
 [15 Gaap]
-description=BGM = The Dreadnought
 patch=1,EE,0011DBF8,word,24020011
 patch=1,EE,0011DBFC,word,24030044
 patch=1,EE,001BB20C,short,0000003B
 
 [16 Elraine 2]
-description=BGM = Zealot
 patch=1,EE,0011DBF8,word,2402000B
 patch=1,EE,0011DBFC,word,24030045
 patch=1,EE,001BB20C,short,00000042
 
 [17 Fortuna]
-description=BGM = Wheel of Judgement
 patch=1,EE,0011DBF8,word,2402000D
 patch=1,EE,0011DBFC,word,24030046
 patch=1,EE,001BB20C,short,0000007D
 
 [18 Rimul]
-description=BGM = A Resolution
 patch=1,EE,0011DBF8,word,24020004
 patch=1,EE,0011DBFC,word,24030028
 patch=1,EE,001BB20C,short,00000044
 
 [19 Magnadeus]
-description=BGM = Vive Memor Mortis
 patch=1,EE,0011DBF8,word,24020012
 patch=1,EE,0011DBFC,word,24030027
 patch=1,EE,001BB20C,short,00000045

@@ -483,6 +483,13 @@ patch=1,EE,202E06A4,extended,24060063 //Shop: quantity cap, stock mode
 patch=1,EE,202E06B4,extended,28430064
 patch=1,EE,202E07C4,extended,24040063 //Shop: quantity cap
 
+[Learn all titles]
+patch=1,EE,20236114,extended,FFFFFFFF
+patch=1,EE,20236118,extended,FFFFFFFF
+patch=1,EE,2023611C,extended,FFFFFFFF
+patch=1,EE,20236120,extended,FFFFFFFF
+patch=1,EE,20236124,extended,7FFFFFFF
+
 ; Re-fight bosses and unique encounters.
 
 [01 Mao]

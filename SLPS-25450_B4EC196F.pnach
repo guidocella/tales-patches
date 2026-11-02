@@ -687,25 +687,25 @@ patch=1,EE,00236FE0,short,00000006
 patch=1,EE,00236FE2,short,0000006b
 patch=1,EE,00236638,short,00001003
 
-[39 Crownell + Veigue + Annie]
-patch=1,EE,00236FE0,short,0000001D
-patch=1,EE,00236FE2,short,0000006b
-patch=1,EE,00236638,short,00001003
-
-[40 Crownell + Tytree + Hilda]
-patch=1,EE,00236FE0,short,00000025
-patch=1,EE,00236FE2,short,0000006b
-patch=1,EE,00236638,short,00001003
-
-[41 Shaorune & Eephon]
+[39 Shaorune & Eephon]
 patch=1,EE,00236FE0,short,00000033
 patch=1,EE,00236FE2,short,00000067
 patch=1,EE,00236638,short,00001005
 
-[42 Geyorkias + Zilva]
+[40 Crownell + Veigue + Annie]
+patch=1,EE,00236FE0,short,0000001D
+patch=1,EE,00236FE2,short,0000006b
+patch=1,EE,00236638,short,00001003
+
+[41 Geyorkias + Zilva]
 patch=1,EE,00236FE0,short,00000034
 patch=1,EE,00236FE2,short,00000067
 patch=1,EE,00236638,short,00001008
+
+[42 Crownell + Tytree + Hilda]
+patch=1,EE,00236FE0,short,00000025
+patch=1,EE,00236FE2,short,0000006b
+patch=1,EE,00236638,short,00001003
 
 [43 Four Stars x2]
 patch=1,EE,00236FE0,short,00000035

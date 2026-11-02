@@ -13,25 +13,16 @@ patch=1,EE,20322144,extended,00021283
 
 [No random encounters]
 description=Hold □ while moving to start an encounter. Can't be disabled at runtime.
-patch=1,EE,0012D29C,word,001F200B
-patch=1,EE,0012D2A0,word,3C020024
-patch=1,EE,0012D2A4,word,944225C2
-patch=1,EE,0012D2A8,word,30428000
+patch=1,EE,2012D29C,extended,001F200B
+patch=1,EE,2012D2A0,extended,3C020024
+patch=1,EE,2012D2A4,extended,944225C2
+patch=1,EE,2012D2A8,extended,30428000
 
 [Max grade]
-patch=1,EE,00235AC0,word,0098961C
+patch=1,EE,20235AC0,extended,0098961C
 ; I modified this to give 99999 grade instead of 9999.
 
 ; Source: https://discord.com/channels/818214215365427320/897239185986031666/1460741665496105133
-
-[Ougi usable at low rush gauge]
-description=Gives the effect of the Esoteric amulet.
-patch=1,EE,D02FECE6,extended,00005440
-patch=1,EE,202FECE4,extended,57E0000D
-; ritz code's version of this doesn't work - this may be a bug in ps2par-react.
-; [奥義 usable at low rush gauge]
-; patch=1,EE,002FECE6,word,00005440
-; patch=1,EE,002FECE4,word,57E0000D
 
 [Max smash points]
 patch=1,EE,201AB3F4,extended,0803C0C0
@@ -65,8 +56,11 @@ patch=1,EE,27062706,extended,00000000
 
 ; Source: https://ritzcode.web.fc2.com/tor.html
 
-; The original version of this worked in battles but broke moving in fields
-; which I had to fix.
+[Ougi usable at low rush gauge]
+description=Gives the effect of the Esoteric amulet.
+patch=1,EE,D02FECE6,extended,00005440
+patch=1,EE,202FECE4,extended,57E0000D
+
 [Veigue altered force]
 description=Gives the effect of the 魂 amulets.
 patch=1,EE,E0021A7E,extended,002F9994
@@ -75,29 +69,29 @@ patch=1,EE,202F99A8,extended,16820005
 
 [Max Hi-Ougi counter]
 description=Maxes the counter of how many latent abilities must activate to use Hi-Ougi.
-patch=1,EE,00235B1C,word,00000064
+patch=1,EE,00235B1C,extended,00000064
 
 [Remove Hi-Ougi battle number restriction]
 description=Remove the restriction of using a Hi-Ougi at most once every six random battles.
-patch=1,EE,00235B84,word,00000000
+patch=1,EE,00235B84,extended,00000000
 
 [Hi-Ougi always usable]
-patch=1,EE,00357D48,word,00000258
-patch=1,EE,00357D4A,word,00000001
-patch=1,EE,0030C3BA,word,00001043
-patch=1,EE,0030C3B8,word,10000003
-patch=1,EE,0030CE28,word,00000027
-patch=1,EE,0030CE28,word,14430001
+patch=1,EE,10357D48,extended,00000258
+patch=1,EE,10357D4A,extended,00000001
+patch=1,EE,D030C3BA,extended,00001043
+patch=1,EE,2030C3B8,extended,10000003
+patch=1,EE,D030CE28,extended,00000027
+patch=1,EE,2030CE28,extended,14430001
 
 [Automatic Blue Earth]
 description=Activate Dual the Sun with Mao in the party. Works even on the 1st playthrough. Also extends enemy Hi-Ougi if Eugene Mao and Hilda are in the party, which may make the party transparent.
 ; You do not need to control Hilda like ritz code says.
-patch=1,EE,00145C64,word,00000008
-patch=1,EE,00145C64,word,00000000
-patch=1,EE,00145C70,word,00000006
-patch=1,EE,00145C70,word,24150000
-patch=1,EE,00145D2E,word,10400006
-patch=1,EE,00145D2C,word,13E00006
+patch=1,EE,D0145C64,extended,00000008
+patch=1,EE,20145C64,extended,00000000
+patch=1,EE,D0145C70,extended,00000006
+patch=1,EE,20145C70,extended,24150000
+patch=1,EE,D0145D2E,extended,10400006
+patch=1,EE,20145D2C,extended,13E00006
 
 [Automatic Blue Earth if available]
 description=Activate Dual the Sun with Mao in the party. Only works on New Game+. Also extends enemy Hi-Ougi if Eugene Mao and Hilda are in the party, which may make the party transparent.
@@ -492,236 +486,236 @@ patch=1,EE,202E07C4,extended,24040063 //Shop: quantity cap
 ; Re-fight bosses and unique encounters.
 
 [01 Mao]
-patch=1,EE,00236FE0,word,00000002
-patch=1,EE,00236FE2,word,0000000D
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000002
+patch=1,EE,00236FE2,short,0000000D
+patch=1,EE,00236638,short,00001003
 
 [02 Tohma]
-patch=1,EE,00236FE0,word,00000004
-patch=1,EE,00236FE2,word,00000027
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000004
+patch=1,EE,00236FE2,short,00000027
+patch=1,EE,00236638,short,00001003
 
 [03 Dark Wings]
-patch=1,EE,00236FE0,word,00000026
-patch=1,EE,00236FE2,word,00000046
-patch=1,EE,00236638,word,00001000
+patch=1,EE,00236FE0,short,00000026
+patch=1,EE,00236FE2,short,00000046
+patch=1,EE,00236638,short,00001000
 
 [04 Dark Wings]
-patch=1,EE,00236FE0,word,00000036
-patch=1,EE,00236FE2,word,0000005A
-patch=1,EE,00236638,word,00001000
+patch=1,EE,00236FE0,short,00000036
+patch=1,EE,00236FE2,short,0000005A
+patch=1,EE,00236638,short,00001000
 
 [05 Leg Tight]
-patch=1,EE,00236FE0,word,00000005
-patch=1,EE,00236FE2,word,00000038
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000005
+patch=1,EE,00236FE2,short,00000038
+patch=1,EE,00236638,short,00001003
 
 [06 Annie]
-patch=1,EE,00236FE0,word,00000007
-patch=1,EE,00236FE2,word,0000004F
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000007
+patch=1,EE,00236FE2,short,0000004F
+patch=1,EE,00236638,short,00001003
 
 [07 Grand Bask]
-patch=1,EE,00236FE0,word,0000000A
-patch=1,EE,00236FE2,word,00000052
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000000A
+patch=1,EE,00236FE2,short,00000052
+patch=1,EE,00236638,short,00001003
 
 [08 Tytree]
-patch=1,EE,00236FE0,word,0000000B
-patch=1,EE,00236FE2,word,00000073
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000000B
+patch=1,EE,00236FE2,short,00000073
+patch=1,EE,00236638,short,00001003
 
 [09 Mountain thieves]
-patch=1,EE,00236FE0,word,0000000C
-patch=1,EE,00236FE2,word,00000013
-patch=1,EE,00236638,word,00001000
+patch=1,EE,00236FE0,short,0000000C
+patch=1,EE,00236FE2,short,00000013
+patch=1,EE,00236638,short,00001000
 
 [10 Hilda + soldiers]
-patch=1,EE,00236FE0,word,0000000D
-patch=1,EE,00236FE2,word,0000002D
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000000D
+patch=1,EE,00236FE2,short,0000002D
+patch=1,EE,00236638,short,00001003
 
 [11 Hilda]
-patch=1,EE,00236FE0,word,0000000E
-patch=1,EE,00236FE2,word,0000002D
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000000E
+patch=1,EE,00236FE2,short,0000002D
+patch=1,EE,00236638,short,00001003
 
 [12 Militsa]
-patch=1,EE,00236FE0,word,0000000F
-patch=1,EE,00236FE2,word,00000030
-patch=1,EE,00236638,word,00005000
+patch=1,EE,00236FE0,short,0000000F
+patch=1,EE,00236FE2,short,00000030
+patch=1,EE,00236638,short,00005000
 
 [13 Militsa]
-patch=1,EE,00236FE0,word,00000010
-patch=1,EE,00236FE2,word,00000011
-patch=1,EE,00236638,word,00001009
+patch=1,EE,00236FE0,short,00000010
+patch=1,EE,00236FE2,short,00000011
+patch=1,EE,00236638,short,00001009
 
 [14 Donnell]
-patch=1,EE,00236FE0,word,00000012
-patch=1,EE,00236FE2,word,00000034
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000012
+patch=1,EE,00236FE2,short,00000034
+patch=1,EE,00236638,short,00001003
 
 [15 Walto + Militsa]
-patch=1,EE,00236FE0,word,00000013
-patch=1,EE,00236FE2,word,00000011
-patch=1,EE,00236638,word,00001009
+patch=1,EE,00236FE0,short,00000013
+patch=1,EE,00236FE2,short,00000011
+patch=1,EE,00236638,short,00001009
 
 [16 King's Shield soldiers]
-patch=1,EE,00236FE0,word,0000002E
-patch=1,EE,00236FE2,word,0000005B
-patch=1,EE,00236638,word,00005000
+patch=1,EE,00236FE0,short,0000002E
+patch=1,EE,00236FE2,short,0000005B
+patch=1,EE,00236638,short,00005000
 
 [17 Saleh + Tohma]
-patch=1,EE,00236FE0,word,00000014
-patch=1,EE,00236FE2,word,0000005C
-patch=1,EE,00236638,word,00001009
+patch=1,EE,00236FE0,short,00000014
+patch=1,EE,00236FE2,short,0000005C
+patch=1,EE,00236638,short,00001009
 
 [18 Geyorkias]
-patch=1,EE,00236FE0,word,00000015
-patch=1,EE,00236FE2,word,0000005D
-patch=1,EE,00236638,word,00001004
+patch=1,EE,00236FE0,short,00000015
+patch=1,EE,00236FE2,short,0000005D
+patch=1,EE,00236638,short,00001004
 
 [19 Eugene]
-patch=1,EE,00236FE0,word,00000016
-patch=1,EE,00236FE2,word,0000005E
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000016
+patch=1,EE,00236FE2,short,0000005E
+patch=1,EE,00236638,short,00001003
 
 [20 Eephon]
-patch=1,EE,00236FE0,word,00000017
-patch=1,EE,00236FE2,word,0000004B
-patch=1,EE,00236638,word,00001005
+patch=1,EE,00236FE0,short,00000017
+patch=1,EE,00236FE2,short,0000004B
+patch=1,EE,00236638,short,00001005
 
 [21 Thieves]
-patch=1,EE,00236FE0,word,00000032
-patch=1,EE,00236FE2,word,00000009
-patch=1,EE,00236638,word,00001001
+patch=1,EE,00236FE0,short,00000032
+patch=1,EE,00236FE2,short,00000009
+patch=1,EE,00236638,short,00001001
 
 [22 Nereg minibosses 1]
-patch=1,EE,00236FE0,word,00000018
-patch=1,EE,00236FE2,word,0000005F
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000018
+patch=1,EE,00236FE2,short,0000005F
+patch=1,EE,00236638,short,00001003
 
 [23 Nereg minibosses 2]
-patch=1,EE,00236FE0,word,00000019
-patch=1,EE,00236FE2,word,0000005F
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000019
+patch=1,EE,00236FE2,short,0000005F
+patch=1,EE,00236638,short,00001003
 
 [24 Nereg minibosses 3]
-patch=1,EE,00236FE0,word,0000001A
-patch=1,EE,00236FE2,word,0000005F
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000001A
+patch=1,EE,00236FE2,short,0000005F
+patch=1,EE,00236638,short,00001003
 
 [25 Berserk Dark Wings]
-patch=1,EE,00236FE0,word,0000001B
-patch=1,EE,00236FE2,word,00000060
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000001B
+patch=1,EE,00236FE2,short,00000060
+patch=1,EE,00236638,short,00001003
 
 [26 Shaorune]
-patch=1,EE,00236FE0,word,0000001C
-patch=1,EE,00236FE2,word,0000004A
-patch=1,EE,00236638,word,00001005
+patch=1,EE,00236FE0,short,0000001C
+patch=1,EE,00236FE2,short,0000004A
+patch=1,EE,00236638,short,00001005
 
 [27 Tohma]
-patch=1,EE,00236FE0,word,0000002F
-patch=1,EE,00236FE2,word,0000000A
-patch=1,EE,00236638,word,00001009
+patch=1,EE,00236FE0,short,0000002F
+patch=1,EE,00236FE2,short,0000000A
+patch=1,EE,00236638,short,00001009
 
 [28 Hilda]
-patch=1,EE,00236FE0,word,0000001E
-patch=1,EE,00236FE2,word,0000004C
-patch=1,EE,00236638,word,00001005
+patch=1,EE,00236FE0,short,0000001E
+patch=1,EE,00236FE2,short,0000004C
+patch=1,EE,00236638,short,00001005
 
 [29 Veigue]
-patch=1,EE,00236FE0,word,0000001F
-patch=1,EE,00236FE2,word,0000004E
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000001F
+patch=1,EE,00236FE2,short,0000004E
+patch=1,EE,00236638,short,00001003
 
 [30 Milhaust]
-patch=1,EE,00236FE0,word,00000020
-patch=1,EE,00236FE2,word,0000005A
-patch=1,EE,00236638,word,00001007
+patch=1,EE,00236FE0,short,00000020
+patch=1,EE,00236FE2,short,0000005A
+patch=1,EE,00236638,short,00001007
 
 [31 Tytree]
-patch=1,EE,00236FE0,word,00000030
-patch=1,EE,00236FE2,word,00000071
-patch=1,EE,00236638,word,00008006
+patch=1,EE,00236FE0,short,00000030
+patch=1,EE,00236FE2,short,00000071
+patch=1,EE,00236638,short,00008006
 
 [32 Four Stars]
-patch=1,EE,00236FE0,word,00000021
-patch=1,EE,00236FE2,word,00000062
-patch=1,EE,00236638,word,0000100A
+patch=1,EE,00236FE0,short,00000021
+patch=1,EE,00236FE2,short,00000062
+patch=1,EE,00236638,short,0000100A
 
 [33 Milhaust]
-patch=1,EE,00236FE0,word,00000022
-patch=1,EE,00236FE2,word,00000010
-patch=1,EE,00236638,word,00001007
+patch=1,EE,00236FE0,short,00000022
+patch=1,EE,00236FE2,short,00000010
+patch=1,EE,00236638,short,00001007
 
 [34 Zilva]
-patch=1,EE,00236FE0,word,00000023
-patch=1,EE,00236FE2,word,00000063
-patch=1,EE,00236638,word,00001008
+patch=1,EE,00236FE0,short,00000023
+patch=1,EE,00236FE2,short,00000063
+patch=1,EE,00236638,short,00001008
 
 [35 Gale Embryon 1]
-patch=1,EE,00236FE0,word,00000029
-patch=1,EE,00236FE2,word,00000065
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000029
+patch=1,EE,00236FE2,short,00000065
+patch=1,EE,00236638,short,00001003
 
 [35 Gale Embryon 2]
-patch=1,EE,00236FE0,word,0000002A
-patch=1,EE,00236FE2,word,00000065
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000002A
+patch=1,EE,00236FE2,short,00000065
+patch=1,EE,00236638,short,00001003
 
 [36 Gale Embryon 3]
-patch=1,EE,00236FE0,word,0000002B
-patch=1,EE,00236FE2,word,00000065
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000002B
+patch=1,EE,00236FE2,short,00000065
+patch=1,EE,00236638,short,00001003
 
 [37 Yuris]
-patch=1,EE,00236FE0,word,00000024
-patch=1,EE,00236FE2,word,00000068
-patch=1,EE,00236638,word,00001006
+patch=1,EE,00236FE0,short,00000024
+patch=1,EE,00236FE2,short,00000068
+patch=1,EE,00236638,short,00001006
 
 [38 Crownell + Mao + Eugene]
-patch=1,EE,00236FE0,word,00000006
-patch=1,EE,00236FE2,word,0000006b
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000006
+patch=1,EE,00236FE2,short,0000006b
+patch=1,EE,00236638,short,00001003
 
 [39 Crownell + Veigue + Annie]
-patch=1,EE,00236FE0,word,0000001D
-patch=1,EE,00236FE2,word,0000006b
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,0000001D
+patch=1,EE,00236FE2,short,0000006b
+patch=1,EE,00236638,short,00001003
 
 [40 Crownell + Tytree + Hilda]
-patch=1,EE,00236FE0,word,00000025
-patch=1,EE,00236FE2,word,0000006b
-patch=1,EE,00236638,word,00001003
+patch=1,EE,00236FE0,short,00000025
+patch=1,EE,00236FE2,short,0000006b
+patch=1,EE,00236638,short,00001003
 
 [41 Shaorune & Eephon]
-patch=1,EE,00236FE0,word,00000033
-patch=1,EE,00236FE2,word,00000067
-patch=1,EE,00236638,word,00001005
+patch=1,EE,00236FE0,short,00000033
+patch=1,EE,00236FE2,short,00000067
+patch=1,EE,00236638,short,00001005
 
 [42 Geyorkias + Zilva]
-patch=1,EE,00236FE0,word,00000034
-patch=1,EE,00236FE2,word,00000067
-patch=1,EE,00236638,word,00001008
+patch=1,EE,00236FE0,short,00000034
+patch=1,EE,00236FE2,short,00000067
+patch=1,EE,00236638,short,00001008
 
 [43 Four Stars x2]
-patch=1,EE,00236FE0,word,00000035
-patch=1,EE,00236FE2,word,00000067
-patch=1,EE,00236638,word,0000100A
+patch=1,EE,00236FE0,short,00000035
+patch=1,EE,00236FE2,short,00000067
+patch=1,EE,00236638,short,0000100A
 
 [Restore the 1st battle theme]
 description=You need to enter 1 battle with this enabled after setting a boss music.
-patch=1,EE,00236638,word,00001000
+patch=1,EE,00236638,short,00001000
 
 [Restore the 2nd battle theme]
 description=You need to enter 1 battle with this enabled after setting a boss music.
-patch=1,EE,00236638,word,00001001
+patch=1,EE,00236638,short,00001001
 
 [Restore the 3rd battle theme]
 description=You need to enter 1 battle with this enabled after setting a boss music.
-patch=1,EE,00236638,word,00001002
+patch=1,EE,00236638,short,00001002
 
 [Battle BGM = The edge of an oath]
-patch=1,EE,00236638,word,00001007
+patch=1,EE,00236638,short,00001007

@@ -1,0 +1,116 @@
+# Tales of Innocence R: 60 FPS battles and fields
+# Offsets are from 0x81000000; values are bytes in memory order.
+# Assembly sources for the code caves are in src/.
+
+## Frame rate
+# Battle init calls set_battle_fps (code cave in the unreferenced FUN_8100cbf0)
+# instead of the fps setter at 0x8100a2ce. It sets fps to 30 plus one ulp: game
+# logic stays at 30, while present's exact == 30.0 check fails, so it waits one
+# vblank. Menus and other scenes set exactly 30 and stay at 30 FPS.
+0:0xCBF0 9FED010A FDF76BBB 0100F041 9FED010A FDF765BB 00007042
+0:0x3F9A6 CDF723F9
+# Field init calls set_field_fps (same cave) instead, which sets 60. So do the
+# exits of the field menus that run at 60 and then set 30 when they close
+# (FUN_810a2xxx, the save and load menus FUN_810f9c9c and FUN_8110d4d8 and its
+# subclass)
+0:0x7E6B8 8EF7A0FA
+0:0xA3338 69F760FC
+0:0xF9E42 12F7DBFE
+0:0xF9E86 12F7B9FE
+0:0xF9ECC 12F796FE
+0:0x10D654 FFF6D2FA
+0:0x10D6AA FFF6A7FA
+0:0x10D702 FFF67BFA
+0:0x10E14C FEF656FD
+
+## Battle speed
+# Battle time scale 0.5 instead of 1.0, at init and on reset
+0:0x3F9B4 5FF07C50
+0:0x73C64 B6EE000A
+# Character animation step (scale/fps)*scale: divide by 15 instead of fps
+0:0x57BA8 B2EE0E0A
+# Special camera grows its step by scale*1.1 per frame: use 2*sqrt(1.1) so it
+# doesn't shrink to 0 and divide by zero at scale 0.5
+0:0x65D16 43F65E70C4F20600
+
+## Smooth animation
+# Node matrix tracks (FUN_81011384) copied the previous key unless the model enabled
+# interpolation, and never interpolated special nodes like the mystic arte camera,
+# so with keys every 1/30 s bones and the arte camera moved at 30 FPS. Always
+# interpolate between two different keys.
+0:0x114A8 00BF
+0:0x114B0 00BF
+
+## UI and mystic arte cut-ins
+# 2D layout animation player entry (FUN_81025e10): in 60 FPS battles run it every
+# frame at half speed (anim_half, in the unreferenced FUN_81134d68)
+0:0x134DE0 44F22C11 C8F21711 0968D1F8 402640F2 0003C4F2 F0139A42 12D010B5 2DED018A 044694ED 068AB6EE 000A28EE 000A84ED 060A00F0 05F884ED 068ABDEC 018A10BD 70B58168 F0F6F6BF
+0:0x25E10 0EF1E6BF
+# Cut-in state (CBattleStateSuperArts update, FUN_8106e582): halve the steps that
+# slide the HUD away and double its frame counts and fade
+0:0x6E618 F1EE001A
+0:0x6E63A B1EE001A
+0:0x6E65C F1EE000A
+0:0x6E686 1E2A
+0:0x6E6B4 5028
+0:0x6E70C 2823
+0:0x6E3A8 1E28
+# Sprite flipbook player (FUN_81000eec) steps 30 FPS sequences every other frame when
+# fps != 30.0 instead of only when fps == 60.0, which also covers 60 FPS battles
+0:0xF18 C4F2F015
+0:0xF2E 03D0
+# Sprite flipbook draw (FUN_81000f88): on the second showing of a 30 FPS frame, draw
+# each quad halfway to the same quad in the next frame (flipbook_lerp, after
+# anim_half), so cut-ins slide at 60 FPS
+0:0x134E30 40B500F0 1BF8B0F9 00C01DB1 455FAC44 4FEA6C0C BDE84040 CCF618B9 40B500F0 0DF8B0F9 08402DB1 0544B5F9 08502C44 4FEA6404 BDE84040 CCF61DB9 169D2D69 75B9189E 149DAD88 0136AE42 08DA119D 35442E78 15F8015C B54201D1 6D017047 00257047
+0:0x1078 33F1DABE
+0:0x10A2 33F1D3BE
+
+## Field speed
+# The field player adds its velocity to its position every frame (FUN_810b002c):
+# add velocity * 30/fps instead (add_scaled, at the start of FUN_81134d68)
+0:0x134D68 44F22C12 C8F21712 126802F5 C862D2ED 001AB3EE 0E2A82EE 212A91ED 000AD0ED 000A40EE 020AC0ED 000A91ED 010AD0ED 010A40EE 020AC0ED 010A91ED 020AD0ED 020A40EE 020AC0ED 020A7047
+0:0xB00D0 84F04AFE
+# NPCs (FUN_810aad16) the same way
+0:0xAAD5C 8AF004F8
+# Field camera turns 2 degrees per frame with the right stick (FUN_810a7e9e):
+# turn 1 degree, as fields always run at 60
+0:0xA7F18 48F2E001C4F2C801
+0:0xA7F30 4FF63521C3F68E41
+# Fades step once per frame: their setup (FUN_81026dba) branches to fade_frames
+# (after add_scaled), which doubles the frame count while fps is 60
+0:0x134DB4 2DE9F041 44F22C1C C8F2171C DCF800C0 DCF840C6 40F20004 C4F27024 A44508BF 5B00F1F6 F2BF
+0:0x26DBA 0DF1FBBF
+
+## Field menus
+# The menu's character panel steps the gradient it plays behind a portrait when
+# an item is used (FUN_811307a0) by pi/5 then pi/20 per frame: halve both
+0:0x1307DC C3F6A065
+0:0x1307F4 C3F6A055
+# Layout sprites (FUN_8102525a) are placed at whole pixels, so animations that
+# move by under a pixel per frame, like the menu cursor's bob, moved every
+# other frame. layout_subpixel (after shatter_update) passes the truncated
+# fractions down, and add_subpixel adds them to the vertices before the sprite
+# is submitted (FUN_8101b1c8), which shows with resolution upscaling
+0:0x134F04 10B56DED 03EADDF8 54C09CED 210AD0ED 070A20EE 20FABDEE CF0AB8EE C00A3FEE 40FA9CED 220AD0ED 080A60EE 20FABDEE EF0AB8EE C00A7FEE C0FA4CF6 FE2CC7F6 C07C0EEE 90CADDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDEFF6 B8FF04B0 FDEC03EA 10BD10B4 1EEE90CA 4CF6FE24 C7F6C074 A44512D1 01F1140C 04249CED 000ADCED 010A30EE 0F0A70EE AF0A8CED 000ACCED 010A0CF1 080C013C EFD110BC E5F6DFBC
+0:0x252F0 0FF108FE
+0:0x1B394 19F1EFFD
+
+## Battle loading
+# The screen shatter into battles plays on the NowLoadingThread (FUN_8102e83e),
+# one update per present. Its loop calls loading_present (after flipbook_lerp),
+# which waits an extra vblank unless fps is exactly 30 or the screen is the
+# shatter. The shatter's vtables point to shatter_update (after it), which runs
+# the update every frame but keeps the update's frame counter at 30 Hz.
+0:0x134E94 10B5D4F6 CCF82169 09680969 44F6CF62 C8F21312 91420FD0 44F22C11 C8F21711 0968D1F8 401640F2 0002C4F2 F0129142 02D00120 0FF006EA 10BD70B5 04462589 44F22C16 C8F21716 3668D6F8 386606F0 0106052D 03D24EB9 88F760F9 06E088F7 5DF91EB1 2189A942 00D02581 70BD
+0:0x2E85E 06F119FB
+0:0x16C580 CF4E1381
+0:0x16C5AC CF4E1381
+# Halve the update's per-step motion (FUN_810bd1b0): piece speed grows by 0.2
+# instead of 0.8 up to 12 instead of 24, falling pieces move by -8 instead of
+# -16, and spin by pi/64 instead of pi/32 (FUN_810ba44c)
+0:0xBD2E0 B2EE081A
+0:0xBD2E4 C3F64C60
+0:0xBD306 C4F24017
+0:0xBD376 5FF07C54
+0:0xBA576 C3F64950

@@ -1,6 +1,5 @@
 # Tales of Innocence R: 60 FPS battles and fields
 # Offsets are from 0x81000000; values are bytes in memory order.
-# Assembly sources for the code caves are in src/.
 
 ## Frame rate
 # Battle init calls set_battle_fps (code cave in the unreferenced FUN_8100cbf0)
@@ -29,9 +28,56 @@
 0:0x73C64 B6EE000A
 # Character animation step (scale/fps)*scale: divide by 15 instead of fps
 0:0x57BA8 B2EE0E0A
+# Motion frame (FUN_8101031c) is (int)(time*fps + 0.5). At half speed time*fps
+# is a whole number plus 0.5 every other step, so float error decided whether it
+# rounded up, a frame could last 1 or 3 steps instead of 2, and its velocity
+# events applied too often or too rarely: Spada's 虎牙破斬 rose 1.75 too high and
+# ended hovering. Add 0.25 instead, so each frame lasts exactly 2 steps (30 FPS
+# is unchanged)
+0:0x1032C B5EE000A
 # Special camera grows its step by scale*1.1 per frame: use 2*sqrt(1.1) so it
 # doesn't shrink to 0 and divide by zero at scale 0.5
-0:0x65D16 43F65E70C4F20600
+0:0x65D16 43F65E70 C4F20600
+# Battle intro camera (FUN_81070d2c) orbits by 4 degrees and moves +0x1c by 1.11
+# per update, but ends on a scaled timer: halve both steps
+0:0x70D48 0E50
+0:0x70D58 0E70
+# The glow at the stage edge (the battle's model at +0x7b4) steps by its speed
+# / fps, and its speed is 1: edge_glow_step (after layout_subpixel) sets the
+# speed to the battle time scale first
+0:0x400 D4F81421 C0F85824 11F07DB9
+0:0x445CE BBF717FF
+# Rave gauge (CBattleRaveMgr update, FUN_8103c1ce) works per update: the shown
+# value moves toward the gauge by at most 4 times an ease that grows by 0.1, then
+# the gauge waits 10 updates and drains by FUN_8103bfc6's rate. Move by at most
+# 2, grow the ease by 0.05, wait 20 updates (FUN_8103bdee and FUN_8103bece),
+# and halve the rate (rave_drain, after set_field_fps in FUN_8100cbf0)
+0:0x3C22A F0EE001A
+0:0x3C24C B0EE000A
+0:0x3C252 F8EE001A
+0:0x3C262 B8EE000A
+0:0x3C27A C3F64C51
+0:0x3BE3A 1422
+0:0x3BED8 1423
+0:0xCC08 10B52FF0 DCF9F6EE 000A20EE 200A10BD
+0:0x3C33A D0F765FC
+# Countering an enraged attack gives a rave bonus for 180 * (1 + bonus) updates
+# (FUN_810428cc): use 360
+0:0x4293C C4F2B430
+# Damage numbers (FUN_8102d90a) rise, fade and time out by fixed steps per
+# update. Plain ones (FUN_8102d872): fade by 16 instead of 32 per update and
+# shrink by 0.1 instead of 0.2, start fading out after 44 instead of 22 updates
+# (also when a newer number replaces them, FUN_8102d488) and last 62 instead of
+# 31. damage_update (after rave_drain) runs the other kinds every other frame
+0:0x2D87C 3D28
+0:0x2D88A 2C2A
+0:0x2D88E 1030
+0:0x2D89E 1038
+0:0x2D8B0 C3F6CC50
+0:0x2D53A 5FF02C0E
+0:0x2D55C 2C2A
+0:0xCC18 91F82420 002A18BF 022A0AD0 44F22C12 C8F21712 1268D2F8 3826D207 1CBF0020 704720F0 66BE
+0:0x2DB62 DFF759F8
 
 ## Smooth animation
 # Node matrix tracks (FUN_81011384) copied the previous key unless the model enabled
@@ -43,9 +89,9 @@
 
 ## UI and mystic arte cut-ins
 # 2D layout animation player entry (FUN_81025e10): in 60 FPS battles run it every
-# frame at half speed (anim_half, in the unreferenced FUN_81134d68)
-0:0x134DE0 44F22C11 C8F21711 0968D1F8 402640F2 0003C4F2 F0139A42 12D010B5 2DED018A 044694ED 068AB6EE 000A28EE 000A84ED 060A00F0 05F884ED 068ABDEC 018A10BD 70B58168 F0F6F6BF
-0:0x25E10 0EF1E6BF
+# frame at half speed (anim_half, in the unreferenced FUN_810001be)
+0:0x234 44F22C11 C8F21711 0968D1F8 402640F2 0003C4F2 F0139A42 12D010B5 2DED018A 044694ED 068AB6EE 000A28EE 000A84ED 060A00F0 05F884ED 068ABDEC 018A10BD 70B58168 25F0CCBD
+0:0x25E10 DAF710BA
 # Cut-in state (CBattleStateSuperArts update, FUN_8106e582): halve the steps that
 # slide the HUD away and double its frame counts and fade
 0:0x6E618 F1EE001A
@@ -62,25 +108,49 @@
 # Sprite flipbook draw (FUN_81000f88): on the second showing of a 30 FPS frame, draw
 # each quad halfway to the same quad in the next frame (flipbook_lerp, after
 # anim_half), so cut-ins slide at 60 FPS
-0:0x134E30 40B500F0 1BF8B0F9 00C01DB1 455FAC44 4FEA6C0C BDE84040 CCF618B9 40B500F0 0DF8B0F9 08402DB1 0544B5F9 08502C44 4FEA6404 BDE84040 CCF61DB9 169D2D69 75B9189E 149DAD88 0136AE42 08DA119D 35442E78 15F8015C B54201D1 6D017047 00257047
-0:0x1078 33F1DABE
-0:0x10A2 33F1D3BE
+0:0x27C 40B500F0 1BF8B0F9 00C01DB1 455FAC44 4FEA6C0C BDE84040 00F0F2BE 40B500F0 0DF8B0F9 08402DB1 0544B5F9 08502C44 4FEA6404 BDE84040 00F0F7BE 169D2D69 75B9189E 149DAD88 0136AE42 08DA119D 35442E78 15F8015C B54201D1 6D017047 00257047
+0:0x1078 FFF700B9
+0:0x10A2 FFF7F9B8
 
 ## Field speed
 # The field player adds its velocity to its position every frame (FUN_810b002c):
-# add velocity * 30/fps instead (add_scaled, at the start of FUN_81134d68)
-0:0x134D68 44F22C12 C8F21712 126802F5 C862D2ED 001AB3EE 0E2A82EE 212A91ED 000AD0ED 000A40EE 020AC0ED 000A91ED 010AD0ED 010A40EE 020AC0ED 010A91ED 020AD0ED 020A40EE 020AC0ED 020A7047
-0:0xB00D0 84F04AFE
+# add velocity * 30/fps instead (add_scaled, at the start of FUN_810001be), except
+# y, which the ground collision sets to the distance to the ground
+0:0x1C0 44F22C12 C8F21712 126802F5 C862D2ED 001AB3EE 0E2A82EE 212A91ED 000AD0ED 000A40EE 020AC0ED 000A91ED 010AD0ED 010A70EE 800AC0ED 010A91ED 020AD0ED 020A40EE 020AC0ED 020A7047
+0:0xB00D0 50F776F8
 # NPCs (FUN_810aad16) the same way
-0:0xAAD5C 8AF004F8
+0:0xAAD5C 55F730FA
 # Field camera turns 2 degrees per frame with the right stick (FUN_810a7e9e):
 # turn 1 degree, as fields always run at 60
-0:0xA7F18 48F2E001C4F2C801
-0:0xA7F30 4FF63521C3F68E41
+0:0xA7F18 48F2E001 C4F2C801
+0:0xA7F30 4FF63521 C3F68E41
+# The random encounter step (FUN_81083050) adds a fixed step to the encounter
+# counter every update while moving, rolls for a battle past a threshold and
+# counts down the bottle's duration, so battles came twice as fast: its entry
+# branches to encounter_step (after damage_update), which skips it every other frame
+0:0xCC40 44F22C11 C8F21711 0968D1F8 3816C907 1CBF0020 70472DE9 F04176F0 FBB9
+0:0x83050 89F7F6BD
+# Eyes and mouths swap UVs on frame counts: the blink's wait (CEyeAnime update
+# FUN_8113591c) and the eye and mouth flipbook step (FUN_811357f6) count updates,
+# so characters blinked and talked twice as fast: their entries branch to eye_step
+# and face_flipbook_step (in FUN_81008560), which skip them every other frame
+0:0x8560 44F22C11 C8F21711 0968D1F8 3816C907 C16904BF 70B52DF1 D3B919B1 816B09B1 00F001B8 704710B5 44F22C11 C8F21711 0968D1F8 3816C907 C16901D1 2DF12DB9 90ED031A D0ED050A 90ED040A 42680029 816808BF 10BD90F8 21302DF1 46B9
+0:0x13591C D2F620BE
+0:0x1357F6 D2F6C6BE
+# Footsteps (FUN_810ac09e) play when a foot bone dips below a height, then wait
+# 7 updates (10 when model+0x98 is 1) before checking again, so at 60 FPS the
+# wait ended while the foot was still down and each step played twice: double them
+0:0xAC396 1420
+0:0xAC3A0 0E20
+# Script moves (characters walking to a point, camera moves at a speed) set their
+# duration to distance / (speed * fps) with FUN_810b0940, but count it down by dt,
+# so at 60 FPS they took half as long: convert with 30 instead of fps
+0:0xB0940 F3EE0E0A 20EE200A 7047
 # Fades step once per frame: their setup (FUN_81026dba) branches to fade_frames
-# (after add_scaled), which doubles the frame count while fps is 60
-0:0x134DB4 2DE9F041 44F22C1C C8F2171C DCF800C0 DCF840C6 40F20004 C4F27024 A44508BF 5B00F1F6 F2BF
-0:0x26DBA 0DF1FBBF
+# (after add_scaled), which doubles the frame count unless fps is exactly 30, so
+# in fields and battles
+0:0x20C 2DE9F041 44F22C1C C8F2171C DCF800C0 DCF840C6 40F20004 C4F2F014 A44518BF 5B0026F0 C6BD
+0:0x26DBA D9F727BA
 
 ## Field menus
 # The menu's character panel steps the gradient it plays behind a portrait when
@@ -92,9 +162,9 @@
 # other frame. layout_subpixel (after shatter_update) passes the truncated
 # fractions down, and add_subpixel adds them to the vertices before the sprite
 # is submitted (FUN_8101b1c8), which shows with resolution upscaling
-0:0x134F04 10B56DED 03EADDF8 54C09CED 210AD0ED 070A20EE 20FABDEE CF0AB8EE C00A3FEE 40FA9CED 220AD0ED 080A60EE 20FABDEE EF0AB8EE C00A7FEE C0FA4CF6 FE2CC7F6 C07C0EEE 90CADDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDEFF6 B8FF04B0 FDEC03EA 10BD10B4 1EEE90CA 4CF6FE24 C7F6C074 A44512D1 01F1140C 04249CED 000ADCED 010A30EE 0F0A70EE AF0A8CED 000ACCED 010A0CF1 080C013C EFD110BC E5F6DFBC
-0:0x252F0 0FF108FE
-0:0x1B394 19F1EFFD
+0:0x350 10B56DED 03EADDF8 54C09CED 210AD0ED 070A20EE 20FABDEE CF0AB8EE C00A3FEE 40FA9CED 220AD0ED 080A60EE 20FABDEE EF0AB8EE C00A7FEE C0FA4CF6 FE2CC7F6 C07C0EEE 90CADDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CD24F0 92FD04B0 FDEC03EA 10BD10B4 1EEE90CA 4CF6FE24 C7F6C074 A44512D1 01F1140C 04249CED 000ADCED 010A30EE 0F0A70EE AF0A8CED 000ACCED 010A0CF1 080C013C EFD110BC 1AF0B9BA
+0:0x252F0 DBF72EF8
+0:0x1B394 E5F715F8
 
 ## Battle loading
 # The screen shatter into battles plays on the NowLoadingThread (FUN_8102e83e),
@@ -102,10 +172,10 @@
 # which waits an extra vblank unless fps is exactly 30 or the screen is the
 # shatter. The shatter's vtables point to shatter_update (after it), which runs
 # the update every frame but keeps the update's frame counter at 30 Hz.
-0:0x134E94 10B5D4F6 CCF82169 09680969 44F6CF62 C8F21312 91420FD0 44F22C11 C8F21711 0968D1F8 401640F2 0002C4F2 F0129142 02D00120 0FF006EA 10BD70B5 04462589 44F22C16 C8F21716 3668D6F8 386606F0 0106052D 03D24EB9 88F760F9 06E088F7 5DF91EB1 2189A942 00D02581 70BD
-0:0x2E85E 06F119FB
-0:0x16C580 CF4E1381
-0:0x16C5AC CF4E1381
+0:0x2E0 10B508F0 A6FE2169 09680969 40F21B32 C8F20012 91420FD0 44F22C11 C8F21711 0968D1F8 401640F2 0002C4F2 F0129142 02D00120 43F1E0EF 10BD70B5 04462589 44F22C16 C8F21716 3668D6F8 386606F0 0106052D 03D24EB9 BCF03AFF 06E0BCF0 37FF1EB1 2189A942 00D02581 70BD
+0:0x2E85E D1F73FFD
+0:0x16C580 1B030081
+0:0x16C5AC 1B030081
 # Halve the update's per-step motion (FUN_810bd1b0): piece speed grows by 0.2
 # instead of 0.8 up to 12 instead of 24, falling pieces move by -8 instead of
 # -16, and spin by pi/64 instead of pi/32 (FUN_810ba44c)

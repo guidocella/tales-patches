@@ -43,10 +43,10 @@
 0:0x70D48 0E50
 0:0x70D58 0E70
 # The glow at the stage edge (the battle's model at +0x7b4) steps by its speed
-# / fps, and its speed is 1: edge_glow_step (after layout_subpixel) sets the
+# / fps, and its speed is 1: edge_glow_step (after shatter_update) sets the
 # speed to the battle time scale first
-0:0x400 D4F81421 C0F85824 11F07DB9
-0:0x445CE BBF717FF
+0:0x350 D4F81421 C0F85824 11F0D5B9
+0:0x445CE BBF7BFFE
 # Rave gauge (CBattleRaveMgr update, FUN_8103c1ce) works per update: the shown
 # value moves toward the gauge by at most 4 times an ease that grows by 0.1, then
 # the gauge waits 10 updates and drains by FUN_8103bfc6's rate. Move by at most
@@ -124,6 +124,15 @@
 # turn 1 degree, as fields always run at 60
 0:0xA7F18 48F2E001 C4F2C801
 0:0xA7F30 4FF63521 C3F68E41
+# Field characters turn toward where they face by at most pi/8 per update
+# (FUN_810af988; pi/64 or pi/16 depending on 0x8117e0cc), so they turned, and the
+# compass with them, twice as fast: halve the limits
+0:0xAFD1A C3F64961
+0:0xAFD26 CBF64961
+0:0xAFD9C C3F6C941
+0:0xAFDA8 CBF6C941
+0:0xAFE1A C3F6C951
+0:0xAFE26 CBF6C951
 # The random encounter step (FUN_81083050) adds a fixed step to the encounter
 # counter every update while moving, rolls for a battle past a threshold and
 # counts down the bottle's duration, so battles came twice as fast: its entry
@@ -159,12 +168,15 @@
 0:0x1307F4 C3F6A055
 # Layout sprites (FUN_8102525a) are placed at whole pixels, so animations that
 # move by under a pixel per frame, like the menu cursor's bob, moved every
-# other frame. layout_subpixel (after shatter_update) passes the truncated
-# fractions down, and add_subpixel adds them to the vertices before the sprite
-# is submitted (FUN_8101b1c8), which shows with resolution upscaling
-0:0x350 10B56DED 03EADDF8 54C09CED 210AD0ED 070A20EE 20FABDEE CF0AB8EE C00A3FEE 40FA9CED 220AD0ED 080A60EE 20FABDEE EF0AB8EE C00A7FEE C0FA4CF6 FE2CC7F6 C07C0EEE 90CADDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CD24F0 92FD04B0 FDEC03EA 10BD10B4 1EEE90CA 4CF6FE24 C7F6C074 A44512D1 01F1140C 04249CED 000ADCED 010A30EE 0F0A70EE AF0A8CED 000ACCED 010A0CF1 080C013C EFD110BC 1AF0B9BA
-0:0x252F0 DBF72EF8
-0:0x1B394 E5F715F8
+# other frame. layout_subpixel (after face_anim in FUN_81008560) passes the
+# truncated fractions down, and add_subpixel adds them to the vertices before
+# the sprite is submitted (FUN_8101b1c8), which shows with resolution upscaling
+0:0x85C0 10B56DED 03EADDF8 54C090ED 071AD0ED 081A08E0 10B56DED 03EADDF8 40C0B7EE 001AF7EE 001A9CED 210A20EE 01FABDEE CF0AB8EE C00A3FEE 40FA9CED 220A60EE 21FABDEE EF0AB8EE C00A7FEE C0FA4CF6 FE2CC7F6 C07C0EEE 90CADDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CDDDF8 20C04DF8 04CD1CF0 50FC04B0 FDEC03EA 10BD10B4 1EEE90CA 4CF6FE24 C7F6C074 A44512D1 01F1140C 04249CED 000ADCED 010A30EE 0F0A70EE AF0A8CED 000ACCED 010A0CF1 080C013C EFD110BC 12F077B9
+0:0x252F0 E3F766F9
+0:0x1B394 EDF757F9
+# The world map's location cursor goes through FUN_81025194, which adds its
+# layout's position unscaled and truncated too: layout_subpixel_unscaled
+0:0x25250 E3F7C0F9
 
 ## Battle loading
 # The screen shatter into battles plays on the NowLoadingThread (FUN_8102e83e),

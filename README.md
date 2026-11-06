@@ -16,7 +16,7 @@ Lists the numbers of the encounter groups and stages of every boss fight in the 
 
 `SLPS-25172_A86BA5E4.pnach` includes miscellaneous cheats, ucuckic's cheat for 4 extra arte slots, and cheats to re-fight every boss.
 
-## Rebirth
+## Rebirth PS2
 
 `SLPS-25450_B4EC196F.pnach` includes a cheat for 8 arte slots, miscellaneous cheats, and cheats to re-fight every boss and unique encounter.
 

@@ -5,8 +5,9 @@
 # direction, or with the right stick, for player 1 and the co-op patch's
 # players. The arte menu's left and right go through all eight pages. Needs
 # Vita3K: L2/R2 are read through a hand-made import stub for
-# sceCtrlPeekBufferPositive2. The new slots are saved in unused bytes of each
-# character's data.
+# sceCtrlPeekBufferPositive2. The new slots are saved in each character's
+# data, in the unused end of an array of counts whose stat bonus loops are
+# shortened to skip them.
 # Code cave in FUN_8100b378, which nothing references
 0:0xB378 01EB4201 0C2A03D2 40F25C30 085E70BD B1F8A804 C04300B2 70BD00EB 42000C2A
 0:0xB398 06D240F2 5C328018 B0F90020 0B4605E0 00F2A840 0288D243 12B2CB43 11F1010F
@@ -55,3 +56,13 @@
 0:0xE5C4A 25F739FC
 # Row names are drawn only up to it
 0:0xE5D7E 25F7C2FB
+# Stat bonuses skip slots 12-35, kept in the counts at +0x3f8 past the 0xc0 that exist.
+# FUN_810cbc48 (equipment stats) clears its whole count buffer instead of half
+0:0xCBC6A 5FF40072
+# and copies 0xc0 counts instead of 0x100
+0:0xCBC84 6022
+# Same in FUN_810cbbf4
+0:0xCBC04 5FF40072
+0:0xCBC1C 6020
+# and in the sum of FUN_810cec6c
+0:0xCECB8 B5F1C00F

@@ -60,6 +60,8 @@ See https://ritzcode.web.fc2.com/cwcpsp/topndx.txt for more cheats.
 
 Both are compatible with the co-op patch.
 
+Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` (Linux).
+
 ## Xillia/
 
 Patches for Tales of Xillia remastered:

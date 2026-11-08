@@ -155,6 +155,10 @@
 # duration to distance / (speed * fps) with FUN_810b0940, but count it down by dt,
 # so at 60 FPS they took half as long: convert with 30 instead of fps
 0:0xB0940 F3EE0E0A 20EE200A 7047
+# The sorcerer's ring's shot (CFieldShot, update FUN_810b0592) moves at a speed
+# scaled by 30/fps but disappears after 11 updates, so at 60 FPS it went half as
+# far: 22 updates
+0:0xB078C 162A
 # Fades step once per frame: their setup (FUN_81026dba) branches to fade_frames
 # (after add_scaled), which doubles the frame count unless fps is exactly 30, so
 # in fields and battles

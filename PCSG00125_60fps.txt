@@ -31,17 +31,25 @@
 # velocity to the exact offset to the arc's next point, which add_scaled
 # halved, so jumps fell short, into the rock below. jump_sub (after
 # layout_subpixel) doubles that offset's x and z first
-0:0x14884 45F2F862 C8F22812 126802F5 BE6292ED 002AF3EE 0E1A82EE 212A90ED 000AD1ED 001A30EE 610A20EE 020AD0ED 010AD1ED 011A70EE E10A90ED 021AD1ED 021A31EE 611A21EE 021A7047
+0:0x14884 45F2F862 C8F22812 126802F5 BE6292ED 002AF3EE 0E1A82EE 212A90ED 000AD1ED 001A30EE 610A20EE 020AD0ED 010AD1ED 011A70EE E10A90ED 021AD1ED 021A31EE 611A21EE 021A7047 226801E0 DBF80020 4CF25403 C8F21B13 9A427FF4 D1AF25F0 42BD
 0:0x804CE 94F7D9F9
 0:0x8057A 94F783F9
+# Script moves (field object vtable+0x2c, to a point in a given time, and
+# vtable+0x30, along a route) set the velocity the same way, so they ended
+# short, and warps (moves in 0 s) stopped halfway: move_sub and route_sub
+# (after jump_sub) double it too, except for the camera's
+0:0x7F856 95F739F8
+0:0x7F8F6 94F7E9FF
+0:0x7F9D2 94F77DFF
+0:0x7FEEC 94F7F0FC
 # The field launch/fall physics (FUN_810803ba; the jumps down cliffs in towns)
 # steps gravity and speed per update, so the arc ran at double speed and, with
 # only x and z halved by add_scaled, landed short, inside the rock below.
 # fall_step (after jump_sub) steps it on even frames only, and fall_add adds
 # y * 30/fps to the velocity
-0:0x148CC 04F2B415 45F2F860 C8F22810 0068D0F8 E815C907 0CD000F5 BE6090ED 000AF3EE 0E0AB4EE 600AF1EE 10FA01D0 6BF0ACBD 6BF067BD 45F2F862 C8F22812 126802F5 BE62D2ED 001AB3EE 0E2A82EE 212A90ED 000AD1ED 000A30EE 200A80ED 000A90ED 010AD1ED 010A00EE 820A80ED 010A90ED 020AD1ED 020A30EE 200A80ED 020A7047
-0:0x803CA 94F77FBA
-0:0x8045A 94F751FA
+0:0x148E8 04F2B415 45F2F860 C8F22810 0068D0F8 E815C907 0CD000F5 BE6090ED 000AF3EE 0E0AB4EE 600AF1EE 10FA01D0 6BF09EBD 6BF059BD 45F2F862 C8F22812 126802F5 BE62D2ED 001AB3EE 0E2A82EE 212A90ED 000AD1ED 000A30EE 200A80ED 000A90ED 010AD1ED 010A00EE 820A80ED 010A90ED 020AD1ED 020A30EE 200A80ED 020A7047
+0:0x803CA 94F78DBA
+0:0x8045A 94F75FFA
 # The random encounter step (FUN_81090f9c) adds a fixed step to the encounter
 # counter every update while moving, rolls for a battle past a threshold and
 # counts down the bottle's duration, so battles came twice as fast: its entry

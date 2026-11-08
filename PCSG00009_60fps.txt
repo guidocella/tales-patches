@@ -45,8 +45,8 @@
 # The glow at the stage edge (the battle's model at +0x7b4) steps by its speed
 # / fps, and its speed is 1: edge_glow_step (after shatter_update) sets the
 # speed to the battle time scale first
-0:0x350 D4F81421 C0F85824 11F0D5B9
-0:0x445CE BBF7BFFE
+0:0x3C8 D4F81421 C0F85824 11F099B9
+0:0x445CE BBF7FBFE
 # Rave gauge (CBattleRaveMgr update, FUN_8103c1ce) works per update: the shown
 # value moves toward the gauge by at most 4 times an ease that grows by 0.1, then
 # the gauge waits 10 updates and drains by FUN_8103bfc6's rate. Move by at most
@@ -106,11 +106,16 @@
 0:0xF18 C4F2F015
 0:0xF2E 03D0
 # Sprite flipbook draw (FUN_81000f88): on the second showing of a 30 FPS frame, draw
-# each quad halfway to the same quad in the next frame (flipbook_lerp, after
-# anim_half), so cut-ins slide at 60 FPS
-0:0x27C 40B500F0 1BF8B0F9 00C01DB1 455FAC44 4FEA6C0C BDE84040 00F0F2BE 40B500F0 0DF8B0F9 08402DB1 0544B5F9 08502C44 4FEA6404 BDE84040 00F0F7BE 169D2D69 75B9189E 149DAD88 0136AE42 08DA119D 35442E78 15F8015C B54201D1 6D017047 00257047
+# each quad halfway to the same quad in the next frame (the one with the same UVs,
+# blend and texture whose first vertex is nearest; flipbook_lerp, after
+# anim_half), and its color halfway too, so cut-ins slide and fade at 60 FPS. The
+# caves return the sum of the two vertices, and the draw's vertex scale
+# (vmov.f32 s1, #0.5) becomes 0.25, so in-between positions keep the half pixel
+0:0x27C 00B500F0 1AF8B0F9 00C0445F A4445DF8 04EB00F0 F5BE92F8 1AC05419 94F81A40 A4444FEA 5C0C00F0 F3BE4419 B4F90840 B0F90850 2C4400F0 F8BE2DE9 DF501E98 01690029 45D1209A 1C988188 01328A42 3FDA1999 11440B78 11F8011C CBB3229C A9EB4415 05EB4115 B9F90000 B9F90810 4FF40076 0027D5F8 10E0D9F8 10C0E645 1ED1D5F8 14E0D9F8 14C0E645 18D1B5F8 18E0B9F8 18C0E645 12D1B5F9 00E0BEEB 000E48BF CEF1000E B5F908C0 BCEB010C 48BFCCF1 000CE644 B6459CBF 76462F46 2035013B D7D127B1 A7EB0905 BDE8DF50 70470025 BDE8DF50 7047
 0:0x1078 FFF700B9
-0:0x10A2 FFF7F9B8
+0:0x1088 FFF703B9
+0:0x10A2 FFF700B9
+0:0x1080 F5EE000A
 
 ## Field speed
 # The field player adds its velocity to its position every frame (FUN_810b002c):
@@ -188,10 +193,10 @@
 # which waits an extra vblank unless fps is exactly 30 or the screen is the
 # shatter. The shatter's vtables point to shatter_update (after it), which runs
 # the update every frame but keeps the update's frame counter at 30 Hz.
-0:0x2E0 10B508F0 A6FE2169 09680969 40F21B32 C8F20012 91420FD0 44F22C11 C8F21711 0968D1F8 401640F2 0002C4F2 F0129142 02D00120 43F1E0EF 10BD70B5 04462589 44F22C16 C8F21716 3668D6F8 386606F0 0106052D 03D24EB9 BCF03AFF 06E0BCF0 37FF1EB1 2189A942 00D02581 70BD
-0:0x2E85E D1F73FFD
-0:0x16C580 1B030081
-0:0x16C5AC 1B030081
+0:0x358 10B508F0 6AFE2169 09680969 40F29332 C8F20012 91420FD0 44F22C11 C8F21711 0968D1F8 401640F2 0002C4F2 F0129142 02D00120 43F1A4EF 10BD70B5 04462589 44F22C16 C8F21716 3668D6F8 386606F0 0106052D 03D24EB9 BCF0FEFE 06E0BCF0 FBFE1EB1 2189A942 00D02581 70BD
+0:0x2E85E D1F77BFD
+0:0x16C580 93030081
+0:0x16C5AC 93030081
 # Halve the update's per-step motion (FUN_810bd1b0): piece speed grows by 0.2
 # instead of 0.8 up to 12 instead of 24, falling pieces move by -8 instead of
 # -16, and spin by pi/64 instead of pi/32 (FUN_810ba44c)

@@ -62,6 +62,12 @@ Both are compatible with the co-op patch.
 
 Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` (Linux).
 
+# Tales of Hearts R
+
+`PCSE00429_60fps.txt` (US) / `PCSG00125_60fps.txt` (Japan) is a 60 FPS patch.
+
+It is compatible with the co-op patch.
+
 ## Xillia/
 
 Patches for Tales of Xillia remastered:

@@ -1,0 +1,208 @@
+# Tales of Hearts R: 60 FPS battles and fields
+# Offsets are from 0x81000000; values are bytes in memory order.
+
+## Frame rate
+# Battle init calls set_battle_fps (code cave in the unreferenced FUN_81000414)
+# instead of the fps setter at 0x81013576. It sets fps to 30 plus one ulp: game
+# logic stays at 30, while present's exact == 30.0 check fails, so it waits one
+# vblank. Menus and other scenes set exactly 30 and stay at 30 FPS.
+0:0x414 9FED010A 13F0ADB8 0100F041
+0:0xCF968 30F754FD
+# The fps setter (FUN_81013576) branches to field_fps (in the unreferenced
+# FUN_81000bcc), which sets 60 instead of exactly 30 while the current scene is
+# the field: its init and the exits of the 60 FPS menus (soma, save/load), which
+# set 30
+0:0xBCC B4EE600A F1EE10FA 08D145F6 DE11C8F2 28110988 052908BF 30EE000A 4FF4BE61 12F0C8BC
+0:0x1357C EDF726BB
+
+## Field speed
+# The field object update (FUN_8107f5e2, the player and NPCs) adds the velocity
+# (+0x108) to the position (+0x1c) every update: add_scaled (after field_fps)
+# adds velocity * 30/fps instead, except y, which follows the ground, and not
+# for the camera, whose velocity takes it to where it should be
+0:0xBF0 22684CF2 5403C8F2 1B139A42 08BF39F0 0DBC45F2 F862C8F2 28121268 02F5BE62 D2ED001A B3EE0E2A 82EE212A 91ED000A D0ED000A 40EE020A C0ED000A 91ED010A D0ED010A 70EE800A C0ED010A 91ED020A D0ED020A 40EE020A C0ED020A 704745F2 F862C8F2 28121268 02F5BE62 D2ED001A B3EE0E2A 82EE212A 90ED000A D1ED001A 01EE820A D0ED010A D1ED011A 70EEA10A 90ED021A D1ED021A 01EE821A 7047
+0:0x7F5F6 81F7FBFA
+# The ground probe (FUN_8108b99a) casts down from position + velocity, a whole
+# 30 FPS step ahead: going down slopes and stairs, objects followed the lower
+# ground ahead and sank into the floor, then walked through walls under it.
+# probe_add (after add_scaled) scales the step like add_scaled
+0:0x8BA5A 75F7F8F8
+# The field jump update (FUN_81080464; the script jump down a cliff) sets the
+# velocity to the exact offset to the arc's next point, which add_scaled
+# halved, so jumps fell short, into the rock below. jump_sub (after
+# layout_subpixel) doubles that offset's x and z first
+0:0x14884 45F2F862 C8F22812 126802F5 BE6292ED 002AF3EE 0E1A82EE 212A90ED 000AD1ED 001A30EE 610A20EE 020AD0ED 010AD1ED 011A70EE E10A90ED 021AD1ED 021A31EE 611A21EE 021A7047
+0:0x804CE 94F7D9F9
+0:0x8057A 94F783F9
+# The field launch/fall physics (FUN_810803ba; the jumps down cliffs in towns)
+# steps gravity and speed per update, so the arc ran at double speed and, with
+# only x and z halved by add_scaled, landed short, inside the rock below.
+# fall_step (after jump_sub) steps it on even frames only, and fall_add adds
+# y * 30/fps to the velocity
+0:0x148CC 04F2B415 45F2F860 C8F22810 0068D0F8 E815C907 0CD000F5 BE6090ED 000AF3EE 0E0AB4EE 600AF1EE 10FA01D0 6BF0ACBD 6BF067BD 45F2F862 C8F22812 126802F5 BE62D2ED 001AB3EE 0E2A82EE 212A90ED 000AD1ED 000A30EE 200A80ED 000A90ED 010AD1ED 010A00EE 820A80ED 010A90ED 020AD1ED 020A30EE 200A80ED 020A7047
+0:0x803CA 94F77FBA
+0:0x8045A 94F751FA
+# The random encounter step (FUN_81090f9c) adds a fixed step to the encounter
+# counter every update while moving, rolls for a battle past a threshold and
+# counts down the bottle's duration, so battles came twice as fast: its entry
+# branches to encounter_step (after sprite_lerp), which skips it every other frame
+0:0xA18 45F2F861 C8F22811 0968D1F8 E815C907 1CBF0020 70472DE9 F04190F0 B5BA
+0:0x90F9C 6FF73CBD
+# The sorcerer's ring (square; CScriptObjectSorcererRing, field object vtable
+# 0x811bca10, update FUN_81087a4a) moves by a scaled velocity but flies for 11
+# updates (+0x247): fly for 22, and double its start delays (+0x245, +0x246,
+# set in FUN_81087e56)
+0:0x87D38 162A
+0:0x87F5E 4900 2154 0221 0130 2154 0130 2754 00BF
+# Script moves (characters walking or running to a point in cutscenes, camera
+# and effect moves at a speed) convert the script's speed with FUN_8109b64c
+# (speed * fps) and set their duration to distance / that, counted down in
+# seconds, so at 60 FPS they took half as long: convert with 30
+0:0x9B656 B3EE0E0A 00BF
+# Right stick turns the camera (FUN_8107ab96) by 2 degrees per update: 1
+0:0x7ABE0 C3F68E43
+0:0x7AC2E C3F68E42
+0:0x7AC74 48F2E001
+0:0x7AC7C C4F2C801
+0:0x7AC96 C3F68E40
+
+## Battle speed
+# Battle time scale (CProcBattle+0xcc) 0.5 instead of 1.0, at init and on reset
+0:0xCF970 5FF07C50
+0:0xE238E B6EE000A
+# Motion frame (FUN_8101abf8) is (int)(time*fps + 0.5). At half speed time*fps
+# is a whole number plus 0.5 every other step, so float error decided whether it
+# rounded up and a frame could last 1 or 3 steps. Add 0.25 instead, so each
+# frame lasts exactly 2 steps (30 FPS is unchanged)
+0:0x1AC0C B5EE000A
+# Special camera grows its step by scale*1.1 per frame: use 2*sqrt(1.1) so it
+# doesn't shrink to 0 at scale 0.5
+0:0xE5D90 43F65E70 C4F20600
+# Battle intro camera (FUN_810db93e) orbits by 4 degrees and moves +0x1c by 1.11
+# per update, but ends on a scaled timer: halve both steps
+0:0xDB95A 0E50
+0:0xDB96A 0E70
+# Fades step once per update: their setup (FUN_8103c05c) branches to
+# fade_frames (after damage_update), which doubles the frame count unless fps is
+# exactly 30. The victory screen's white fade
+0:0x490 2DE9F041 45F2F86C C8F2281C DCF800C0 DCF8F0C5 40F20004 C4F2F014 A44518BF 5B003BF0 D5BDD1ED 000A0968 40F20002 C4F2F012 914218BF 70EEA00A 60F04CB9
+0:0x3C05C C4F718BA
+# Texture UV animations (update FUN_81060744; eye blinks, mouths) step by their
+# speed / fps per update: uv_anim_fps (after fade_frames) divides by twice the
+# fps unless it's exactly 30
+0:0x60764 9FF7A7BE
+# Chase link (FUN_810fe58c) counts its timer (+0x2fe0, 6 s), elapsed time and
+# interval by 1/fps per update: use 0.5/fps
+0:0xFE5BA F6EE000A
+
+## 2D layouts
+# The shared 2D layout animation player (FUN_81039e3c) steps by a fixed speed
+# per update: anim_half (after set_battle_fps) runs it at half speed while fps
+# isn't exactly 30. The hit counter, the overlimit gauge's glow
+0:0x420 45F2F861 C8F22811 0968D1F8 F02540F2 0003C4F2 F0139A42 12D010B5 2DED018A 044694ED 068AB6EE 000A28EE 000A84ED 060A00F0 05F884ED 068ABDEC 018A10BD 70B58168 39F0ECBC
+0:0x39E3C C6F7F0BA
+## Field menus
+# The menu's character panel steps the gradient it plays behind a portrait when
+# an item is used (FUN_8117fa88) by pi/5 then pi/20 per frame: halve both
+0:0x17FABE C3F6A065
+0:0x17FAD6 C3F6A055
+# Layout sprites (FUN_81038f40) are placed at whole pixels, so menu
+# animations that move by about a pixel per update, like the arte menu's
+# cursor (FUN_81039226) and arrows (FUN_8103914a), moved every other frame.
+# Their calls go to layout_subpixel (in the unreferenced FUN_810147fa), which
+# adds the truncated fractions to the sprite's vertices
+0:0x147FC B0EE621A F0EE431A 70B52DED 028ABDEE C10AB8EE C00A31EE 408ABDEE E10AB8EE C00A71EE C08A45F6 2414C8F2 28142468 256DE469 9C2605FB 0644DDF8 24C04DF8 04CDDDF8 24C04DF8 04CDDDF8 24C04DF8 04CDDDF8 24C04DF8 04CD24F0 73FB04B0 4C340425 94ED000A D4ED010A 30EE080A 70EEA80A 84ED000A C4ED010A 0834013D F0D1BDEC 028A70BD
+0:0x392EA DBF78BFA
+0:0x3921C DBF7EEFA
+
+## Damage numbers
+# Damage numbers (FUN_810bfac2) rise, fade and time out by fixed steps per
+# update. Plain ones (FUN_810bfa2a): fade by 16 instead of 32 per update and
+# shrink by 0.1 instead of 0.2, start fading out after 44 instead of 22 updates
+# (also when a newer number replaces them, FUN_810bf3f0 and FUN_810bf728's
+# loops) and last 62 instead of 31. damage_update (after anim_half) runs the
+# other kinds every other frame
+0:0xBFA34 3D28
+0:0xBFA42 2C2A
+0:0xBFA46 1030
+0:0xBFA56 1038
+0:0xBFA68 C3F6CC50
+0:0xBF406 2C22
+0:0xBF428 2C2D
+0:0xBF738 2C23
+0:0xBF756 2C2A
+0:0x468 91F82420 002A18BF 022A0AD0 45F2F862 C8F22812 1268D2F8 E825D207 1CBF0020 7047BFF0 1ABB
+0:0xBFC88 40F7EEFB
+
+## Sprite animations
+# The sprite animation player (FUN_810030fe; the mystic arte cut-in) steps 30
+# FPS animations every other update only while fps is exactly 60.0, so in
+# battles they ran at double speed: do it while fps isn't exactly 30.0
+0:0x3128 C4F2F016
+0:0x313E 05D0
+# Sprite animation draw (FUN_81003198): on the second showing of a 30 FPS frame,
+# draw each quad vertex halfway to the same quad in the next frame (the one
+# with the same UVs and texture whose first vertex is nearest)
+# (sprite_lerp, in the unreferenced FUN_81000902), so the mystic arte cut-in
+# slides at 60 FPS.
+# The caves return doubled coordinates, and the vertex int-to-float conversions
+# halve them (vcvt.f32.s32 s0, s0, #1), so in-between positions keep the half
+# pixel
+0:0x904 00B500F0 2FF85DF8 04EBB7F9 000037F9 0CC06044 02F0C9BD 00B500F0 23F85DF8 04EBB7F9 0830BC44 BCF908C0 634402F0 CABD00B5 00F016F8 5DF804EB B0F90040 30F90CC0 644402F0 0ABE00B5 00F00AF8 5DF804EB B0F90860 8444BCF9 08C06644 02F010BE FFB5DBF8 80010169 002940F0 4C80C268 DBF86C01 81880132 8A4244DA 81681144 0B7811F8 011C002B 00F03D80 DBF88841 DBF89851 A4EB4515 05EB4115 B4F90000 B4F90810 4FF40076 0027D5F8 10E0D4F8 10C0E645 1ED1D5F8 14E0D4F8 14C0E645 18D1D5F8 18E0D4F8 18C0E645 12D1B5F9 00E0BEEB 000E48BF CEF1000E B5F908C0 BCEB010C 48BFCCF1 000CE644 B6459CBF 76462F46 2035013B D7D127B1 A7EB040C BDE8FF40 70474FF0 000CBDE8 FF407047
+0:0x34AA FDF72BBA
+0:0x34C6 FDF729BA
+0:0x355E FDF7EAB9
+0:0x3584 FDF7E3B9
+0:0x34BA BAEEEF0A
+0:0x34D4 BAEEEF0A
+0:0x356E BAEEEF0A
+0:0x3592 BAEEEF0A
+
+## Mystic artes
+# The mystic arte state (CBattleStateSuperArts update FUN_810dcb16) slides the
+# letterbox bars (battle+0x440 and +0x444) by 8 per update: use 4. Its cut-in
+# phase counts updates (+0x12) to 15 for the cut-in voice and to the cut-in
+# sprite animation's frame count - 5 (+0x14, FUN_810dbdfe), and the next phase
+# waits 15 updates (FUN_810dc6a0): count to 30, and compare half the count with
+# the frame count (uxth -> lsrs #1), as the cut-in now steps every other update
+0:0xDCBDA B1EE001A
+0:0xDCBFC B1EE000A
+0:0xDCC2E 1E2A
+0:0xDCC68 4008
+0:0xDC6D0 1E28
+
+## Smooth animation
+# The model animation step (FUN_8101c398) floors the sample time to a multiple
+# of 1/30 s unless model+0x7a4 is set. It defaults to 1, but the mystic arte
+# user has it cleared, so its bones moved at 30 FPS. Never floor (cbnz -> b)
+0:0x1C500 0BE0
+
+## Battle entry
+# The screen effects into battles (the glass shatter and others) play on the
+# NowLoadingThread (FUN_810b2846), one update per present: its loop calls
+# loading_present (after add_scaled), which waits an extra vblank unless
+# fps is exactly 30 or the screen is the glass shatter
+0:0xC90 10B52169 09680C69 11F01BFB 40F6CB42 C8F20012 94420FD0 45F2F861 C8F22811 0968D1F8 F01540F2 0002C4F2 F0129142 02D00120 93F120E9 10BD0189 0429B3F0 DE8D45F2 F861C8F2 28110968 D1F8E815 C90733F0 D48D7047
+0:0xB2864 4EF714FA
+# The glass shatter's vtables point to shatter_update (after it), which runs
+# the cracking updates on even frames only, then the update every frame
+0:0x1C2B50 CB0C0081
+0:0x1C2B80 CB0C0081
+# So its motion steps are halved and its frame counts doubled. The shards
+# start moving as a distance grows past theirs (+= speed, speed += 1, from 1;
+# now += 0.25 from 0.375, the same distance every other frame), then move at
+# 4 per update (accel and max): 2
+0:0xB493A F5EE000A
+0:0xB4E3A 5FF07B51
+0:0xB4E5C C4F20001
+# The camera pulls back after 3 updates (now 6) by a speed that starts at 6
+# and grows by 1 up to 10: from 2.875 by 0.25 up to 5
+0:0xB4E4E 0620
+0:0xB4EF6 C4F23801
+0:0xB3B14 B5EE001A F1EE041A
+0:0xB3B32 C4F2A000
+# The white fade starts after 12 updates (now 24) and adds 0x20 alpha per
+# update (now 0x10); it ends after update 44 (from update 4, now 85)
+0:0xB4A54 1829
+0:0xB4A62 1031
+0:0xB4A7E 5528

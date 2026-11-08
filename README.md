@@ -66,7 +66,11 @@ Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` 
 
 `PCSE00429_60fps.txt` (US) / `PCSG00125_60fps.txt` (Japan) is a 60 FPS patch.
 
-It is compatible with the co-op patch.
+`PCSE00429_artes.txt` (US) / `PCSG00125_artes.txt` (Japan) implements 36 arte slots on L2 and R2. Navigate the arte menu with left and right to access the new pages. This also unlocks the page with slots for the normal attack button since the start of the game.
+
+Both are compatible with the co-op patch.
+
+Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` (Linux).
 
 ## Xillia/
 

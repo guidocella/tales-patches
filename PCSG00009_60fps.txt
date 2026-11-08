@@ -93,13 +93,14 @@
 0:0x234 44F22C11 C8F21711 0968D1F8 402640F2 0003C4F2 F0139A42 12D010B5 2DED018A 044694ED 068AB6EE 000A28EE 000A84ED 060A00F0 05F884ED 068ABDEC 018A10BD 70B58168 25F0CCBD
 0:0x25E10 DAF710BA
 # Cut-in state (CBattleStateSuperArts update, FUN_8106e582): halve the steps that
-# slide the HUD away and double its frame counts and fade
+# slide the HUD away and double its frame counts. Not its white fade at the end:
+# fade_frames already doubles it, and doubling it again left it half done when the
+# swirl background disappears
 0:0x6E618 F1EE001A
 0:0x6E63A B1EE001A
 0:0x6E65C F1EE000A
 0:0x6E686 1E2A
 0:0x6E6B4 5028
-0:0x6E70C 2823
 0:0x6E3A8 1E28
 # Sprite flipbook player (FUN_81000eec) steps 30 FPS sequences every other frame when
 # fps != 30.0 instead of only when fps == 60.0, which also covers 60 FPS battles

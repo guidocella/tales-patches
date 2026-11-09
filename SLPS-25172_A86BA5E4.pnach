@@ -1,6 +1,6 @@
 gametitle=Tales of Destiny 2
 
-; Source: https://chaos-file.jp/?z=t2&tid=666
+// Source: https://chaos-file.jp/?z=t2&tid=666
 
 [No random encounters]
 description=Hold L1+R1 while moving to start an encounter.
@@ -40,7 +40,7 @@ patch=1,EE,E0020005,extended,002CED98
 patch=1,EE,202CED98,extended,24030001
 patch=1,EE,202CEDC4,extended,10400001
 
-; Source: https://ritzcode.web.fc2.com/tod2.html
+// Source: https://ritzcode.web.fc2.com/tod2.html
 
 [Base arte extensions (追加特技) always usable]
 patch=1,EE,D02CEC18,extended,00000214
@@ -95,8 +95,8 @@ patch=1,EE,001BB20C,short,0000003E
 [Battle BGM = DONA NOBIS PACEM]
 patch=1,EE,001BB20C,short,00000040
 
-; Re-fight bosses. Each cheat sets the encounter group, the stage and the
-; boss's BGM.
+// Re-fight bosses. Each cheat sets the encounter group, the stage and the
+// boss's BGM.
 [01 Buel]
 patch=1,EE,0011DBF8,word,24020003
 patch=1,EE,0011DBFC,word,2403002D
@@ -192,7 +192,7 @@ patch=1,EE,0011DBF8,word,24020012
 patch=1,EE,0011DBFC,word,24030027
 patch=1,EE,001BB20C,short,00000045
 
-; Source: https://github.com/ucuckic/tales_patches
+// Source: https://github.com/ucuckic/tales_patches
 [4 more arte slots, show max HP and spirit blaster]
 description=L3 changes the arte page in the menu, and holding 🔺 lets you use the new arte slots in battle. The in-battle menu is moved to Start.
 patch=0,EE,0016714C,word,00000000

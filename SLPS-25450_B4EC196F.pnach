@@ -1,6 +1,6 @@
 gametitle=Tales of Rebirth
 
-; Source: https://github.com/Sora3100/Tales_of_Cheat_Tables
+// Source: https://github.com/Sora3100/Tales_of_Cheat_Tables
 [Increase field speed]
 author=Sora3100
 description=Increases field run speed while holding R1, affects NPCs as well.
@@ -9,7 +9,7 @@ patch=1,EE,20322144,extended,00021303 //Vanilla game code
 patch=1,EE,D0242643,extended,01410008 //Checks if R1
 patch=1,EE,20322144,extended,00021283
 
-; Source: https://ds-cheat.boy.jp/ps2/tor.html
+// Source: https://ds-cheat.boy.jp/ps2/tor.html
 
 [No random encounters]
 description=Hold □ while moving to start an encounter. Can't be disabled at runtime.
@@ -20,9 +20,9 @@ patch=1,EE,2012D2A8,extended,30428000
 
 [Max grade]
 patch=1,EE,20235AC0,extended,0098961C
-; I modified this to give 99999 grade instead of 9999.
+// I modified this to give 99999 grade instead of 9999.
 
-; Source: https://discord.com/channels/818214215365427320/897239185986031666/1460741665496105133
+// Source: https://discord.com/channels/818214215365427320/897239185986031666/1460741665496105133
 
 [Max smash points]
 patch=1,EE,201AB3F4,extended,0803C0C0
@@ -54,7 +54,7 @@ patch=1,EE,27062706,extended,00000000
 patch=1,EE,402336A0,extended,00040001
 patch=1,EE,27062706,extended,00000000
 
-; Source: https://ritzcode.web.fc2.com/tor.html
+// Source: https://ritzcode.web.fc2.com/tor.html
 
 [Ougi usable at low rush gauge]
 description=Gives the effect of the Esoteric amulet.
@@ -85,7 +85,7 @@ patch=1,EE,2030CE28,extended,14430001
 
 [Automatic Blue Earth]
 description=Activate Dual the Sun with Mao in the party. Works even on the 1st playthrough. Also extends enemy Hi-Ougi if Eugene Mao and Hilda are in the party, which may make the party transparent.
-; You do not need to control Hilda like ritz code says.
+// You do not need to control Hilda like ritz code says.
 patch=1,EE,D0145C64,extended,00000008
 patch=1,EE,20145C64,extended,00000000
 patch=1,EE,D0145C70,extended,00000006
@@ -98,7 +98,7 @@ description=Activate Dual the Sun with Mao in the party. Only works on New Game+
 author=Sora3100
 patch=1,EE,20145D10,extended,1000000A
 
-; Original cheats
+// Original cheats
 
 [Double arte slots]
 description=L3 in the arte menu swaps to a second page of arte shortcuts. Hold L2 in battle to use it.
@@ -490,7 +490,7 @@ patch=1,EE,2023611C,extended,FFFFFFFF
 patch=1,EE,20236120,extended,FFFFFFFF
 patch=1,EE,20236124,extended,7FFFFFFF
 
-; Re-fight bosses and unique encounters.
+// Re-fight bosses and unique encounters.
 
 [01 Mao]
 patch=1,EE,00236FE0,short,00000002

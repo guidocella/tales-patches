@@ -1,6 +1,6 @@
 gametitle=Tales of Legendia
 
-; Converted from the US version from https://github.com/ucuckic/tales_patches
+// Converted from the US version from https://github.com/ucuckic/tales_patches
 [60 FPS battles]
 //jump to the function below
 patch=0,EE,02e2c00,word,08020558

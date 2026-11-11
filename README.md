@@ -76,9 +76,13 @@ Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` 
 
 Patches for Tales of Xillia remastered:
 
-- `python skit_delay.py /path/to/GameAssembly.dll` makes timed skits appear instantly to fix the bug in the remastered that delays consecutive skits with the same trigger.
-- `python projectile_speed.py /path/to/GameAssembly.dll` fixes the speed of certain projectile artes at 30 and 120 FPS (https://www.youtube.com/watch?v=ztST83z0tM4).
-- `python hide_cursor.py /path/to/GameAssembly.dll` disables the mouse cursor in menus when playing with a keyboard, which prevents it from stealing focus when scrolling.
+- `Xillia/XilliaPatches.dll` is a BepInEx plugin with these fixes, which can each be turned on or off in `BepInEx/config/XilliaPatches.cfg` (created when the game starts with the plugin):
+  - To avoid the bug in the Remastered that delays consecutive skits with the same trigger for minutes, make skits that require time spent in a location appear as soon as their other conditions are met.
+  - Fix the speed at 30 and 120 FPS of certain projectile artes, such as Alvin's Chase Bullet. (https://www.youtube.com/watch?v=ztST83z0tM4).
+  - Make bosses tech out after a configurable number of seconds of hitstun instead of after a few hits.
+  - Hide the mouse cursor in menus, so it doesn't appear in the middle of the screen and steal the selection when scrolling when playing with a keyboard.
+
+  If you don't already have it from [TalesofXilliaFix](https://codeberg.org/DrPlague/TalesofXilliaFix), install [BepInEx 6 for IL2CPP](https://builds.bepinex.dev/projects/bepinex_be), and copy the DLL to `BepInEx/plugins`.
 - `wine-fps/version.dll` fixes frame rate drops/slowdown at 120 FPS when running in Wine caused by Unity calling CreateSemaphoreExW and its destructor ~100 times per frame, which requires a wineserver round trip. It recycles the anonymous semaphores from a pool instead. This should also work for other Unity games.
 
 ## See also:

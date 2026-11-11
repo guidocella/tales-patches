@@ -82,7 +82,7 @@ Patches for Tales of Xillia remastered:
   - Make bosses tech out after a configurable number of seconds of hitstun instead of after a few hits.
   - Hide the mouse cursor in menus, so it doesn't appear in the middle of the screen and steal the selection when scrolling when playing with a keyboard.
 
-  If you don't already have it from [TalesofXilliaFix](https://codeberg.org/DrPlague/TalesofXilliaFix), install [BepInEx 6 for IL2CPP](https://builds.bepinex.dev/projects/bepinex_be), and copy the DLL to `BepInEx/plugins`.
+  If you don't already have it from [TalesofXilliaFix](https://codeberg.org/Lyall/TalesofXilliaFix), install [BepInEx 6 for IL2CPP](https://builds.bepinex.dev/projects/bepinex_be), and copy the DLL to `BepInEx/plugins`.
 - `wine-fps/version.dll` fixes frame rate drops/slowdown at 120 FPS when running in Wine caused by Unity calling CreateSemaphoreExW and its destructor ~100 times per frame, which requires a wineserver round trip. It recycles the anonymous semaphores from a pool instead. This should also work for other Unity games.
 
 ## See also:

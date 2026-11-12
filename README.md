@@ -52,7 +52,7 @@ See https://ritzcode.web.fc2.com/cwcpsp/topndx.txt for more cheats.
 
 `NPJH50501.ini` includes cheats for 60 FPS and 3 more arte slots on L2+○/×/▲, using PPSSPP's extended controls.
 
-## Tales of Innocence R
+## Innocence R
 
 `PCSG00009_60fps.txt` is a 60 FPS patch.
 
@@ -62,7 +62,7 @@ Both are compatible with the co-op patch.
 
 Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` (Linux).
 
-# Tales of Hearts R
+## Hearts R
 
 In `Hearts R/`:
 
@@ -74,7 +74,7 @@ Both are compatible with the co-op patch.
 
 Put them in `%AppData%\Vita3K\patch` (Windows) or `~/.local/share/Vita3K/patch` (Linux).
 
-## Xillia/
+## Xillia
 
 Patches for Tales of Xillia remastered:
 

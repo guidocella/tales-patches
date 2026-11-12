@@ -56,7 +56,7 @@ See https://ritzcode.web.fc2.com/cwcpsp/topndx.txt for more cheats.
 
 `PCSG00009_60fps.txt` is a 60 FPS patch.
 
-`PCSG00009_artes.txt` implements 32 arte slots on L2, R2 and L2+R2. Navigate the arte menu with left and right to access the new pages.
+`PCSG00009_artes.txt` implements 32 arte slots on L2, R2 and L2+R2. Slots on L2/R2/L2+R2 + direction don't require pressing ⨯. Navigate the arte menu with left and right to access the new pages.
 
 Both are compatible with the co-op patch.
 

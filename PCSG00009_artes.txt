@@ -2,7 +2,7 @@
 # Offsets are from 0x81000000; values are bytes in memory order.
 #
 # Six more pages of four slots: L2, R2 and L2+R2 with the arte button and a
-# direction, or with the right stick, for player 1 and the co-op patch's
+# direction, with just a direction, or with the right stick, for player 1 and the co-op patch's
 # players. The arte menu's left and right go through all eight pages. Needs
 # Vita3K: L2/R2 are read through a hand-made import stub for
 # sceCtrlPeekBufferPositive2. The new slots are saved in each character's
@@ -29,7 +29,9 @@
 0:0x13831C 000000EF 0EF0A0E1 8C1EF815 10B590B0 00202168 45F2BC22 C8F21612 91420DD1
 0:0x13833C D4F8C015 44F64F72 C4F25032 914205D1 D4F8BC15 01390229 00D8881C 69460122
 0:0x13835C AFF24403 98470128 06DB0298 C0F30120 18B1C000 043000E0 002010B0 10BD1146
-0:0x13837C 00E01946 2DE90350 FFF7D0FF 01990144 0098DDF8 08C0DDF8 0CE004B0 6047
+0:0x13837C 00E01946 2DE90350 FFF7D0FF 01990144 0098DDF8 08C0DDF8 0CE004B0 604700B5
+0:0x13839C FFF7C4FF 4EF28201 C8F21711 098808B1 41F0F001 08460021 5DF804CB D4F8B4E5
+0:0x1383BC 6047
 # Slot getter FUN_8105c8d4 (CBattlePlayer vtable+0x2a4) reads slots 12-35 too
 0:0x5C8F8 AEF73EBD
 # Slot setter FUN_810ccacc writes slots 12-35 too
@@ -38,6 +40,8 @@
 0:0x69386 CEF0F8FF
 # and right stick
 0:0x69488 CEF079FF
+# With L2/R2 held, a newly pressed direction counts as the arte button
+0:0x69320 CFF03BF8
 # Arte menu: reads of slots 12-35 when loading the rows
 0:0xE1B86 29F720BC
 # when opening

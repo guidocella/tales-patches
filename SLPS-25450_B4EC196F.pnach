@@ -754,3 +754,6 @@ patch=1,EE,00236638,short,00001002
 
 [Battle BGM = The edge of an oath]
 patch=1,EE,00236638,short,00001007
+
+[Battle BGM = Final episode]
+patch=1,EE,00236638,short,00001006

@@ -35,6 +35,12 @@
 # ended hovering. Add 0.25 instead, so each frame lasts exactly 2 steps (30 FPS
 # is unchanged)
 0:0x1032C B5EE000A
+# Velocity event mode 2 (FUN_8103494c) sets the velocity to the last update's
+# displacement (vt+0x98: +0x368, velocity * time scale), to keep momentum. At
+# half time scale that halved it each time: a boss's falling loop (烈震雷光撃)
+# fell at -0.375 per update instead of -7 and took 150 frames to land instead
+# of 8. Double it (in place of dead stores to the stack)
+0:0x34982 30EE000A 70EEA00A 31EE011A 85ED090A C5ED0A0A 85ED0B1A
 # Special camera grows its step by scale*1.1 per frame: use 2*sqrt(1.1) so it
 # doesn't shrink to 0 and divide by zero at scale 0.5
 0:0x65D16 43F65E70 C4F20600

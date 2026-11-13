@@ -67,6 +67,10 @@
 # (speed * fps) and set their duration to distance / that, counted down in
 # seconds, so at 60 FPS they took half as long: convert with 30
 0:0x9C102 B3EE0E0A 00BF
+# Leaving an area through its edge (FUN_81067466) walks the player out at its
+# run speed (vtable+0x1b8, per update) * fps for 0.2 s with vtable+0xa8, so at
+# 60 FPS twice as fast and far: convert with 30
+0:0x67B78 F3EE0E0A
 # Right stick turns the camera (FUN_8107ab96) by 2 degrees per update: 1
 0:0x7B5E0 C3F68E43
 0:0x7B62E C3F68E42

@@ -92,3 +92,7 @@ Patches for Tales of Xillia remastered:
 https://github.com/Sora3100/Tales_of_Cheat_Tables
 
 https://github.com/ucuckic/tales_patches
+
+## AI disclosure
+
+Game modifications are developed by using Claude.

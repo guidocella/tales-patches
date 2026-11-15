@@ -46,7 +46,11 @@ See https://github.com/lifebottle/Tales-of-Phantasia-X/releases for more cheats.
 
 ## Narikiri Dungeon X
 
-`ULJS00293-NDX.ini` includes cheats for 60 FPS, 28 arte slots using PPSSPP's extended controls, and co-op using https://github.com/Armonte/ppsspp-tales-mp.
+`ULJS00293-NDX.ini` includes cheats for
+
+- 60 FPS
+- 28 arte slots using PPSSPP's extended controls. Change page with left and right in the menu. Page 2 uses L2, page 3 uses right stick and L2 + right stick.
+- co-op using https://github.com/Armonte/ppsspp-tales-mp.
 
 See https://ritzcode.web.fc2.com/cwcpsp/topndx.txt for more cheats.
 

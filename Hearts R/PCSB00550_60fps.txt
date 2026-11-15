@@ -97,12 +97,20 @@
 # Fades step once per update: their setup (FUN_8103c05c) branches to
 # fade_frames (after damage_update), which doubles the frame count unless fps is
 # exactly 30. The victory screen's white fade
-0:0x490 2DE9F041 46F2F86C C8F2281C DCF800C0 DCF8F0C5 40F20004 C4F2F014 A44518BF 5B003BF0 7BBED1ED 000A0968 40F20002 C4F2F012 914218BF 70EEA00A 60F06EBB
+0:0x490 2DE9F041 46F2F86C C8F2281C DCF800C0 DCF8F0C5 40F20004 C4F2F014 A44518BF 5B003BF0 7BBED1ED 000A0968 40F20102 C4F2F012 914208BF 70EEA00A 60F06EBB
 0:0x3C1A8 C4F772B9
 # Texture UV animations (update FUN_81060744; eye blinks, mouths) step by their
 # speed / fps per update: uv_anim_fps (after fade_frames) divides by twice the
-# fps unless it's exactly 30
+# fps in battles (fps 30 plus one ulp). Fields run at 60 and need nothing
 0:0x60BA8 9FF785BC
+# The battle steps its stage model, the models attached to it and the glow at
+# the stage edge by their speed / fps per update (FUN_8101c600), and their
+# speed is 1, not the time scale: stage_step (after shatter_update) halves the
+# speeds for those calls
+0:0xCE8 10B50446 00F2E462 92EC041A F6EE000A 21EE201A 61EEA01A 22EE202A 62EEA02A 82EC041A 1BF0DEFC 04F2E462 92EC041A 31EE011A 71EEA11A 32EE022A 72EEA22A 82EC041A 10BD
+0:0xD58DC 2BF704FA
+0:0xD12A2 2FF721FD
+0:0xD5A44 2BF750F9
 # Chase link (FUN_810fe58c) counts its timer (+0x2fe0, 6 s), elapsed time and
 # interval by 1/fps per update: use 0.5/fps
 0:0xFFC0E F6EE000A

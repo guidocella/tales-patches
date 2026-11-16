@@ -50,6 +50,13 @@
 0:0x148E8 04F2B415 45F2F860 C8F22810 0068D0F8 E815C907 0CD000F5 BE6090ED 000AF3EE 0E0AB4EE 600AF1EE 10FA01D0 6BF09EBD 6BF059BD 45F2F862 C8F22812 126802F5 BE62D2ED 001AB3EE 0E2A82EE 212A90ED 000AD1ED 000A30EE 200A80ED 000A90ED 010AD1ED 010A00EE 820A80ED 010A90ED 020AD1ED 020A30EE 200A80ED 020A7047
 0:0x803CA 94F78DBA
 0:0x8045A 94F75FFA
+# Connected objects (script CScriptObjectConnect: a door leaf on its hinge,
+# which CScriptObjectDirMove turns) follow their parent by adding the exact
+# step to their new spot to the velocity, which add_scaled halved: leaves swung
+# only halfway around their hinge and blocked the doorway. connect_add (after
+# fall_add) doubles its x and z first
+0:0x14968 01684CF2 5402C8F2 1B129142 10D045F2 F862C8F2 28121268 02F5BE62 92ED002A F3EE0E1A 82EE212A 20EE020A 21EE021A 496F0847
+0:0x80898 94F766F8
 # The random encounter step (FUN_81090f9c) adds a fixed step to the encounter
 # counter every update while moving, rolls for a battle past a threshold and
 # counts down the bottle's duration, so battles came twice as fast: its entry
@@ -84,9 +91,11 @@
 0:0xE238E B6EE000A
 # Motion frame (FUN_8101abf8) is (int)(time*fps + 0.5). At half speed time*fps
 # is a whole number plus 0.5 every other step, so float error decided whether it
-# rounded up and a frame could last 1 or 3 steps. Add 0.25 instead, so each
-# frame lasts exactly 2 steps (30 FPS is unchanged)
-0:0x1AC0C B5EE000A
+# rounded up and a frame could last 1 or 3 steps. Add 0.625 instead, so each
+# frame lasts exactly 2 steps (30 FPS is unchanged). Not 0.25: motions can
+# clamp at a half frame (a dragon's leap at 37.5), where the original rounds
+# up to the last frame (38) that the enemy arts waits for, so they froze
+0:0x1AC0C B6EE040A
 # Special camera grows its step by scale*1.1 per frame: use 2*sqrt(1.1) so it
 # doesn't shrink to 0 at scale 0.5
 0:0xE5D90 43F65E70 C4F20600

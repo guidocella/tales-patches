@@ -123,6 +123,14 @@
 # Chase link (FUN_810fe58c) counts its timer (+0x2fe0, 6 s), elapsed time and
 # interval by 1/fps per update: use 0.5/fps
 0:0xFFC16 F6EE000A
+# A thrown weapon returning to its owner (CBattleWeaponStateReturn) homes on
+# the hand from the owner's position plus length * cos/sin(atan2(dx, dz) - rot)
+# of the hand's offset. When Gall's chase move put the hand right above
+# his position, atan2(0, 0) was NaN, and so were the axe's target, velocity and
+# position: it never came back and axe artes showed a blank weapon camera.
+# return_atan2 (after connect_add) returns 0 instead of NaN
+0:0x14A10 10B572F1 ABF8B4EE 400AF1EE 10FA64BF 002000EE 100A10BD
+0:0x122E48 F1F6E2FD
 
 ## 2D layouts
 # The shared 2D layout animation player (FUN_81039e3c) steps by a fixed speed

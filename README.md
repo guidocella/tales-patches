@@ -18,7 +18,11 @@ Lists the numbers of the encounter groups and stages of every boss fight in the 
 
 ## Rebirth PS2
 
-`SLPS-25450_B4EC196F.pnach` includes a cheat for 8 arte slots, miscellaneous cheats, and cheats to re-fight every boss and unique encounter.
+`SLPS-25450_B4EC196F.pnach` includes cheats for:
+
+- 8 arte slots. L3 in the arte menu swaps to a second page of arte slots. Hold the button left unbound in the battle key settings (L2 by default) in battle to use it: that button + direction uses that arte, + × a random one.
+- Miscellaneous cheats.
+- Cheats to re-fight every boss and unique encounter.
 
 `patches/SLPS-25450_B4EC196F.pnach` is a widescreen patch that doesn't stretch 2D fields or the UI. Put it in `%USERPROFILE%\Documents\PCSX2\patches` (Windows) or `~/.config/PCSX2/patches` (Linux). Set Graphics → FMV Aspect Ratio Override → Standard (4:3) in PCSX2 to not stretch FMVs.
 

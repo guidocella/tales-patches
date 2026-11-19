@@ -60,7 +60,9 @@ See https://ritzcode.web.fc2.com/cwcpsp/topndx.txt for more cheats.
 
 ## Tales of the Heroes: Twin Brave
 
-`NPJH50501.ini` includes cheats for 60 FPS and 3 more arte slots on L2+○/×/▲, using PPSSPP's extended controls.
+`NPJH50501.ini` includes cheats for
+- 60 FPS
+- 3 more arte slots on L2+○/×/▲, using PPSSPP's extended controls. Press left/right in the arte menu to switch page.
 
 ## Innocence R
 

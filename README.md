@@ -30,6 +30,12 @@ Lists the numbers of the encounter groups and stages of every boss fight in the 
 
 `SLPS-25533_1F8640E0.pnach` includes a cheat for 60 FPS battles.
 
+## Destiny: Director's Cut
+
+`SLPS-25842_8409FD51.pnach` is a cheat for 32 arte slots. It substitutes 4 shortcuts on the right stick for L2/R2, and adds 3 more pages of slots used while holding L2, R2 or both. A direction alone, e.g. L2 + Up, uses its arte. If you rebind L2 and R2 in the settings, those buttons will be used instead. Left/right in the arte menu change the page. The widescreen patch below is required to display the menu correctly.
+
+`patches/SLPS-25842_8409FD51.pnach` is a widescreen patch that doesn't stretch 2D fields or the UI. Put it in `%USERPROFILE%\Documents\PCSX2\patches` (Windows) or `~/.config/PCSX2/patches` (Linux). You can alternatively place this one with the other cheats since there is no builtin widescreen patch that would override it. Set Graphics → FMV Aspect Ratio Override → Standard (4:3) in PCSX2 to not stretch FMVs.
+
 ## Phantasia Full Voice Edition
 
 `ULJS00079.ini` includes cheats for 32 arte slots, uncropping the world map restoring the PS1 zoom level, and manually starting random encounters.

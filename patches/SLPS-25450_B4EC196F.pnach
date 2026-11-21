@@ -2,10 +2,16 @@ gametitle=Tales of Rebirth (SLPS-25450)
 
 [Widescreen 16:9]
 gsaspectratio=16:9
-description=Widescreen hack, with 2D graphics at their 4:3 proportions
+description=Widescreen hack, with 2D graphics at their 4:3 proportions and the HUD toward the screen edges
+
+//3D camera: the projection widened to 16:9 (the original widescreen hack;
+//its constants are loaded by the new code below)
 patch=1,EE,0015c8e8,word,00000000
 patch=1,EE,0015c8fc,word,46196b42
 patch=1,EE,0015c900,word,e7ad0040
+
+//new code (in unused memory): 2D graphics squeezed to 4:3 and moved toward the edges,
+//2D fields pillarboxed
 patch=1,EE,000FD000,word,3C197000
 patch=1,EE,000FD004,word,8F250248
 patch=1,EE,000FD008,word,00044900
@@ -811,6 +817,8 @@ patch=1,EE,000FDC84,word,0C03F603
 patch=1,EE,000FDC88,word,00000000
 patch=1,EE,000FDC8C,word,0804121A
 patch=1,EE,000FDC90,word,00000000
+
+//calls in the game's code redirected to the new code (the ones in overlays only while those are loaded)
 patch=1,EE,0010DAB0,word,0C03F40C
 patch=1,EE,0010DC58,word,0C03F40C
 patch=1,EE,00172DC4,word,0C03F576
@@ -898,6 +906,8 @@ patch=1,EE,202F02D0,extended,0C03F41A
 patch=1,EE,E002696C,extended,002F02F0
 patch=1,EE,E0018E44,extended,002F02F2
 patch=1,EE,202F02F4,extended,0C03F41A
+
+//functions hooked by a jump to the new code at their start (the ones in overlays only while those are loaded)
 patch=1,EE,0010DFF8,word,0803F638
 patch=1,EE,0010DFFC,word,00000000
 patch=1,EE,0012B350,word,0803F642

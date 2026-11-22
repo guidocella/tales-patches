@@ -123,6 +123,14 @@
 # Chase link (FUN_810fe58c) counts its timer (+0x2fe0, 6 s), elapsed time and
 # interval by 1/fps per update: use 0.5/fps
 0:0xFFC0E F6EE000A
+# Motion rotation curves (FUN_810d85a2, channels 3-5 of the motion data of
+# effects, enemies and weapons) turn the object by the curve's slope, in degrees
+# per 30 FPS frame, every update, while its velocity is halved by the time
+# scale: arcs were half as big (Hisui's 鳶氷雨 shards landed halfway). Convert
+# with pi/360 instead of pi/180
+0:0xD9296 C3F60E40
+0:0xD92AC C3F60E40
+0:0xD92C2 C3F60E40
 # A thrown weapon returning to its owner (CBattleWeaponStateReturn) homes on
 # the hand from the owner's position plus length * cos/sin(atan2(dx, dz) - rot)
 # of the hand's offset. When Gall's chase move put the hand right above

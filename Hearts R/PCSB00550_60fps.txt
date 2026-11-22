@@ -55,7 +55,7 @@
 # step to their new spot to the velocity, which add_scaled halved: leaves swung
 # only halfway around their hinge and blocked the doorway. connect_add (after
 # fall_add) doubles its x and z first
-0:0x149D4 01684CF6 9C42C8F2 1B129142 10D046F2 F862C8F2 28121268 02F5BE62 92ED002A F3EE0E1A 82EE212A 20EE020A 21EE021A 496F0847
+0:0x149D4 01684CF6 9C42C8F2 1B129142 1CD046F2 F862C8F2 28121268 02F5BE62 92ED002A F3EE0E1A 82EE212A DDED002A 9DED023A 30EE620A 31EE431A 20EE020A 21EE021A 30EE220A 31EE031A 496F0847
 0:0x81290 93F7A0FB
 # The random encounter step (FUN_81090f9c) adds a fixed step to the encounter
 # counter every update while moving, rolls for a battle past a threshold and
@@ -129,8 +129,8 @@
 # his position, atan2(0, 0) was NaN, and so were the axe's target, velocity and
 # position: it never came back and axe artes showed a blank weapon camera.
 # return_atan2 (after connect_add) returns 0 instead of NaN
-0:0x14A08 10B572F1 ABF8B4EE 400AF1EE 10FA64BF 002000EE 100A10BD
-0:0x122E40 F1F6E2FD
+0:0x14A20 10B572F1 9FF8B4EE 400AF1EE 10FA64BF 002000EE 100A10BD
+0:0x122E40 F1F6EEFD
 
 ## 2D layouts
 # The shared 2D layout animation player (FUN_81039e3c) steps by a fixed speed

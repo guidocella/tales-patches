@@ -26,9 +26,23 @@ Lists the numbers of the encounter groups and stages of every boss fight in the 
 
 `patches/SLPS-25450_B4EC196F.pnach` is a widescreen patch that doesn't stretch 2D fields or the UI. Put it in `%USERPROFILE%\Documents\PCSX2\patches` (Windows) or `~/.config/PCSX2/patches` (Linux). Set Graphics → FMV Aspect Ratio Override → Standard (4:3) in PCSX2 to not stretch FMVs.
 
-## Legendia (Japan)
+## Legendia
 
-`SLPS-25533_1F8640E0.pnach` includes a cheat for 60 FPS battles.
+`SLUS-21201_43AB7214.pnach` (US) / `SLPS-25533_1F8640E0.pnach` (Japan) includes cheats for:
+
+- 60 FPS. To prevent slowdowns, set the EE cycle rate to 180% and enable thread pinning. At 300% PCSX2 itself can fall below full speed. The code to make battles 60 FPS is taken from https://github.com/ucuckic/tales_patches, this makes all the rest 60 FPS as well.
+- 24 arte slots. Press left/right in the menu to access the new pages which are activated with L2, R2, and L2+R2. Shortcuts are moved to right stick up/down. A direction alone, e.g. L2 + Up, uses its arte.
+- Cheats to re-fight every boss.
+- Miscellaneous cheats.
+
+`patches/SLUS-21201_43AB7214.pnach` (US) / `patches/SLPS-25533_1F8640E0.pnach` (Japan) is a widescreen patch that doesn't stretch the UI. Put it in `%USERPROFILE%\Documents\PCSX2\patches` (Windows) or `~/.config/PCSX2/patches` (Linux). Set Graphics → FMV Aspect Ratio Override → Standard (4:3) in PCSX2 to not stretch FMVs.
+
+In the HD textures, the default buttons and menu portraits are made narrower to compensate for the stretching of the builtin widescreen patch, but it ships versions at the original width:
+- delete `replacements/UI/Buttons/` or move it out of `replacements/`
+- extract `_Optional/Buttons_original_HD.zip` anywhere into `replacemnents/`
+- backup `replacements/UI/Menu portraits/` if you want, then extract `_Optional/Menu portraits original HD.7z` into `replacements/UI/Menu portraits/` overwriting duplicate files
+
+In Hidden Fortress and Fire Monument, there is a black rectangle at the top left corner in widescreen because of a bug in PCSX2's hardware renderer. You can mitigate it with Game Properties → Graphics → Hardware Fixes → GPU Target CLUT.
 
 ## Destiny: Director's Cut
 

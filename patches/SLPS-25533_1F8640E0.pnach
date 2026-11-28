@@ -1,0 +1,294 @@
+gametitle=Tales of Legendia (Japan)
+
+[Widescreen 16:9]
+gsaspectratio=16:9
+author=Arapapa
+
+//Widescreen hack 16:9
+
+//ae47613f 00000045 00000045
+patch=1,EE,203D5820,extended,3f266666 //3f6147ae
+
+//abaaaa3e 8988083e da0d5d3d
+patch=1,EE,203BA330,extended,40133333 //3eaaaaab
+
+// 2D layers (FUN_001eb170 draws them): widen their orthographic projection (FUN_0015ece0) from x = +-2047.5 to +-2730.
+patch=1,EE,001EB2C8,word,0C024010   // jal 0x90040
+patch=1,EE,00090040,word,3C013FAA   // lui at,0x3faa
+patch=1,EE,00090044,word,3421AAAB   // ori at,at,0xaaab (4/3)
+patch=1,EE,00090048,word,44810000   // mtc1 at,f0
+patch=1,EE,0009004C,word,46006302   // mul.s f12,f12,f0
+patch=1,EE,00090050,word,08057B38   // j 0x15ece0
+patch=1,EE,00090054,word,46006B42   // mul.s f13,f13,f0
+
+// Text isn't drawn through the projection: FUN_0022e040 draws a glyph with GS coordinates (centered on 2048). Scale its left
+// edge around the center and its width by 0.75, except for text rendered into a texture (by FUN_001f7340, FUN_00206cb0 and
+// FUN_003335d0, like the town names), which is narrowed when the texture is drawn: it's drawn at Z -16 (font +0xbc).
+patch=1,EE,0022E56C,word,08024020   // j 0x90080
+patch=1,EE,0022E570,word,46032180   // add.s f6,f4,f3 (left edge)
+patch=1,EE,00090080,word,8EA100BC   // lw at,0xbc(s5)
+patch=1,EE,00090084,word,24210010   // addiu at,at,0x10
+patch=1,EE,00090088,word,10200008   // beqz at,0x900ac
+patch=1,EE,0009008C,word,3C014500   // lui at,0x4500
+patch=1,EE,00090090,word,44813800   // mtc1 at,f7 (2048)
+patch=1,EE,00090094,word,3C013F40   // lui at,0x3f40
+patch=1,EE,00090098,word,44814000   // mtc1 at,f8 (0.75)
+patch=1,EE,0009009C,word,46073181   // sub.s f6,f6,f7
+patch=1,EE,000900A0,word,46083182   // mul.s f6,f6,f8
+patch=1,EE,000900A4,word,46073180   // add.s f6,f6,f7
+patch=1,EE,000900A8,word,46081082   // mul.s f2,f2,f8 (width)
+patch=1,EE,000900AC,word,0808B95D   // j 0x22e574
+patch=1,EE,000900B0,word,46061140   // add.s f5,f2,f6 (right edge)
+
+// Text nodes (FUN_0023d2a0) clip their text to the intersection of the GS scissor and their screen rectangle from
+// FUN_00238850 (+8 x, +0x10 width), which isn't narrowed: scale those around 256.
+patch=1,EE,0023D2AC,word,08024040   // j 0x90100
+patch=1,EE,0023D2B0,word,C4A20008   // lwc1 f2,8(a1) (x)
+patch=1,EE,00090100,word,3C014380   // lui at,0x4380
+patch=1,EE,00090104,word,44812000   // mtc1 at,f4 (256)
+patch=1,EE,00090108,word,46041081   // sub.s f2,f2,f4
+patch=1,EE,0009010C,word,3C013F40   // lui at,0x3f40
+patch=1,EE,00090110,word,44812800   // mtc1 at,f5 (0.75)
+patch=1,EE,00090114,word,46051082   // mul.s f2,f2,f5
+patch=1,EE,00090118,word,46041080   // add.s f2,f2,f4
+patch=1,EE,0009011C,word,0808F4AD   // j 0x23d2b4
+patch=1,EE,00090120,word,46020328   // max.s f12,f0,f2
+patch=1,EE,0023D2D4,word,08024049   // j 0x90124
+patch=1,EE,0023D2D8,word,C4A00010   // lwc1 f0,0x10(a1) (width)
+patch=1,EE,00090124,word,46050002   // mul.s f0,f0,f5
+patch=1,EE,00090128,word,0808F4B7   // j 0x23d2dc
+patch=1,EE,0009012C,word,46001000   // add.s f0,f2,f0
+
+// Clipping 2D nodes (FUN_00239030) intersect the GS scissor with their screen rectangle from FUN_00238850 (+8 x, +0x10
+// width): scale them the same way.
+patch=1,EE,00239060,word,08024030   // j 0x900c0
+patch=1,EE,00239064,word,C4420000   // lwc1 f2,0(v0) (x)
+patch=1,EE,000900C0,word,3C014380   // lui at,0x4380
+patch=1,EE,000900C4,word,44811800   // mtc1 at,f3 (256)
+patch=1,EE,000900C8,word,3C013F40   // lui at,0x3f40
+patch=1,EE,000900CC,word,44812000   // mtc1 at,f4 (0.75)
+patch=1,EE,000900D0,word,46031081   // sub.s f2,f2,f3
+patch=1,EE,000900D4,word,46041082   // mul.s f2,f2,f4
+patch=1,EE,000900D8,word,46031080   // add.s f2,f2,f3
+patch=1,EE,000900DC,word,C7A50090   // lwc1 f5,0x90(sp) (width)
+patch=1,EE,000900E0,word,46042942   // mul.s f5,f5,f4
+patch=1,EE,000900E4,word,E7A50090   // swc1 f5,0x90(sp)
+patch=1,EE,000900E8,word,0808E41A   // j 0x239068
+patch=1,EE,000900EC,word,46001024   // cvt.w.s f0,f2
+
+// Scrolling lists (FUN_002791d0, e.g. the save files) do the same with their rectangle at sp+0x28 (x) and sp+0x30 (width).
+patch=1,EE,00279208,word,08024088   // j 0x90220
+patch=1,EE,0027920C,word,C4420000   // lwc1 f2,0(v0) (x)
+patch=1,EE,00090220,word,3C014380   // lui at,0x4380
+patch=1,EE,00090224,word,44811800   // mtc1 at,f3 (256)
+patch=1,EE,00090228,word,3C013F40   // lui at,0x3f40
+patch=1,EE,0009022C,word,44812000   // mtc1 at,f4 (0.75)
+patch=1,EE,00090230,word,46031081   // sub.s f2,f2,f3
+patch=1,EE,00090234,word,46041082   // mul.s f2,f2,f4
+patch=1,EE,00090238,word,46031080   // add.s f2,f2,f3
+patch=1,EE,0009023C,word,C7A50030   // lwc1 f5,0x30(sp) (width)
+patch=1,EE,00090240,word,46042942   // mul.s f5,f5,f4
+patch=1,EE,00090244,word,E7A50030   // swc1 f5,0x30(sp)
+patch=1,EE,00090248,word,0809E484   // j 0x279210
+patch=1,EE,0009024C,word,46001024   // cvt.w.s f0,f2
+
+// 2D nodes anchored to a 3D point (FUN_001eba90, e.g. the battle target marker) are placed where it projects: scale their x by
+// 4/3 so that the narrower 2D projection puts them back on it.
+patch=1,EE,001EBB70,word,0C024050   // jal 0x90140
+patch=1,EE,00090140,word,3C013FAA   // lui at,0x3faa
+patch=1,EE,00090144,word,3421AAAB   // ori at,at,0xaaab (4/3)
+patch=1,EE,00090148,word,44810000   // mtc1 at,f0
+patch=1,EE,0009014C,word,0804C1DC   // j 0x130770
+patch=1,EE,00090150,word,46006302   // mul.s f12,f12,f0
+
+// Sprite lists (FUN_00362930, e.g. the climax combo cut-ins) draw each sprite from its x0 (+0x14) and x1 (+0x18): stretch
+// sprites that span the whole screen (-256 to 256), like the cut-ins' bands, to -342 to 342 so that they still do.
+patch=1,EE,00362C04,word,08024060   // j 0x90180
+patch=1,EE,00362C08,word,8602000C   // lh v0,0xc(s0) (x0)
+patch=1,EE,00090180,word,86010010   // lh at,0x10(s0) (x1)
+patch=1,EE,00090184,word,38210100   // xori at,at,0x100
+patch=1,EE,00090188,word,14200004   // bnez at,0x9019c
+patch=1,EE,0009018C,word,24410100   // addiu at,v0,0x100
+patch=1,EE,00090190,word,14200002   // bnez at,0x9019c
+patch=1,EE,00090194,word,00000000
+patch=1,EE,00090198,word,2402FEAA   // li v0,-342
+patch=1,EE,0009019C,word,080D8B03   // j 0x362c0c
+patch=1,EE,000901A0,word,44820000   // mtc1 v0,f0
+patch=1,EE,00362C80,word,08024070   // j 0x901c0
+patch=1,EE,00362C84,word,86020010   // lh v0,0x10(s0) (x1)
+patch=1,EE,000901C0,word,8601000C   // lh at,0xc(s0) (x0)
+patch=1,EE,000901C4,word,24210100   // addiu at,at,0x100
+patch=1,EE,000901C8,word,14200004   // bnez at,0x901dc
+patch=1,EE,000901CC,word,38410100   // xori at,v0,0x100
+patch=1,EE,000901D0,word,14200002   // bnez at,0x901dc
+patch=1,EE,000901D4,word,00000000
+patch=1,EE,000901D8,word,24020156   // li v0,342
+patch=1,EE,000901DC,word,080D8B22   // j 0x362c88
+patch=1,EE,000901E0,word,44820000   // mtc1 v0,f0
+
+// Event and skit portraits (FUN_0023bab0) are first composed (base, eyes, mouth) into an offscreen buffer through the 2D
+// projection, then drawn from it through the projection again: widen the composed vertices' x by 4/3 so that only the second
+// draw narrows them.
+patch=1,EE,0023BD10,word,0C024080   // jal 0x90200
+patch=1,EE,0023BD7C,word,0C024080   // jal 0x90200
+patch=1,EE,0023BDF4,word,0C024080   // jal 0x90200
+patch=1,EE,0023BE58,word,0C024080   // jal 0x90200
+patch=1,EE,00090200,word,C4A00020   // lwc1 f0,0x20(a1) (x)
+patch=1,EE,00090204,word,3C013FAA   // lui at,0x3faa
+patch=1,EE,00090208,word,3421AAAB   // ori at,at,0xaaab (4/3)
+patch=1,EE,0009020C,word,44810800   // mtc1 at,f1
+patch=1,EE,00090210,word,46010002   // mul.s f0,f0,f1
+patch=1,EE,00090214,word,08056F84   // j 0x15be10
+patch=1,EE,00090218,word,E4A00020   // swc1 f0,0x20(a1)
+
+// Keep the portraits where they were on the stretched screen, farther apart: FUN_001e7c10 positions them with
+// FUN_00130770, so scale their x by 4/3 like the 3D-anchored nodes (0x90140).
+patch=1,EE,001E8250,word,0C024050   // jal 0x90140
+
+// Emotion balloons over actors (the exclamation mark, speech balloons: FUN_0021b520) project the actor's position plus their
+// offset and place their node there with FUN_00130770: scale their x by 4/3 too, or they drift toward the center.
+patch=1,EE,0021B87C,word,0C024050   // jal 0x90140
+
+// World map HUD: move it toward the screen's edges by scaling its x by 4/3 (0x90140). The clock (FUN_00213cf0) and the
+// minimap (FUN_00293fe0) position each of their nodes at their x - 256 with FUN_00130770...
+patch=1,EE,00214034,word,0C024050   // jal 0x90140
+patch=1,EE,002140C0,word,0C024050   // jal 0x90140
+patch=1,EE,0021414C,word,0C024050   // jal 0x90140
+patch=1,EE,00214310,word,0C024050   // jal 0x90140
+patch=1,EE,002940AC,word,0C024050   // jal 0x90140
+patch=1,EE,00294138,word,0C024050   // jal 0x90140
+patch=1,EE,002942FC,word,0C024050   // jal 0x90140
+// ...and the skit notice is created at x 236.
+patch=1,EE,00210BF0,word,3C02439D   // lui v0,0x439d (314, was 0x436c)
+
+// Field HUD: the action prompt at the bottom right (FUN_002830b0) and the town name at the bottom left (FUN_00283710) are
+// placed when they're created: scale their x by 4/3 too.
+patch=1,EE,00283590,word,0C024050   // jal 0x90140
+patch=1,EE,00283EA4,word,0C024050   // jal 0x90140
+
+// Battle HUD: the control mode at the top right (FUN_00365xxx) is placed at x 136 (to 240): move it to 216 (to 320)...
+patch=1,EE,003650C8,word,240500D8   // li a1,0xd8 (was 0x88)
+// ...and the enemy names (FUN_00343060) slide in to 512 - 232 (box from 24 to 248 from the center): slide them 82 farther.
+patch=1,EE,00343134,word,24020252   // li v0,0x252 (was 0x200)
+// The combo counters (FUN_002acb40) also move 82 farther from the center: the party's on the right, the enemies' on the left.
+// FUN_002ad1e0 draws their bars at +-112 from the center (sliding in from +-264)...
+patch=1,EE,002AD2F8,word,3C024342   // lui v0,0x4342 (194, was 112)
+patch=1,EE,002AD2FC,word,3C024342   // lui v0,0x4342
+patch=1,EE,002AD308,word,3C0243AD   // lui v0,0x43ad (346, was 264)
+patch=1,EE,002AD4E4,word,3C024342   // lui v0,0x4342
+patch=1,EE,002AD4E8,word,3C024342   // lui v0,0x4342
+patch=1,EE,002AD4F4,word,3C0243AD   // lui v0,0x43ad
+// ...and FUN_002ad800 their text at x 8 (enemies, from -144) or 360 (party, from 512).
+patch=1,EE,002AD834,word,3C02C362   // lui v0,0xc362 (-226, was -144)
+patch=1,EE,002AD844,word,3C024414   // lui v0,0x4414 (592, was 512)
+patch=1,EE,002AD854,word,3C02C294   // lui v0,0xc294 (-74, was 8)
+patch=1,EE,002AD864,word,3C0243DD   // lui v0,0x43dd (442, was 360)
+
+// The message window's "next" cursor (FUN_0027c9f0) is placed at x 224 * flag - 14 from the center: under the box, or at
+// the bottom right in events. Move the latter from 210 to 295, as far from the 16:9 edge as it was from the 4:3 one.
+patch=1,EE,0027D870,word,00051023   // subu v0,zero,a1 (0 or -1)
+patch=1,EE,0027D878,word,30420135   // andi v0,v0,309
+patch=1,EE,0027D880,word,00000000   // nop (was sll v0,v0,5)
+
+// Menu backgrounds (FUN_002398a0 draws a textured quad node): fill the sides. Full-width quads (x 0, width 512: the
+// gradient behind the main menu, the gray bars) are stretched to x -86..598, and full-height columns at the edges
+// (the shop's checkerboard, 56 px tiles) are repeated outward to the same edges. Cave at 0x91800 (0x90250+ is the
+// boot loader's heap state, so this goes past its data). Event CGs over the field (512x512 at x -256) get a black copy of
+// themselves (same alpha, for fades) drawn first on each side, so the 3D field doesn't show beside them. Source: bg-cave.s.
+patch=1,EE,002398A0,word,08024600   // j 0x91800 (delay slot: the original lui v1,0x3b80)
+patch=1,EE,00091800,word,27BDFFD0
+patch=1,EE,00091804,word,FFBF0000
+patch=1,EE,00091808,word,FFB00008
+patch=1,EE,0009180C,word,FFB10010
+patch=1,EE,00091810,word,FFB20018
+patch=1,EE,00091814,word,FFB30020
+patch=1,EE,00091818,word,00808025
+patch=1,EE,0009181C,word,8C910014
+patch=1,EE,00091820,word,8C920018
+patch=1,EE,00091824,word,3C080200
+patch=1,EE,00091828,word,35080200
+patch=1,EE,0009182C,word,16480016
+patch=1,EE,00091830,word,322AFFFF
+patch=1,EE,00091834,word,3409FF00
+patch=1,EE,00091838,word,15490013
+patch=1,EE,0009183C,word,00000000
+patch=1,EE,00091840,word,8E13001C
+patch=1,EE,00091844,word,3C08FF00
+patch=1,EE,00091848,word,02684024
+patch=1,EE,0009184C,word,AE08001C
+patch=1,EE,00091850,word,2408FD00
+patch=1,EE,00091854,word,A6080014
+patch=1,EE,00091858,word,0C02465D
+patch=1,EE,0009185C,word,02002025
+patch=1,EE,00091860,word,24080100
+patch=1,EE,00091864,word,A6080014
+patch=1,EE,00091868,word,0C02465D
+patch=1,EE,0009186C,word,02002025
+patch=1,EE,00091870,word,AE13001C
+patch=1,EE,00091874,word,AE110014
+patch=1,EE,00091878,word,0C02465D
+patch=1,EE,0009187C,word,02002025
+patch=1,EE,00091880,word,10000033
+patch=1,EE,00091884,word,00000000
+patch=1,EE,00091888,word,3248FFFF
+patch=1,EE,0009188C,word,24090200
+patch=1,EE,00091890,word,1509000A
+patch=1,EE,00091894,word,322AFFFF
+patch=1,EE,00091898,word,15400008
+patch=1,EE,0009189C,word,2408FFAA
+patch=1,EE,000918A0,word,A6080014
+patch=1,EE,000918A4,word,240802AC
+patch=1,EE,000918A8,word,A6080018
+patch=1,EE,000918AC,word,0C02465D
+patch=1,EE,000918B0,word,02002025
+patch=1,EE,000918B4,word,10000026
+patch=1,EE,000918B8,word,00000000
+patch=1,EE,000918BC,word,0C02465D
+patch=1,EE,000918C0,word,02002025
+patch=1,EE,000918C4,word,00125C02
+patch=1,EE,000918C8,word,240901C0
+patch=1,EE,000918CC,word,15690020
+patch=1,EE,000918D0,word,00119C00
+patch=1,EE,000918D4,word,00139C03
+patch=1,EE,000918D8,word,1660000E
+patch=1,EE,000918DC,word,00000000
+patch=1,EE,000918E0,word,3248FFFF
+patch=1,EE,000918E4,word,02689823
+patch=1,EE,000918E8,word,02684821
+patch=1,EE,000918EC,word,2929FFAB
+patch=1,EE,000918F0,word,15200006
+patch=1,EE,000918F4,word,00000000
+patch=1,EE,000918F8,word,A6130014
+patch=1,EE,000918FC,word,0C02465D
+patch=1,EE,00091900,word,02002025
+patch=1,EE,00091904,word,1000FFF6
+patch=1,EE,00091908,word,00000000
+patch=1,EE,0009190C,word,00119C00
+patch=1,EE,00091910,word,00139C03
+patch=1,EE,00091914,word,3248FFFF
+patch=1,EE,00091918,word,02684821
+patch=1,EE,0009191C,word,29290200
+patch=1,EE,00091920,word,1520000B
+patch=1,EE,00091924,word,00000000
+patch=1,EE,00091928,word,3248FFFF
+patch=1,EE,0009192C,word,02689821
+patch=1,EE,00091930,word,2A690256
+patch=1,EE,00091934,word,11200006
+patch=1,EE,00091938,word,00000000
+patch=1,EE,0009193C,word,A6130014
+patch=1,EE,00091940,word,0C02465D
+patch=1,EE,00091944,word,02002025
+patch=1,EE,00091948,word,1000FFF7
+patch=1,EE,0009194C,word,00000000
+patch=1,EE,00091950,word,AE110014
+patch=1,EE,00091954,word,AE120018
+patch=1,EE,00091958,word,DFBF0000
+patch=1,EE,0009195C,word,DFB00008
+patch=1,EE,00091960,word,DFB10010
+patch=1,EE,00091964,word,DFB20018
+patch=1,EE,00091968,word,DFB30020
+patch=1,EE,0009196C,word,03E00008
+patch=1,EE,00091970,word,27BD0030
+patch=1,EE,00091974,word,27BDFFB0
+patch=1,EE,00091978,word,0808E62A
+patch=1,EE,0009197C,word,3C033B80

@@ -1,0 +1,2678 @@
+gametitle=Tales of Legendia (US)
+
+// Source: https://chaos-file.jp/?z=t2&tid=633
+
+[All artes]
+patch=1,EE,202916F8,extended,241900FF
+patch=1,EE,202916FC,extended,A0790588
+patch=1,EE,20291704,extended,0040180A
+patch=1,EE,20291888,extended,241900FF
+patch=1,EE,2029188C,extended,A0790588
+patch=1,EE,20291890,extended,0040180A
+
+[All skits]
+patch=1,EE,204A87A4,extended,FFFFFFFF
+patch=1,EE,204A87A8,extended,FFFFFFFF
+patch=1,EE,204A87AC,extended,FFFFFFFF
+patch=1,EE,204A87B0,extended,FFFFFFFF
+patch=1,EE,204A87B4,extended,FFFFFFFF
+patch=1,EE,204A87BC,extended,FFFFFFFF
+patch=1,EE,104A87C0,extended,0000FFFF
+
+[Disable random encounters]
+description=Press R2 to start an encounter
+patch=1,EE,202D46A4,extended,00000000
+patch=1,EE,D04969DC,extended,0000FDFF
+patch=1,EE,202D46A4,extended,10000002
+
+// Original cheats
+
+[Don't consume TP in battle]
+patch=1,EE,2034F9B4,extended,0000282D
+
+[No damage to the party]
+// FUN_0036c1a0 applies a hit to a battle character (party or enemy): it adds minus the damage (+0x11b8) to the HP with
+// FUN_002bb050(chr+0x18, delta), which clamps it to [0, max HP] and KOs at 0. Call a cave instead that zeroes negative
+// deltas when the flag for the character's side is set: 0x80F41 for party members (character ID at +4 is 1-9), 0x80F40
+// for enemies (IDs in the hundreds). Damage numbers and hit reactions still show. "No damage to enemies" writes
+// the same cave with the other flag, so the two can be enabled together.
+patch=1,EE,0036C37C,word,0C0203C0   // jal 0x80f00 (was jal 0x2bb050)
+patch=1,EE,00080F00,word,8E680004   // lw t0,4(s3)
+patch=1,EE,00080F04,word,2508FFFF   // addiu t0,t0,-1
+patch=1,EE,00080F08,word,2D080009   // sltiu t0,t0,9
+patch=1,EE,00080F0C,word,3C090008   // lui t1,0x8
+patch=1,EE,00080F10,word,01284821   // addu t1,t1,t0
+patch=1,EE,00080F14,word,91290F40   // lbu t1,0xf40(t1)
+patch=1,EE,00080F18,word,00A0402A   // slt t0,a1,zero
+patch=1,EE,00080F1C,word,01094024   // and t0,t0,t1
+patch=1,EE,00080F20,word,0008280B   // movn a1,zero,t0
+patch=1,EE,00080F24,word,080AEC14   // j 0x2bb050
+patch=1,EE,00080F28,word,00000000
+patch=1,EE,00080F41,byte,01
+
+[No damage to enemies]
+// See "No damage to the party".
+patch=1,EE,0036C37C,word,0C0203C0   // jal 0x80f00 (was jal 0x2bb050)
+patch=1,EE,00080F00,word,8E680004   // lw t0,4(s3)
+patch=1,EE,00080F04,word,2508FFFF   // addiu t0,t0,-1
+patch=1,EE,00080F08,word,2D080009   // sltiu t0,t0,9
+patch=1,EE,00080F0C,word,3C090008   // lui t1,0x8
+patch=1,EE,00080F10,word,01284821   // addu t1,t1,t0
+patch=1,EE,00080F14,word,91290F40   // lbu t1,0xf40(t1)
+patch=1,EE,00080F18,word,00A0402A   // slt t0,a1,zero
+patch=1,EE,00080F1C,word,01094024   // and t0,t0,t1
+patch=1,EE,00080F20,word,0008280B   // movn a1,zero,t0
+patch=1,EE,00080F24,word,080AEC14   // j 0x2bb050
+patch=1,EE,00080F28,word,00000000
+patch=1,EE,00080F40,byte,01
+
+[Senel learns Lord of Creation/万物神追撃]
+patch=1,EE,704A83B4,extended,00000002
+
+[Fully heal the party after battles]
+// At the end of a battle (won or escaped), FUN_0037eac0 copies each battle member's HP back to their party record with
+// FUN_0028b730, which clamps it to the max HP. Pass 0x7fff instead. KO is HP 0: for KO'd members, take the path for living
+// ones, which revives them (FUN_0028bd80) before setting the HP, and skip setting the HP back to 0 (FUN_0028bdd0) when
+// bit 0 of their battle status flags (+0x11c) is set. (FUN_00367d10 does the same sync when opening a battle menu's
+// submenu: leave it alone.)
+patch=1,EE,0037EB68,word,00000000   // was blezl v0 (HP <= 0: KO'd)
+patch=1,EE,0037EB88,word,24057FFF   // li a1,0x7fff (was lh a1,2(s1))
+patch=1,EE,0037EBB0,word,00000000   // was bnezl v0 (KO flag)
+
+[Run speed 2x]
+// The field's player control (FUN_001ce110) moves the player by the stick times 0.25 each update.
+patch=1,EE,001CE178,word,3C033F00   // lui v1,0x3f00 (0.25 * 2)
+// The world map's walking (FUN_0020a150) moves the player by the stick times the speed (+0x58) when running: also multiply it
+// by 2 (walking, below 0.7 of the stick, is unchanged).
+patch=1,EE,0020A5EC,word,0C020400   // jal 0x81000
+patch=1,EE,00081000,word,24100001   // li s0,1
+patch=1,EE,00081004,word,3C014000   // lui at,0x4000
+patch=1,EE,00081008,word,44810800   // mtc1 at,f1
+patch=1,EE,0008100C,word,00000000
+patch=1,EE,00081010,word,03E00008   // jr ra
+patch=1,EE,00081014,word,4601AD42   // mul.s f21,f21,f1
+
+[Run speed 3x]
+patch=1,EE,001CE178,word,3C033F40   // lui v1,0x3f40 (0.25 * 3)
+patch=1,EE,0020A5EC,word,0C020400   // jal 0x81000
+patch=1,EE,00081000,word,24100001   // li s0,1
+patch=1,EE,00081004,word,3C014040   // lui at,0x4040
+patch=1,EE,00081008,word,44810800   // mtc1 at,f1
+patch=1,EE,0008100C,word,00000000
+patch=1,EE,00081010,word,03E00008   // jr ra
+patch=1,EE,00081014,word,4601AD42   // mul.s f21,f21,f1
+
+[Run speed 4x]
+patch=1,EE,001CE178,word,3C033F80   // lui v1,0x3f80 (0.25 * 4)
+patch=1,EE,0020A5EC,word,0C020400   // jal 0x81000
+patch=1,EE,00081000,word,24100001   // li s0,1
+patch=1,EE,00081004,word,3C014080   // lui at,0x4080
+patch=1,EE,00081008,word,44810800   // mtc1 at,f1
+patch=1,EE,0008100C,word,00000000
+patch=1,EE,00081010,word,03E00008   // jr ra
+patch=1,EE,00081014,word,4601AD42   // mul.s f21,f21,f1
+
+[Run speed 5x]
+patch=1,EE,001CE178,word,3C033FA0   // lui v1,0x3fa0 (0.25 * 5)
+patch=1,EE,0020A5EC,word,0C020400   // jal 0x81000
+patch=1,EE,00081000,word,24100001   // li s0,1
+patch=1,EE,00081004,word,3C0140A0   // lui at,0x40a0
+patch=1,EE,00081008,word,44810800   // mtc1 at,f1
+patch=1,EE,0008100C,word,00000000
+patch=1,EE,00081010,word,03E00008   // jr ra
+patch=1,EE,00081014,word,4601AD42   // mul.s f21,f21,f1
+
+[60 FPS]
+description=Set the EE cycle rate to 180% and enable thread pinning
+// Halve battle speed.
+patch=1,EE,02E34A0,word,08020558
+patch=1,EE,00081560,word,C4800068
+patch=1,EE,00081564,word,3C023F00
+patch=1,EE,00081568,word,44826800
+patch=1,EE,0008156C,word,460D0002
+patch=1,EE,00081570,word,080B8D29
+
+// Halve field speed: the field task's timestep (animations, effects)...
+// This includes menus (bit 0 of the field's +0x34, which also stops its actors), whose cursors, key repeat, sprite animations
+// and tweens are fixed below.
+// 0x815FC is set by the field task on frames it updates the field at 60 FPS.
+patch=1,EE,00168864,word,08020560
+patch=1,EE,00081580,word,92020034
+patch=1,EE,00081584,word,30420001
+patch=1,EE,00081588,word,00000000   // was bnez v0 (menu open: stay at 30 FPS)
+patch=1,EE,0008158C,word,3C023F80
+patch=1,EE,00081590,word,24020001
+patch=1,EE,00081594,word,3C010008
+patch=1,EE,00081598,word,A02215FC
+patch=1,EE,0008159C,word,3C023F00
+patch=1,EE,000815A0,word,4482A000
+patch=1,EE,000815A4,word,0805A21B
+patch=1,EE,000815A8,word,00000000
+
+// ...and the step of motion interpolators (walking, camera), which ignore the timestep.
+// 0x815F8 is 1 while the field runs at 60 FPS.
+patch=1,EE,0016BCB0,word,08020580
+patch=1,EE,00081600,word,C4820000
+patch=1,EE,00081604,word,3C030008
+patch=1,EE,00081608,word,906315F8
+patch=1,EE,0008160C,word,10600004
+patch=1,EE,00081610,word,3C033F00
+patch=1,EE,00081614,word,44830000
+patch=1,EE,00081618,word,00000000
+patch=1,EE,0008161C,word,46006302
+patch=1,EE,00081620,word,0805AF2E
+patch=1,EE,00081624,word,3C033F80
+
+// The field's encounter gauge decreases by the distance walked in an update, which is already halved at 60 FPS. Its update
+// (FUN_002d4410, also called by the world map) also counts down the updates an item that changes the encounter rate lasts
+// (0x4a7e1c): at 60 FPS count on alternate updates (0x815E1 is the toggle). t1 is the decrement.
+patch=1,EE,002D4410,word,08020740   // j 0x81d00
+patch=1,EE,002D4414,word,27BDFFE0   // addiu sp,sp,-0x20
+patch=1,EE,002D4538,word,00892821   // addu a1,a0,t1
+patch=1,EE,002D4614,word,00892821   // addu a1,a0,t1
+patch=1,EE,00081D00,word,3C010008   // lui at,0x8
+patch=1,EE,00081D04,word,902A15F8   // lbu t2,0x15F8(at)
+patch=1,EE,00081D08,word,11400005   // beqz t2,0x81d20
+patch=1,EE,00081D0C,word,2409FFFF   // li t1,-1
+patch=1,EE,00081D10,word,902915E1   // lbu t1,0x15E1(at)
+patch=1,EE,00081D14,word,39290001   // xori t1,t1,1
+patch=1,EE,00081D18,word,A02915E1   // sb t1,0x15E1(at)
+patch=1,EE,00081D1C,word,00094823   // subu t1,zero,t1
+patch=1,EE,00081D20,word,080B5106   // j 0x2d4418
+patch=1,EE,00081D24,word,FFBF0000   // sd ra,0(sp)
+
+// ...and the per-frame distance that picks the walk or run animation, and the turn animation's rate, which assume 30 FPS.
+patch=1,EE,001BABF0,word,08020598
+patch=1,EE,001BABF4,word,00000000
+patch=1,EE,00081660,word,3C010008
+patch=1,EE,00081664,word,902115F8
+patch=1,EE,00081668,word,10200002
+patch=1,EE,0008166C,word,3C023B03
+patch=1,EE,00081670,word,4615AD40
+patch=1,EE,00081674,word,0806EAFE
+patch=1,EE,00081678,word,3442126F
+patch=1,EE,001BB010,word,0802059F
+patch=1,EE,001BB014,word,00000000
+patch=1,EE,0008167C,word,3C010008
+patch=1,EE,00081680,word,902115F8
+patch=1,EE,00081684,word,10200002
+patch=1,EE,00081688,word,3C0241A0
+patch=1,EE,0008168C,word,3C024220
+patch=1,EE,00081690,word,0806EC06
+patch=1,EE,00081694,word,44820000
+
+// ...and the separate timestep of the field's effect and light managers (e.g. the save point effect), replacing 0x1ea9d0.
+patch=1,EE,001EA9D0,word,080205A8
+patch=1,EE,001EA9D4,word,00000000
+patch=1,EE,000816A0,word,27BDFFD0
+patch=1,EE,000816A4,word,FFBF0010
+patch=1,EE,000816A8,word,7FB00000
+patch=1,EE,000816AC,word,E7B40020
+patch=1,EE,000816B0,word,90830028
+patch=1,EE,000816B4,word,10600022
+patch=1,EE,000816B8,word,0080802D
+patch=1,EE,000816BC,word,C6140024
+patch=1,EE,000816C0,word,3C010008
+patch=1,EE,000816C4,word,902115F8
+patch=1,EE,000816C8,word,10200004
+patch=1,EE,000816CC,word,3C013F00
+patch=1,EE,000816D0,word,44810000
+patch=1,EE,000816D4,word,00000000
+patch=1,EE,000816D8,word,4600A502
+patch=1,EE,000816DC,word,8F84869C
+patch=1,EE,000816E0,word,8C990000
+patch=1,EE,000816E4,word,8F39000C
+patch=1,EE,000816E8,word,0320F809
+patch=1,EE,000816EC,word,4600A306
+patch=1,EE,000816F0,word,8F84876C
+patch=1,EE,000816F4,word,8C990000
+patch=1,EE,000816F8,word,8F39000C
+patch=1,EE,000816FC,word,0320F809
+patch=1,EE,00081700,word,4600A306
+patch=1,EE,00081704,word,8F8486D8
+patch=1,EE,00081708,word,8C990000
+patch=1,EE,0008170C,word,8F39000C
+patch=1,EE,00081710,word,0320F809
+patch=1,EE,00081714,word,4600A306
+patch=1,EE,00081718,word,8F8487B4
+patch=1,EE,0008171C,word,8C990000
+patch=1,EE,00081720,word,8F39000C
+patch=1,EE,00081724,word,0320F809
+patch=1,EE,00081728,word,4600A306
+patch=1,EE,0008172C,word,8E190004
+patch=1,EE,00081730,word,4600A306
+patch=1,EE,00081734,word,8F39000C
+patch=1,EE,00081738,word,0320F809
+patch=1,EE,0008173C,word,26040004
+patch=1,EE,00081740,word,DFBF0010
+patch=1,EE,00081744,word,7BB00000
+patch=1,EE,00081748,word,C7B40020
+patch=1,EE,0008174C,word,03E00008
+patch=1,EE,00081750,word,27BD0030
+
+// ...and the animation code, which multiplies the playback speed by the timestep twice (FUN_001cd7c0 stores speed * timestep, then
+// FUN_001c3ef0 multiplies it by the timestep again), so divide it back out before it's stored. Without this, animations
+// that aren't restarted every frame slow to a stop, which stalled events waiting for them.
+patch=1,EE,001CDA8C,word,080205D8
+patch=1,EE,001CDA90,word,00000000
+patch=1,EE,00081760,word,44800000
+patch=1,EE,00081764,word,4600A832
+patch=1,EE,00081768,word,45010002
+patch=1,EE,0008176C,word,00000000
+patch=1,EE,00081770,word,4615A503
+patch=1,EE,00081774,word,0807362F
+patch=1,EE,00081778,word,E6740064
+
+// ...and the timestep FUN_001eaa70 passes to the map's draw, which advances the map's animation time (e.g. flowing water).
+// Only this call: other draw calls there may skip work when the timestep is below 1.
+patch=1,EE,001EAA94,word,0C020604   // jal 0x81810
+patch=1,EE,00081810,word,C60C0024   // lwc1 f12,0x24(s0)
+patch=1,EE,00081814,word,3C010008   // lui at,0x8
+patch=1,EE,00081818,word,902115F8   // lbu at,0x15F8(at)
+patch=1,EE,0008181C,word,10200004   // beqz at,0x81830
+patch=1,EE,00081820,word,3C013F00   // lui at,0x3f00
+patch=1,EE,00081824,word,44810000   // mtc1 at,f0
+patch=1,EE,00081828,word,00000000
+patch=1,EE,0008182C,word,46006302   // mul.s f12,f12,f0
+patch=1,EE,00081830,word,03E00008   // jr ra
+patch=1,EE,00081834,word,00000000
+
+// ...and the timestep of 2D layers (e.g. the event overlay, letterbox bars and the fade out of the victory screen), which is
+// always 1 outside the field, in FUN_00164d40. 0x815FE is 1 while the game runs at 60 FPS, in the field, battles or the victory screen.
+patch=1,EE,00164D70,word,080205E0
+patch=1,EE,00164D74,word,3C023F80
+patch=1,EE,00081780,word,44826800   // mtc1 v0,f13
+patch=1,EE,00081784,word,3C020008   // lui v0,0x8
+patch=1,EE,00081788,word,904215FE   // lbu v0,0x15FE(v0)
+patch=1,EE,0008178C,word,10400005   // beqz v0,0x817a4
+patch=1,EE,00081790,word,3C023F00   // lui v0,0x3f00
+patch=1,EE,00081794,word,44820000   // mtc1 v0,f0
+patch=1,EE,00081798,word,00000000
+patch=1,EE,0008179C,word,46006302   // mul.s f12,f12,f0
+patch=1,EE,000817A0,word,46006B42   // mul.s f13,f13,f0
+patch=1,EE,000817A4,word,0805935E   // j 0x164d78
+patch=1,EE,000817A8,word,00000000
+
+// ...and event and skit portraits, whose update (FUN_001e82d0) counts updates for its moves (+0x78 against +0x74), fades (+0x3c
+// per update), scaling (+0xe8 against +0xec), blinking and lip sync: at 60 FPS, run it every frame with half steps, but on alternate
+// frames (0x815F4 is the toggle, 0x815F5 is set on these frames) don't count updates or blink (0x815E3 is set while doing so).
+patch=1,EE,0016D27C,word,080205EC
+patch=1,EE,0016D280,word,00000000
+patch=1,EE,000817B0,word,3C010008   // lui at,0x8
+patch=1,EE,000817B4,word,902215F8   // lbu v0,0x15F8(at)
+patch=1,EE,000817B8,word,10400005   // beqz v0,0x817d0
+patch=1,EE,000817BC,word,00001821   // move v1,zero
+patch=1,EE,000817C0,word,902215F4   // lbu v0,0x15F4(at)
+patch=1,EE,000817C4,word,38420001   // xori v0,v0,1
+patch=1,EE,000817C8,word,A02215F4   // sb v0,0x15F4(at)
+patch=1,EE,000817CC,word,2C430001   // sltiu v1,v0,1
+patch=1,EE,000817D0,word,A02315F5   // sb v1,0x15F5(at)
+patch=1,EE,000817D4,word,3C023F80   // lui v0,0x3f80
+patch=1,EE,000817D8,word,0805B4A1   // j 0x16d284
+patch=1,EE,000817DC,word,44826000   // mtc1 v0,f12
+patch=1,EE,001E82D0,word,08020630   // j 0x818c0
+patch=1,EE,001E82D4,word,00000000
+patch=1,EE,000818C0,word,3C010008   // lui at,0x8
+patch=1,EE,000818C4,word,902215F5   // lbu v0,0x15F5(at)
+patch=1,EE,000818C8,word,902315F8   // lbu v1,0x15F8(at)
+patch=1,EE,000818CC,word,00431024   // and v0,v0,v1
+patch=1,EE,000818D0,word,A02215E3   // sb v0,0x15E3(at)
+patch=1,EE,000818D4,word,27BDFEE0   // addiu sp,sp,-0x120
+patch=1,EE,000818D8,word,0807A0B6   // j 0x1e82d8
+patch=1,EE,000818DC,word,FFBF0050   // sd ra,0x50(sp)
+// Skip the loop over the portrait's eyes and mouth (+0x7c counts them).
+patch=1,EE,001E82EC,word,0C020500   // jal 0x81400
+patch=1,EE,001E82F0,word,7FB00000   // sq s0,0(sp)
+patch=1,EE,00081400,word,9082007C   // lbu v0,0x7c(a0)
+patch=1,EE,00081404,word,3C010008   // lui at,0x8
+patch=1,EE,00081408,word,902115E3   // lbu at,0x15E3(at)
+patch=1,EE,0008140C,word,03E00008   // jr ra
+patch=1,EE,00081410,word,0001100B   // movn v0,zero,at
+// Don't count updates of moves, scaling and the portrait (+0x10).
+patch=1,EE,001E866C,word,0C020505   // jal 0x81414
+patch=1,EE,001E8670,word,8E020078   // lw v0,0x78(s0)
+patch=1,EE,001E877C,word,0C020505   // jal 0x81414
+patch=1,EE,001E8780,word,8E0200E8   // lw v0,0xe8(s0)
+patch=1,EE,001E8B70,word,0C02050A   // jal 0x81428
+patch=1,EE,001E8B74,word,8E030010   // lw v1,0x10(s0)
+patch=1,EE,00081414,word,3C010008   // lui at,0x8
+patch=1,EE,00081418,word,902115E3   // lbu at,0x15E3(at)
+patch=1,EE,0008141C,word,38210001   // xori at,at,1
+patch=1,EE,00081420,word,03E00008   // jr ra
+patch=1,EE,00081424,word,00411021   // addu v0,v0,at
+patch=1,EE,00081428,word,3C010008   // lui at,0x8
+patch=1,EE,0008142C,word,902115E3   // lbu at,0x15E3(at)
+patch=1,EE,00081430,word,38210001   // xori at,at,1
+patch=1,EE,00081434,word,03E00008   // jr ra
+patch=1,EE,00081438,word,00611821   // addu v1,v1,at
+// Halve the steps of moves (+0x6c, +0x70), fades (+0x3c) and scaling (+0xf4).
+patch=1,EE,001E8690,word,0C020518   // jal 0x81460
+patch=1,EE,001E86A0,word,0C02051A   // jal 0x81468
+patch=1,EE,001E86D8,word,0C02051C   // jal 0x81470
+patch=1,EE,001E876C,word,0C02051E   // jal 0x81478
+patch=1,EE,0008143C,word,3C010008   // lui at,0x8
+patch=1,EE,00081440,word,902115F8   // lbu at,0x15F8(at)
+patch=1,EE,00081444,word,10200004   // beqz at,0x81458
+patch=1,EE,00081448,word,3C013F00   // lui at,0x3f00
+patch=1,EE,0008144C,word,44811000   // mtc1 at,f2
+patch=1,EE,00081450,word,00000000
+patch=1,EE,00081454,word,46020842   // mul.s f1,f1,f2
+patch=1,EE,00081458,word,03E00008   // jr ra
+patch=1,EE,0008145C,word,00000000
+patch=1,EE,00081460,word,0802050F   // j 0x8143c
+patch=1,EE,00081464,word,C601006C   // lwc1 f1,0x6c(s0)
+patch=1,EE,00081468,word,0802050F   // j 0x8143c
+patch=1,EE,0008146C,word,C6010070   // lwc1 f1,0x70(s0)
+patch=1,EE,00081470,word,0802050F   // j 0x8143c
+patch=1,EE,00081474,word,C601003C   // lwc1 f1,0x3c(s0)
+patch=1,EE,00081478,word,0802050F   // j 0x8143c
+patch=1,EE,0008147C,word,C60100F4   // lwc1 f1,0xf4(s0)
+// The menu's status screen (FUN_0037b8d0) updates its portrait with FUN_001ded80 every frame too, which blinked twice as fast:
+// toggle 0x815F4 and set 0x815F5 there as well.
+patch=1,EE,0037B904,word,0C0200AC   // jal 0x802b0
+patch=1,EE,000802B0,word,3C010008   // lui at,0x8
+patch=1,EE,000802B4,word,902215F8   // lbu v0,0x15F8(at)
+patch=1,EE,000802B8,word,10400005   // beqz v0,0x802d0
+patch=1,EE,000802BC,word,00001821   // move v1,zero
+patch=1,EE,000802C0,word,902215F4   // lbu v0,0x15F4(at)
+patch=1,EE,000802C4,word,38420001   // xori v0,v0,1
+patch=1,EE,000802C8,word,A02215F4   // sb v0,0x15F4(at)
+patch=1,EE,000802CC,word,2C430001   // sltiu v1,v0,1
+patch=1,EE,000802D0,word,A02315F5   // sb v1,0x15F5(at)
+patch=1,EE,000802D4,word,08077B60   // j 0x1ded80
+patch=1,EE,000802D8,word,00000000
+
+// ...and the message and choice windows (FUN_0027d0f0, FUN_00280420), which step their text and cursor once per update and
+// return early when the timestep is below 1: at 60 FPS pass them 1 and 0 on alternate frames (0x815F6 is the toggle, the
+// timestep goes in 0x815E8). They read button presses (0x496ad0), so presses from a skipped frame are collected in 0x815F0
+// and added to the pad's presses while they run, then the presses are restored (0x815EC, 0x815F7 is set if needed).
+patch=1,EE,0016D2B0,word,08020610   // j 0x81840
+patch=1,EE,0016D2B4,word,00000000
+patch=1,EE,0016D2E4,word,3C020008   // lui v0,0x8
+patch=1,EE,0016D2EC,word,C44C15E8   // lwc1 f12,0x15E8(v0)
+patch=1,EE,0016D324,word,3C020008   // lui v0,0x8
+patch=1,EE,0016D328,word,C44C15E8   // lwc1 f12,0x15E8(v0)
+patch=1,EE,0016D29C,word,0802063C   // j 0x818f0
+patch=1,EE,00081840,word,3C010008   // lui at,0x8
+patch=1,EE,00081844,word,A02015F7   // sb zero,0x15F7(at)
+patch=1,EE,00081848,word,902215F8   // lbu v0,0x15F8(at)
+patch=1,EE,0008184C,word,10400010   // beqz v0,0x81890
+patch=1,EE,00081850,word,3C033F80   // lui v1,0x3f80
+patch=1,EE,00081854,word,902215F6   // lbu v0,0x15F6(at)
+patch=1,EE,00081858,word,38420001   // xori v0,v0,1
+patch=1,EE,0008185C,word,A02215F6   // sb v0,0x15F6(at)
+patch=1,EE,00081860,word,3C050049   // lui a1,0x49
+patch=1,EE,00081864,word,8CA66AD0   // lw a2,0x6ad0(a1)
+patch=1,EE,00081868,word,8C2715F0   // lw a3,0x15F0(at)
+patch=1,EE,0008186C,word,00E63825   // or a3,a3,a2
+patch=1,EE,00081870,word,14400003   // bnez v0,0x81880
+patch=1,EE,00081874,word,AC2715F0   // sw a3,0x15F0(at)
+patch=1,EE,00081878,word,10000006   // b 0x81894
+patch=1,EE,0008187C,word,00001821   // move v1,zero
+patch=1,EE,00081880,word,ACA76AD0   // sw a3,0x6ad0(a1)
+patch=1,EE,00081884,word,AC2615EC   // sw a2,0x15EC(at)
+patch=1,EE,00081888,word,24020001   // li v0,1
+patch=1,EE,0008188C,word,A02215F7   // sb v0,0x15F7(at)
+patch=1,EE,00081890,word,AC2015F0   // sw zero,0x15F0(at)
+patch=1,EE,00081894,word,AC2315E8   // sw v1,0x15E8(at)
+patch=1,EE,00081898,word,3C04004A   // lui a0,0x4a
+patch=1,EE,0008189C,word,0C07FF40   // jal 0x1ffd00
+patch=1,EE,000818A0,word,24849950   // addiu a0,a0,-0x66b0
+patch=1,EE,000818A4,word,0805B4AF   // j 0x16d2bc
+patch=1,EE,000818A8,word,00000000
+patch=1,EE,000818F0,word,3C010008   // lui at,0x8
+patch=1,EE,000818F4,word,902215F7   // lbu v0,0x15F7(at)
+patch=1,EE,000818F8,word,10400004   // beqz v0,0x8190c
+patch=1,EE,000818FC,word,A02015F7   // sb zero,0x15F7(at)
+patch=1,EE,00081900,word,8C2215EC   // lw v0,0x15EC(at)
+patch=1,EE,00081904,word,3C030049   // lui v1,0x49
+patch=1,EE,00081908,word,AC626AD0   // sw v0,0x6ad0(v1)
+patch=1,EE,0008190C,word,0805B4D0   // j 0x16d340
+patch=1,EE,00081910,word,00000000
+
+// ...whose choice cursor bobs by advancing an angle (+0x44) a third of a radian per update: on frames the choice window
+// skips at 60 FPS, only move the cursor (0x815E0 is set while doing so), and advance it by a sixth.
+patch=1,EE,00280434,word,08020690   // j 0x81a40
+patch=1,EE,00081A40,word,0080802D   // dmove s0,a0
+patch=1,EE,00081A44,word,E7B40000   // swc1 f20,0(sp)
+patch=1,EE,00081A48,word,46006034   // c.lt.s f12,f0
+patch=1,EE,00081A4C,word,45010003   // bc1t 0x81a5c
+patch=1,EE,00081A50,word,00000000
+patch=1,EE,00081A54,word,080A0112   // j 0x280448
+patch=1,EE,00081A58,word,00000000
+patch=1,EE,00081A5C,word,92030038   // lbu v1,0x38(s0)
+patch=1,EE,00081A60,word,30610001   // andi at,v1,1
+patch=1,EE,00081A64,word,10200009   // beqz at,0x81a8c
+patch=1,EE,00081A68,word,30610080   // andi at,v1,0x80
+patch=1,EE,00081A6C,word,14200007   // bnez at,0x81a8c
+patch=1,EE,00081A70,word,9201003A   // lbu at,0x3a(s0)
+patch=1,EE,00081A74,word,30210038   // andi at,at,0x38
+patch=1,EE,00081A78,word,14200004   // bnez at,0x81a8c
+patch=1,EE,00081A7C,word,3C010008   // lui at,0x8
+patch=1,EE,00081A80,word,24020001   // li v0,1
+patch=1,EE,00081A84,word,080A020D   // j 0x280834
+patch=1,EE,00081A88,word,A02215E0   // sb v0,0x15E0(at)
+patch=1,EE,00081A8C,word,080A0425   // j 0x281094
+patch=1,EE,00081A90,word,00000000
+patch=1,EE,002808F0,word,080206A8   // j 0x81aa0
+patch=1,EE,00081AA0,word,3C010008   // lui at,0x8
+patch=1,EE,00081AA4,word,902115FE   // lbu at,0x15FE(at)
+patch=1,EE,00081AA8,word,10200002   // beqz at,0x81ab4
+patch=1,EE,00081AAC,word,3C033EAA   // lui v1,0x3eaa
+patch=1,EE,00081AB0,word,3C033E2A   // lui v1,0x3e2a
+patch=1,EE,00081AB4,word,3463AAAB   // ori v1,v1,0xaaab
+patch=1,EE,00081AB8,word,44830800   // mtc1 v1,f1
+patch=1,EE,00081ABC,word,3C010008   // lui at,0x8
+patch=1,EE,00081AC0,word,902215E0   // lbu v0,0x15E0(at)
+patch=1,EE,00081AC4,word,1040000D   // beqz v0,0x81afc
+patch=1,EE,00081AC8,word,00000000
+patch=1,EE,00081ACC,word,A02015E0   // sb zero,0x15E0(at)
+patch=1,EE,00081AD0,word,3C0240C9   // lui v0,0x40c9
+patch=1,EE,00081AD4,word,34420FDB   // ori v0,v0,0xfdb
+patch=1,EE,00081AD8,word,44820000   // mtc1 v0,f0
+patch=1,EE,00081ADC,word,00000000
+patch=1,EE,00081AE0,word,46011040   // add.s f1,f2,f1
+patch=1,EE,00081AE4,word,46000836   // c.le.s f1,f0
+patch=1,EE,00081AE8,word,45010002   // bc1t 0x81af4
+patch=1,EE,00081AEC,word,00000000
+patch=1,EE,00081AF0,word,46000841   // sub.s f1,f1,f0
+patch=1,EE,00081AF4,word,080A0425   // j 0x281094
+patch=1,EE,00081AF8,word,E6010044   // swc1 f1,0x44(s0)
+patch=1,EE,00081AFC,word,080A023F   // j 0x2808fc
+patch=1,EE,00081B00,word,00000000
+// The bob is only ±2 pixels and the cursor's x is rounded to a whole pixel, so it moves in steps: keep the rounding error
+// (0x815D8) and the cursor's sprite (0x815DC), and add the error to the x of that sprite's vertices (FUN_00239d00), which
+// are floats, so it can be drawn between pixels when upscaling.
+patch=1,EE,00280898,word,0C020650   // jal 0x81940
+patch=1,EE,00081940,word,46000064   // cvt.w.s f01,f00
+patch=1,EE,00081944,word,46800860   // cvt.s.w f01,f01
+patch=1,EE,00081948,word,46000841   // sub.s f01,f01,f00
+patch=1,EE,0008194C,word,46000024   // cvt.w.s f00,f00
+patch=1,EE,00081950,word,3C010008   // lui at,0x8
+patch=1,EE,00081954,word,E42115D8   // swc1 f01,0x15D8(at)
+patch=1,EE,00081958,word,03E00008   // jr ra
+patch=1,EE,0008195C,word,AC2415DC   // sw a0,0x15DC(at)
+patch=1,EE,00239DE0,word,0C020520   // jal 0x81480
+patch=1,EE,00239DE4,word,44820800   // mtc1 v0,f01
+patch=1,EE,00239E4C,word,0C020520   // jal 0x81480
+patch=1,EE,00239E50,word,44820800   // mtc1 v0,f01
+patch=1,EE,00239EB8,word,0C020520   // jal 0x81480
+patch=1,EE,00239EBC,word,44820800   // mtc1 v0,f01
+patch=1,EE,00239F2C,word,0C020520   // jal 0x81480
+patch=1,EE,00239F30,word,44820800   // mtc1 v0,f01
+patch=1,EE,00081480,word,46800860   // cvt.s.w f01,f01
+patch=1,EE,00081484,word,3C010008   // lui at,0x8
+patch=1,EE,00081488,word,8C2115DC   // lw at,0x15DC(at)
+patch=1,EE,0008148C,word,14300003   // bne at,s0,0x8149c
+patch=1,EE,00081490,word,3C010008   // lui at,0x8
+patch=1,EE,00081494,word,C42315D8   // lwc1 f03,0x15D8(at)
+patch=1,EE,00081498,word,46030840   // add.s f01,f01,f03
+patch=1,EE,0008149C,word,03E00008   // jr ra
+patch=1,EE,000814A0,word,00000000
+
+// The message window's "next" cursors (US: FUN_0027e6d0, called by the window's update FUN_0027d0f0 at 0x27e14c, picks one
+// of three sprites at +0x28/+0x2c/+0x30 by +0x4e) bob vertically by advancing an angle (+0x44) a quarter radian per update:
+// on frames the message window skips at 60 FPS, run the bob (0x27e8e4 to the end of FUN_0027e6d0) if the cursor function ran
+// for the window on the last update (0x815C8 holds the window then), and advance it by an eighth.
+patch=1,EE,0027D128,word,08020480   // j 0x81200
+patch=1,EE,00081200,word,45010006   // bc1t 0x8121c
+patch=1,EE,00081204,word,3C010008   // lui at,0x8
+patch=1,EE,00081208,word,8C2215C8   // lw v0,0x15C8(at)
+patch=1,EE,0008120C,word,14530002   // bne v0,s3,0x81218
+patch=1,EE,00081210,word,00000000
+patch=1,EE,00081214,word,AC2015C8   // sw zero,0x15C8(at)
+patch=1,EE,00081218,word,0809F44C   // j 0x27d130
+patch=1,EE,0008121C,word,00000000
+patch=1,EE,00081220,word,8C2215C8   // lw v0,0x15C8(at)
+patch=1,EE,00081224,word,14530005   // bne v0,s3,0x8123c
+patch=1,EE,00081228,word,902215FE   // lbu v0,0x15FE(at)
+patch=1,EE,0008122C,word,10400003   // beqz v0,0x8123c
+patch=1,EE,00081230,word,00000000
+patch=1,EE,00081234,word,0C020498   // jal 0x81260
+patch=1,EE,00081238,word,00000000
+patch=1,EE,0008123C,word,0809F85B   // j 0x27e16c
+patch=1,EE,00081240,word,00000000
+// The bob as a function of the window in s3: FUN_0027e6d0's frame (ra at +0x10, s0 at 0), then its code from 0x27e8e4.
+patch=1,EE,00081260,word,27BDFFE0   // addiu sp,sp,-0x20
+patch=1,EE,00081264,word,FFBF0010   // sd ra,0x10(sp)
+patch=1,EE,00081268,word,7FB00000   // sq s0,0(sp)
+patch=1,EE,0008126C,word,0809FA39   // j 0x27e8e4
+patch=1,EE,00081270,word,0260802D   // daddu s0,s3,zero
+// Record the window when the update calls the cursor function.
+patch=1,EE,0027E14C,word,0C02049D   // jal 0x81274
+patch=1,EE,00081274,word,3C010008   // lui at,0x8
+patch=1,EE,00081278,word,AC2415C8   // sw a0,0x15C8(at)
+patch=1,EE,0008127C,word,0809F9B4   // j 0x27e6d0
+patch=1,EE,00081280,word,00000000
+// The angle's step: 0.125 at 60 FPS (0x815FE).
+patch=1,EE,0027E920,word,0C0204A1   // jal 0x81284 (was lui v1,0x3e80)
+patch=1,EE,0027E924,word,00000000   // nop (was mtc1 v1,f1)
+patch=1,EE,00081284,word,3C030008   // lui v1,0x8
+patch=1,EE,00081288,word,906315FE   // lbu v1,0x15FE(v1)
+patch=1,EE,0008128C,word,10600002   // beqz v1,0x81298
+patch=1,EE,00081290,word,3C033E80   // lui v1,0x3e80
+patch=1,EE,00081294,word,3C033E00   // lui v1,0x3e00
+patch=1,EE,00081298,word,03E00008   // jr ra
+patch=1,EE,0008129C,word,44830800   // mtc1 v1,f1
+// Their y is rounded to a whole pixel too: keep the error (0x815D0) and the sprite (0x815D4) like the choice cursor's.
+patch=1,EE,0027EBB0,word,0C020532   // jal 0x814c8 (was cvt.w.s f0,f0)
+patch=1,EE,0027EC14,word,0C020532   // jal 0x814c8 (was addiu v1,v0,-0x21)
+patch=1,EE,0027EC18,word,2443FFDF   // addiu v1,v0,-0x21 (was cvt.w.s f0,f0)
+patch=1,EE,0027EC88,word,0C020532   // jal 0x814c8 (was cvt.w.s f0,f0)
+patch=1,EE,000814C8,word,46000064   // cvt.w.s f01,f00
+patch=1,EE,000814CC,word,46800860   // cvt.s.w f01,f01
+patch=1,EE,000814D0,word,46010041   // sub.s f01,f00,f01
+patch=1,EE,000814D4,word,46000024   // cvt.w.s f00,f00
+patch=1,EE,000814D8,word,3C010008   // lui at,0x8
+patch=1,EE,000814DC,word,E42115D0   // swc1 f01,0x15D0(at)
+patch=1,EE,000814E0,word,03E00008   // jr ra
+patch=1,EE,000814E4,word,AC2415D4   // sw a0,0x15D4(at)
+patch=1,EE,00239DD4,word,0C020529   // jal 0x814a4
+patch=1,EE,00239DD8,word,44820800   // mtc1 v0,f01
+patch=1,EE,00239E40,word,0C020529   // jal 0x814a4
+patch=1,EE,00239E44,word,44820800   // mtc1 v0,f01
+patch=1,EE,00239EA4,word,0C020529   // jal 0x814a4
+patch=1,EE,00239EA8,word,44820800   // mtc1 v0,f01
+patch=1,EE,00239F18,word,0C020529   // jal 0x814a4
+patch=1,EE,00239F1C,word,44820800   // mtc1 v0,f01
+patch=1,EE,000814A4,word,468008A0   // cvt.s.w f02,f01
+patch=1,EE,000814A8,word,3C010008   // lui at,0x8
+patch=1,EE,000814AC,word,8C2115D4   // lw at,0x15D4(at)
+patch=1,EE,000814B0,word,14300003   // bne at,s0,0x814c0
+patch=1,EE,000814B4,word,3C010008   // lui at,0x8
+patch=1,EE,000814B8,word,C42315D0   // lwc1 f03,0x15D0(at)
+patch=1,EE,000814BC,word,46031080   // add.s f02,f02,f03
+patch=1,EE,000814C0,word,03E00008   // jr ra
+patch=1,EE,000814C4,word,00000000
+
+// Notices like "X joined the party!" (FUN_00285040, run every frame by the coroutines FUN_00220250 and FUN_0022c430) bob their
+// cursor by advancing an angle (+0x20) a quarter radian per update: an eighth at 60 FPS. Its y is rounded to a whole pixel
+// too: keep the error like the message window's cursor's.
+patch=1,EE,002850DC,word,0C020532   // jal 0x814c8
+patch=1,EE,002850F4,word,0C0203B0   // jal 0x80ec0
+patch=1,EE,002850F8,word,00000000
+patch=1,EE,00080EC0,word,3C030008   // lui v1,0x8
+patch=1,EE,00080EC4,word,906315FE   // lbu v1,0x15FE(v1)
+patch=1,EE,00080EC8,word,10600002   // beqz v1,0x80ed4
+patch=1,EE,00080ECC,word,3C033E80   // lui v1,0x3e80
+patch=1,EE,00080ED0,word,3C033E00   // lui v1,0x3e00
+patch=1,EE,00080ED4,word,03E00008   // jr ra
+patch=1,EE,00080ED8,word,44830000   // mtc1 v1,f0
+
+// The message window fades in and grows over 3 updates (+0x3c bits 14-16 count them, set by FUN_0027e5c0; alpha is 1 - 0.4n,
+// scale 1 - 0.1n) and fades out and shrinks over 3 (+0x3d bits 3-5, set by FUN_0027d090; alpha is 0.35n, and the scale is
+// multiplied by 0.9 each update). At 60 FPS count 5 and 6 updates with half steps (scale by sqrt(0.9)), and run them on the
+// frames the window skips too. The constants for the current speed are copied to 0x81030 from 0x81040 or 0x81050.
+patch=1,EE,00081040,word,3EB33333   // 0.35
+patch=1,EE,00081044,word,3F666666   // 0.9
+patch=1,EE,00081048,word,3ECCCCCD   // 0.4
+patch=1,EE,0008104C,word,3DCCCCCD   // 0.1
+patch=1,EE,00081050,word,3E333333   // 0.175
+patch=1,EE,00081054,word,3F72DCE9   // sqrt(0.9)
+patch=1,EE,00081058,word,3E4CCCCD   // 0.2
+patch=1,EE,0008105C,word,3D4CCCCD   // 0.05
+patch=1,EE,0027D128,word,08020418   // j 0x81060
+patch=1,EE,00081060,word,3C010008   // lui at,0x8
+patch=1,EE,00081064,word,902215F8   // lbu v0,0x15F8(at)
+patch=1,EE,00081068,word,00021900   // sll v1,v0,4
+patch=1,EE,0008106C,word,00611821   // addu v1,v1,at
+patch=1,EE,00081070,word,78631040   // lq v1,0x1040(v1)
+patch=1,EE,00081074,word,45000062   // bc1f 0x81200
+patch=1,EE,00081078,word,7C231030   // sq v1,0x1030(at)
+patch=1,EE,0008107C,word,10400060   // beqz v0,0x81200
+patch=1,EE,00081080,word,8E63003C   // lw v1,0x3c(s3)
+patch=1,EE,00081084,word,30620002   // andi v0,v1,2
+patch=1,EE,00081088,word,1440005D   // bnez v0,0x81200
+patch=1,EE,0008108C,word,00031AC2   // srl v1,v1,11
+patch=1,EE,00081090,word,3063003F   // andi v1,v1,0x3f
+patch=1,EE,00081094,word,1060005A   // beqz v1,0x81200
+patch=1,EE,00081098,word,00000000
+patch=1,EE,0008109C,word,0809F44C   // j 0x27d130
+patch=1,EE,000810A0,word,00000000
+patch=1,EE,0027D298,word,3C040008   // lui a0,0x8
+patch=1,EE,0027D2A0,word,C4801030   // lwc1 f0,0x1030(a0)
+patch=1,EE,0027D2A4,word,00000000
+patch=1,EE,0027D300,word,3C020008   // lui v0,0x8
+patch=1,EE,0027D308,word,C4401030   // lwc1 f0,0x1030(v0)
+patch=1,EE,0027D310,word,00000000
+patch=1,EE,0027D320,word,3C020008   // lui v0,0x8
+patch=1,EE,0027D324,word,C4541034   // lwc1 f20,0x1034(v0)
+patch=1,EE,0027D33C,word,00000000
+patch=1,EE,0027D6A0,word,3C040008   // lui a0,0x8
+patch=1,EE,0027D6A8,word,C4821038   // lwc1 f2,0x1038(a0)
+patch=1,EE,0027D6B8,word,00000000
+patch=1,EE,0027D710,word,3C040008   // lui a0,0x8
+patch=1,EE,0027D718,word,C4811038   // lwc1 f1,0x1038(a0)
+patch=1,EE,0027D728,word,00000000
+patch=1,EE,0027D768,word,3C020008   // lui v0,0x8
+patch=1,EE,0027D76C,word,C455103C   // lwc1 f21,0x103C(v0)
+patch=1,EE,0027D770,word,00000000
+// Start the fade out at 6 at 60 FPS...
+patch=1,EE,0027D094,word,30630002   // andi v1,v1,2
+patch=1,EE,0027D098,word,1460000A   // bnez v1,0x27d0c4
+patch=1,EE,0027D09C,word,9086003D   // lbu a2,0x3d(a0)
+patch=1,EE,0027D0A0,word,3C050008   // lui a1,0x8
+patch=1,EE,0027D0A4,word,90A515F8   // lbu a1,0x15F8(a1)
+patch=1,EE,0027D0A8,word,30C600C7   // andi a2,a2,0xc7
+patch=1,EE,0027D0AC,word,24A50001   // addiu a1,a1,1
+patch=1,EE,0027D0B0,word,00051900   // sll v1,a1,4
+patch=1,EE,0027D0B4,word,000528C0   // sll a1,a1,3
+patch=1,EE,0027D0B8,word,00651825   // or v1,v1,a1
+patch=1,EE,0027D0BC,word,00C33025   // or a2,a2,v1
+patch=1,EE,0027D0C0,word,A086003D   // sb a2,0x3d(a0)
+patch=1,EE,0027D0C4,word,03E00008   // jr ra
+patch=1,EE,0027D0C8,word,00000000
+// ...and the fade in at 5.
+patch=1,EE,0027E618,word,0C020429   // jal 0x810a4
+patch=1,EE,0027E674,word,0C020429   // jal 0x810a4
+patch=1,EE,000810A4,word,3C040008   // lui a0,0x8
+patch=1,EE,000810A8,word,908415F8   // lbu a0,0x15F8(a0)
+patch=1,EE,000810AC,word,3401C000   // ori at,zero,0xc000
+patch=1,EE,000810B0,word,000423C0   // sll a0,a0,15
+patch=1,EE,000810B4,word,03E00008   // jr ra
+patch=1,EE,000810B8,word,00812021   // addu a0,a0,at
+
+// The event script command that closes it (FUN_001dcb10, a coroutine) waits 5 frames for the fade out, then destroys it: wait
+// 10 at 60 FPS (s1 counts them).
+patch=1,EE,001DCB64,word,3C110008   // lui s1,0x8
+patch=1,EE,001DCB68,word,923115F8   // lbu s1,0x15F8(s1)
+patch=1,EE,001DCB6C,word,26310001   // addiu s1,s1,1
+patch=1,EE,001DCB70,word,00111080   // sll v0,s1,2
+patch=1,EE,001DCB74,word,02228821   // addu s1,s1,v0
+patch=1,EE,001DCB78,word,0C0548C7   // jal 0x15231c
+patch=1,EE,001DCB7C,word,2631FFFF   // addiu s1,s1,-1
+patch=1,EE,001DCB80,word,1620FFFD   // bnez s1,0x1dcb78
+patch=1,EE,001DCB84,word,00000000
+patch=1,EE,001DCB88,word,00000000
+
+// ...and the event script's "wait N frames" command (FUN_001d91f0), which waits N frames and then returns 0, which makes the
+// script yield until the next update, so it takes N+1 updates: at 60 FPS wait 2N+1 frames (s0 is the count, s2 counts).
+// Scripts that move actors in a loop with "wait 0" (e.g. elevators) would otherwise move them twice as fast.
+// Those loops get an actor's position (FUN_001d5990), add to it and set it (FUN_001d5870), so the actor would move every other
+// frame: when "wait 0" follows getting and setting the same actor's position in the same script (0x80030 is the actor, 0x80034
+// the script, 0x80038 is set if it was set, 0x80039 if it's actor 0, whose position is also stored in the field's +0x150),
+// set it halfway between the two positions (0x80000, 0x80010; the halfway one is 0x80020) for the first frame, and to where
+// the script set it when the wait ends (0x8003A is set until then, 0x8003C is the actor).
+// (0x81DC0-0x81FFF was the boot loader's stack, so caves don't go there. 0x80310-0x80DFF belongs to the 24 arte slots cheat, also
+// variables and tables that its build.py writes outside its pnach lines, and 0x80F00-0x80F44 to No damage.)
+patch=1,EE,001D94B8,word,08020010   // j 0x80040
+patch=1,EE,001D94BC,word,3C020008   // lui v0,0x8
+patch=1,EE,00080040,word,904215F8   // lbu v0,0x15F8(v0)
+patch=1,EE,00080044,word,3C010008   // lui at,0x8
+patch=1,EE,00080048,word,A020003A   // sb zero,0x3A(at)
+patch=1,EE,0008004C,word,90280038   // lbu t0,0x38(at)
+patch=1,EE,00080050,word,A0200038   // sb zero,0x38(at)
+patch=1,EE,00080054,word,8C240030   // lw a0,0x30(at)
+patch=1,EE,00080058,word,AC200030   // sw zero,0x30(at)
+patch=1,EE,0008005C,word,00508004   // sllv s0,s0,v0
+patch=1,EE,00080060,word,02028021   // addu s0,s0,v0
+patch=1,EE,00080064,word,16000003   // bnez s0,0x80074
+patch=1,EE,00080068,word,0000902D   // dmove s2,zero
+patch=1,EE,0008006C,word,0807653A   // j 0x1d94e8
+patch=1,EE,00080070,word,00000000
+patch=1,EE,00080074,word,1100001C   // beqz t0,0x800e8
+patch=1,EE,00080078,word,3A090001   // xori t1,s0,1
+patch=1,EE,0008007C,word,1520001A   // bnez t1,0x800e8
+patch=1,EE,00080080,word,8C290034   // lw t1,0x34(at)
+patch=1,EE,00080084,word,15310018   // bne t1,s1,0x800e8
+patch=1,EE,00080088,word,78290010   // lq t1,0x10(at)
+patch=1,EE,0008008C,word,7C290020   // sq t1,0x20(at)
+patch=1,EE,00080090,word,3C093F00   // lui t1,0x3f00
+patch=1,EE,00080094,word,44891000   // mtc1 t1,f2
+patch=1,EE,00080098,word,C4200000   // lwc1 f0,0x0(at)
+patch=1,EE,0008009C,word,C4210010   // lwc1 f1,0x10(at)
+patch=1,EE,000800A0,word,46010000   // add.s f0,f0,f1
+patch=1,EE,000800A4,word,46020002   // mul.s f0,f0,f2
+patch=1,EE,000800A8,word,E4200020   // swc1 f0,0x20(at)
+patch=1,EE,000800AC,word,C4200004   // lwc1 f0,0x4(at)
+patch=1,EE,000800B0,word,C4210014   // lwc1 f1,0x14(at)
+patch=1,EE,000800B4,word,46010000   // add.s f0,f0,f1
+patch=1,EE,000800B8,word,46020002   // mul.s f0,f0,f2
+patch=1,EE,000800BC,word,E4200024   // swc1 f0,0x24(at)
+patch=1,EE,000800C0,word,C4200008   // lwc1 f0,0x8(at)
+patch=1,EE,000800C4,word,C4210018   // lwc1 f1,0x18(at)
+patch=1,EE,000800C8,word,46010000   // add.s f0,f0,f1
+patch=1,EE,000800CC,word,46020002   // mul.s f0,f0,f2
+patch=1,EE,000800D0,word,E4200028   // swc1 f0,0x28(at)
+patch=1,EE,000800D4,word,24090001   // li t1,1
+patch=1,EE,000800D8,word,A029003A   // sb t1,0x3A(at)
+patch=1,EE,000800DC,word,AC24003C   // sw a0,0x3C(at)
+patch=1,EE,000800E0,word,0C020070   // jal 0x801c0
+patch=1,EE,000800E4,word,24250020   // addiu a1,at,0x20
+patch=1,EE,000800E8,word,08076531   // j 0x1d94c4
+patch=1,EE,000800EC,word,00000000
+// The end of the wait.
+patch=1,EE,001D94E8,word,0802003C   // j 0x800f0
+patch=1,EE,001D94EC,word,00000000
+patch=1,EE,000800F0,word,3C010008   // lui at,0x8
+patch=1,EE,000800F4,word,9028003A   // lbu t0,0x3A(at)
+patch=1,EE,000800F8,word,11000004   // beqz t0,0x8010c
+patch=1,EE,000800FC,word,A020003A   // sb zero,0x3A(at)
+patch=1,EE,00080100,word,8C24003C   // lw a0,0x3C(at)
+patch=1,EE,00080104,word,0C020070   // jal 0x801c0
+patch=1,EE,00080108,word,24250010   // addiu a1,at,0x10
+patch=1,EE,0008010C,word,0807657C   // j 0x1d95f0
+patch=1,EE,00080110,word,0000102D   // dmove v0,zero
+// Getting a position: keep the script, the actor and the position.
+patch=1,EE,001D5990,word,0802004C   // j 0x80130
+patch=1,EE,001D5994,word,00000000
+patch=1,EE,00080130,word,27BDFFB0   // addiu sp,sp,-0x50
+patch=1,EE,00080134,word,FFBF0030   // sd ra,0x30(sp)
+patch=1,EE,00080138,word,3C010008   // lui at,0x8
+patch=1,EE,0008013C,word,08075666   // j 0x1d5998
+patch=1,EE,00080140,word,AC240034   // sw a0,0x34(at)
+patch=1,EE,001D59D8,word,0C020054   // jal 0x80150
+patch=1,EE,00080150,word,27BDFFE0   // addiu sp,sp,-0x20
+patch=1,EE,00080154,word,FFBF0000   // sd ra,0(sp)
+patch=1,EE,00080158,word,AFA50010   // sw a1,0x10(sp)
+patch=1,EE,0008015C,word,3C010008   // lui at,0x8
+patch=1,EE,00080160,word,AC240030   // sw a0,0x30(at)
+patch=1,EE,00080164,word,0C06F2C8   // jal 0x1bcb20
+patch=1,EE,00080168,word,A0200038   // sb zero,0x38(at)
+patch=1,EE,0008016C,word,8FA50010   // lw a1,0x10(sp)
+patch=1,EE,00080170,word,78A80000   // lq t0,0(a1)
+patch=1,EE,00080174,word,3C010008   // lui at,0x8
+patch=1,EE,00080178,word,7C280000   // sq t0,0x0(at)
+patch=1,EE,0008017C,word,DFBF0000   // ld ra,0(sp)
+patch=1,EE,00080180,word,03E00008   // jr ra
+patch=1,EE,00080184,word,27BD0020   // addiu sp,sp,0x20
+// Setting a position: keep it if it's the same actor's.
+patch=1,EE,001D594C,word,0C020064   // jal 0x80190
+patch=1,EE,00080190,word,3C010008   // lui at,0x8
+patch=1,EE,00080194,word,8C280030   // lw t0,0x30(at)
+patch=1,EE,00080198,word,15040007   // bne t0,a0,0x801b8
+patch=1,EE,0008019C,word,00000000
+patch=1,EE,000801A0,word,78A80000   // lq t0,0(a1)
+patch=1,EE,000801A4,word,7C280010   // sq t0,0x10(at)
+patch=1,EE,000801A8,word,24080001   // li t0,1
+patch=1,EE,000801AC,word,A0280038   // sb t0,0x38(at)
+patch=1,EE,000801B0,word,2E080001   // sltiu t0,s0,1
+patch=1,EE,000801B4,word,A0280039   // sb t0,0x39(at)
+patch=1,EE,000801B8,word,0806F28C   // j 0x1bca30
+patch=1,EE,000801BC,word,00000000
+// Set the position of the actor a0 to the vector at a1, like FUN_001d5870.
+patch=1,EE,000801C0,word,27BDFFE0   // addiu sp,sp,-0x20
+patch=1,EE,000801C4,word,FFBF0000   // sd ra,0(sp)
+patch=1,EE,000801C8,word,AFA40010   // sw a0,0x10(sp)
+patch=1,EE,000801CC,word,0C06F32C   // jal 0x1bccb0
+patch=1,EE,000801D0,word,AFA50014   // sw a1,0x14(sp)
+patch=1,EE,000801D4,word,8FA40010   // lw a0,0x10(sp)
+patch=1,EE,000801D8,word,0C06F28C   // jal 0x1bca30
+patch=1,EE,000801DC,word,8FA50014   // lw a1,0x14(sp)
+patch=1,EE,000801E0,word,3C010008   // lui at,0x8
+patch=1,EE,000801E4,word,90280039   // lbu t0,0x39(at)
+patch=1,EE,000801E8,word,11000004   // beqz t0,0x801fc
+patch=1,EE,000801EC,word,8FA50014   // lw a1,0x14(sp)
+patch=1,EE,000801F0,word,78A80000   // lq t0,0(a1)
+patch=1,EE,000801F4,word,8F8286E0   // lw v0,-0x7920(gp)
+patch=1,EE,000801F8,word,7C480150   // sq t0,0x150(v0)
+patch=1,EE,000801FC,word,DFBF0000   // ld ra,0(sp)
+patch=1,EE,00080200,word,03E00008   // jr ra
+patch=1,EE,00080204,word,27BD0020   // addiu sp,sp,0x20
+
+// ...and pushing and pulling blocks (FUN_001ce400), which moves the player and the block with motion interpolators over 16
+// updates (+0x4c counts them down) and then snaps them to the grid: at 60 FPS count 32, or they snap back halfway.
+patch=1,EE,001CECCC,word,0C0206C4   // jal 0x81b10
+patch=1,EE,00081B10,word,3C010008   // lui at,0x8
+patch=1,EE,00081B14,word,902315F8   // lbu v1,0x15F8(at)
+patch=1,EE,00081B18,word,24630001   // addiu v1,v1,1
+patch=1,EE,00081B1C,word,03E00008   // jr ra
+patch=1,EE,00081B20,word,00031900   // sll v1,v1,4
+// The animation is switched 2 updates in (+0x4c is 14): 4 at 60 FPS (28).
+patch=1,EE,001CE80C,word,0C0206C9   // jal 0x81b24
+patch=1,EE,001CE810,word,00000000
+patch=1,EE,00081B24,word,3C010008   // lui at,0x8
+patch=1,EE,00081B28,word,902215F8   // lbu v0,0x15F8(at)
+patch=1,EE,00081B2C,word,10400002   // beqz v0,0x81b38
+patch=1,EE,00081B30,word,2402000E   // li v0,0xe
+patch=1,EE,00081B34,word,2402001C   // li v0,0x1c
+patch=1,EE,00081B38,word,14620003   // bne v1,v0,0x81b48
+patch=1,EE,00081B3C,word,00000000
+patch=1,EE,00081B40,word,03E00008   // jr ra
+patch=1,EE,00081B44,word,00000000
+patch=1,EE,00081B48,word,08073BB4   // j 0x1ceed0
+patch=1,EE,00081B4C,word,00000000
+
+// The world map (FUN_00168f00, a coroutine) steps its logic (FUN_0020cf20) once per update without a timestep: set 0x815FC
+// so that it runs at 60 FPS, and 0x815FA, which becomes 0x815F9 like 0x815FC becomes 0x815F8, to halve its steps below.
+// Its effects, map animation, motion interpolators (the camera) and 2D layers use the timesteps already halved above.
+patch=1,EE,00168FB8,word,0C0206D8   // jal 0x81b60
+patch=1,EE,00081B60,word,3C010008   // lui at,0x8
+patch=1,EE,00081B64,word,24020001   // li v0,1
+patch=1,EE,00081B68,word,A02215FA   // sb v0,0x15FA(at)
+patch=1,EE,00081B6C,word,080833C8   // j 0x20cf20
+patch=1,EE,00081B70,word,A02215FC   // sb v0,0x15FC(at)
+// Its states (handlers at 0x4aaec0, called through FUN_0012f560) other than walking (7), the menu (8) and the destination choice
+// (13) count updates in many places (e.g. the warps in FUN_0020ba00): at 60 FPS, run them on alternate updates (0x815E2 is the
+// toggle). The menu and the choice window already run at 60 FPS in the field.
+patch=1,EE,0020D188,word,0C020753   // jal 0x81d4c
+patch=1,EE,00081D4C,word,3C010008   // lui at,0x8
+patch=1,EE,00081D50,word,902215F9   // lbu v0,0x15F9(at)
+patch=1,EE,00081D54,word,1040000B   // beqz v0,0x81d84
+patch=1,EE,00081D58,word,24022180   // li v0,0x2180
+patch=1,EE,00081D5C,word,00A21006   // srlv v0,v0,a1
+patch=1,EE,00081D60,word,30420001   // andi v0,v0,1
+patch=1,EE,00081D64,word,14400007   // bnez v0,0x81d84
+patch=1,EE,00081D68,word,00000000
+patch=1,EE,00081D6C,word,902215E2   // lbu v0,0x15E2(at)
+patch=1,EE,00081D70,word,38420001   // xori v0,v0,1
+patch=1,EE,00081D74,word,14400003   // bnez v0,0x81d84
+patch=1,EE,00081D78,word,A02215E2   // sb v0,0x15E2(at)
+patch=1,EE,00081D7C,word,03E00008   // jr ra
+patch=1,EE,00081D80,word,00001021   // move v0,zero
+patch=1,EE,00081D84,word,0804BD58   // j 0x12f560
+patch=1,EE,00081D88,word,00000000
+// The destination choice (state 13, FUN_0020bf10) updates its choice window every update with a timestep of 1, so the cursor,
+// which moves while up or down is held (0x496ac8) after a 5-update move animation, moved twice as fast: at 60 FPS pass it 1 and
+// 0 on alternate updates like the field's windows (0x80300 is the toggle), collect the held buttons and presses (0x496ac8,
+// 0x496ad0) of skipped updates in 0x80304 and 0x80308, add them while it runs, and restore them afterwards.
+patch=1,EE,0020C0F8,word,0C020084   // jal 0x80210
+patch=1,EE,00080210,word,3C010008   // lui at,0x8
+patch=1,EE,00080214,word,902215F9   // lbu v0,0x15F9(at)
+patch=1,EE,00080218,word,10400020   // beqz v0,0x8029c
+patch=1,EE,0008021C,word,3C050049   // lui a1,0x49
+patch=1,EE,00080220,word,90220300   // lbu v0,0x300(at)
+patch=1,EE,00080224,word,38420001   // xori v0,v0,1
+patch=1,EE,00080228,word,A0220300   // sb v0,0x300(at)
+patch=1,EE,0008022C,word,8CA66AC8   // lw a2,0x6ac8(a1)
+patch=1,EE,00080230,word,8C270304   // lw a3,0x304(at)
+patch=1,EE,00080234,word,00E63825   // or a3,a3,a2
+patch=1,EE,00080238,word,8CA86AD0   // lw t0,0x6ad0(a1)
+patch=1,EE,0008023C,word,8C290308   // lw t1,0x308(at)
+patch=1,EE,00080240,word,01284825   // or t1,t1,t0
+patch=1,EE,00080244,word,14400004   // bnez v0,0x80258
+patch=1,EE,00080248,word,AC270304   // sw a3,0x304(at)
+patch=1,EE,0008024C,word,AC290308   // sw t1,0x308(at)
+patch=1,EE,00080250,word,03200008   // jr t9
+patch=1,EE,00080254,word,44806000   // mtc1 zero,f12
+patch=1,EE,00080258,word,ACA76AC8   // sw a3,0x6ac8(a1)
+patch=1,EE,0008025C,word,ACA96AD0   // sw t1,0x6ad0(a1)
+patch=1,EE,00080260,word,AC200304   // sw zero,0x304(at)
+patch=1,EE,00080264,word,AC200308   // sw zero,0x308(at)
+patch=1,EE,00080268,word,27BDFFF0   // addiu sp,sp,-0x10
+patch=1,EE,0008026C,word,AFBF0000   // sw ra,0(sp)
+patch=1,EE,00080270,word,AFA60004   // sw a2,4(sp)
+patch=1,EE,00080274,word,0320F809   // jalr t9
+patch=1,EE,00080278,word,AFA80008   // sw t0,8(sp)
+patch=1,EE,0008027C,word,8FA60004   // lw a2,4(sp)
+patch=1,EE,00080280,word,8FA80008   // lw t0,8(sp)
+patch=1,EE,00080284,word,3C050049   // lui a1,0x49
+patch=1,EE,00080288,word,ACA66AC8   // sw a2,0x6ac8(a1)
+patch=1,EE,0008028C,word,ACA86AD0   // sw t0,0x6ad0(a1)
+patch=1,EE,00080290,word,8FBF0000   // lw ra,0(sp)
+patch=1,EE,00080294,word,03E00008   // jr ra
+patch=1,EE,00080298,word,27BD0010   // addiu sp,sp,0x10
+patch=1,EE,0008029C,word,03200008   // jr t9
+patch=1,EE,000802A0,word,00000000   // nop
+// Models' animations (FUN_001c3ef0), which the world map passes a timestep of 1.
+patch=1,EE,001C3EF0,word,08020735   // j 0x81cd4
+patch=1,EE,001C3EF4,word,27BDFF60   // addiu sp,sp,-0xa0
+patch=1,EE,00081CD4,word,3C010008   // lui at,0x8
+patch=1,EE,00081CD8,word,902115F9   // lbu at,0x15F9(at)
+patch=1,EE,00081CDC,word,10200005   // beqz at,0x81cf4
+patch=1,EE,00081CE0,word,FFBF0050   // sd ra,0x50(sp)
+patch=1,EE,00081CE4,word,3C013F00   // lui at,0x3f00
+patch=1,EE,00081CE8,word,44810000   // mtc1 at,f0
+patch=1,EE,00081CEC,word,00000000
+patch=1,EE,00081CF0,word,46006302   // mul.s f12,f12,f0
+patch=1,EE,00081CF4,word,08070FBE   // j 0x1c3ef8
+patch=1,EE,00081CF8,word,00000000
+// Walking (FUN_0020a150) moves the player by the speed (+0x58) each update.
+patch=1,EE,0020A5F4,word,0802072B   // j 0x81cac
+patch=1,EE,00081CAC,word,3C010008   // lui at,0x8
+patch=1,EE,00081CB0,word,902115F9   // lbu at,0x15F9(at)
+patch=1,EE,00081CB4,word,10200004   // beqz at,0x81cc8
+patch=1,EE,00081CB8,word,3C013F00   // lui at,0x3f00
+patch=1,EE,00081CBC,word,44810000   // mtc1 at,f0
+patch=1,EE,00081CC0,word,00000000
+patch=1,EE,00081CC4,word,4600AD42   // mul.s f21,f21,f0
+patch=1,EE,00081CC8,word,3C023C23   // lui v0,0x3c23
+patch=1,EE,00081CCC,word,0808297E   // j 0x20a5f8
+patch=1,EE,00081CD0,word,00000000
+// The camera's yaw velocity (+0x70) accelerates and decays by 0.2 degrees per update and eases into its limit by a factor of 0.2
+// (FUN_0020a150, FUN_0020ccd0): at 60 FPS use 0.1 degrees and 1 - sqrt(0.8), and add half of it to the yaw (+0x6c).
+patch=1,EE,0020A96C,word,0C0206EC   // jal 0x81bb0
+patch=1,EE,0020A9A0,word,0C0206EC   // jal 0x81bb0
+patch=1,EE,0020A9DC,word,0C0206EC   // jal 0x81bb0
+patch=1,EE,0020AA68,word,0C0206EC   // jal 0x81bb0
+patch=1,EE,0020CD78,word,0C0206F3   // jal 0x81bcc
+patch=1,EE,0020AA0C,word,0C0206FA   // jal 0x81be8
+patch=1,EE,0020AA14,word,00000000
+patch=1,EE,0020AA40,word,0C0206FA   // jal 0x81be8
+patch=1,EE,0020CE0C,word,0C020703   // jal 0x81c0c
+patch=1,EE,00081BB0,word,3C020008   // lui v0,0x8
+patch=1,EE,00081BB4,word,904215F9   // lbu v0,0x15F9(v0)
+patch=1,EE,00081BB8,word,10400002   // beqz v0,0x81bc4
+patch=1,EE,00081BBC,word,3C023B64   // lui v0,0x3b64
+patch=1,EE,00081BC0,word,3C023AE4   // lui v0,0x3ae4
+patch=1,EE,00081BC4,word,03E00008   // jr ra
+patch=1,EE,00081BC8,word,3442C388   // ori v0,v0,0xc388
+patch=1,EE,00081BCC,word,3C030008   // lui v1,0x8
+patch=1,EE,00081BD0,word,906315F9   // lbu v1,0x15F9(v1)
+patch=1,EE,00081BD4,word,10600002   // beqz v1,0x81be0
+patch=1,EE,00081BD8,word,3C033B64   // lui v1,0x3b64
+patch=1,EE,00081BDC,word,3C033AE4   // lui v1,0x3ae4
+patch=1,EE,00081BE0,word,03E00008   // jr ra
+patch=1,EE,00081BE4,word,3463C388   // ori v1,v1,0xc388
+patch=1,EE,00081BE8,word,3C020008   // lui v0,0x8
+patch=1,EE,00081BEC,word,904215F9   // lbu v0,0x15F9(v0)
+patch=1,EE,00081BF0,word,10400004   // beqz v0,0x81c04
+patch=1,EE,00081BF4,word,3C023E4C   // lui v0,0x3e4c
+patch=1,EE,00081BF8,word,3C023DD8   // lui v0,0x3dd8
+patch=1,EE,00081BFC,word,03E00008   // jr ra
+patch=1,EE,00081C00,word,3442368F   // ori v0,v0,0x368f
+patch=1,EE,00081C04,word,03E00008   // jr ra
+patch=1,EE,00081C08,word,3442CCCD   // ori v0,v0,0xcccd
+patch=1,EE,00081C0C,word,C6010070   // lwc1 f1,0x70(s0)
+patch=1,EE,00081C10,word,3C030008   // lui v1,0x8
+patch=1,EE,00081C14,word,906315F9   // lbu v1,0x15F9(v1)
+patch=1,EE,00081C18,word,10600004   // beqz v1,0x81c2c
+patch=1,EE,00081C1C,word,3C033F00   // lui v1,0x3f00
+patch=1,EE,00081C20,word,44831000   // mtc1 v1,f2
+patch=1,EE,00081C24,word,00000000
+patch=1,EE,00081C28,word,46020842   // mul.s f1,f1,f2
+patch=1,EE,00081C2C,word,03E00008   // jr ra
+patch=1,EE,00081C30,word,00000000
+// The camera's pitch eases out of the terrain by 0.16 (gp-0x7de4) per update (FUN_00296310): 1 - sqrt(0.84) at 60 FPS.
+patch=1,EE,00296688,word,0C02070D   // jal 0x81c34
+patch=1,EE,00081C34,word,3C030008   // lui v1,0x8
+patch=1,EE,00081C38,word,906315F9   // lbu v1,0x15F9(v1)
+patch=1,EE,00081C3C,word,10600004   // beqz v1,0x81c50
+patch=1,EE,00081C40,word,C781821C   // lwc1 f1,-0x7de4(gp)
+patch=1,EE,00081C44,word,3C033DAA   // lui v1,0x3daa
+patch=1,EE,00081C48,word,3463FA1C   // ori v1,v1,0xfa1c
+patch=1,EE,00081C4C,word,44830800   // mtc1 v1,f1
+patch=1,EE,00081C50,word,03E00008   // jr ra
+patch=1,EE,00081C54,word,00000000
+// The clock of the locations' models (+0x11c) counts updates.
+patch=1,EE,0020D1F4,word,0C020716   // jal 0x81c58
+patch=1,EE,0020D1F8,word,00000000
+patch=1,EE,00081C58,word,3C010008   // lui at,0x8
+patch=1,EE,00081C5C,word,902115F9   // lbu at,0x15F9(at)
+patch=1,EE,00081C60,word,10200002   // beqz at,0x81c6c
+patch=1,EE,00081C64,word,3C033F80   // lui v1,0x3f80
+patch=1,EE,00081C68,word,3C033F00   // lui v1,0x3f00
+patch=1,EE,00081C6C,word,03E00008   // jr ra
+patch=1,EE,00081C70,word,44830000   // mtc1 v1,f0
+// The compass and the minimap (FUN_00214c30, FUN_00295c10) slide in and out in a number of updates: double it.
+patch=1,EE,00214C30,word,0802071D   // j 0x81c74
+patch=1,EE,00081C74,word,3C010008   // lui at,0x8
+patch=1,EE,00081C78,word,902115F9   // lbu at,0x15F9(at)
+patch=1,EE,00081C7C,word,10200002   // beqz at,0x81c88
+patch=1,EE,00081C80,word,84880000   // lh t0,0(a0)
+patch=1,EE,00081C84,word,00052840   // sll a1,a1,1
+patch=1,EE,00081C88,word,0808530E   // j 0x214c38
+patch=1,EE,00081C8C,word,00000000
+patch=1,EE,00295C10,word,08020724   // j 0x81c90
+patch=1,EE,00081C90,word,3C010008   // lui at,0x8
+patch=1,EE,00081C94,word,902115F9   // lbu at,0x15F9(at)
+patch=1,EE,00081C98,word,10200002   // beqz at,0x81ca4
+patch=1,EE,00081C9C,word,84880000   // lh t0,0(a0)
+patch=1,EE,00081CA0,word,00052840   // sll a1,a1,1
+patch=1,EE,00081CA4,word,080A5706   // j 0x295c18
+patch=1,EE,00081CA8,word,00000000
+// Ambient sounds (FUN_00241080) play after a random number of updates (+0x24): double it.
+patch=1,EE,0024135C,word,0C02074A   // jal 0x81d28
+patch=1,EE,00081D28,word,96020080   // lhu v0,0x80(s0)
+patch=1,EE,00081D2C,word,00431021   // addu v0,v0,v1
+patch=1,EE,00081D30,word,3C010008   // lui at,0x8
+patch=1,EE,00081D34,word,902115F9   // lbu at,0x15F9(at)
+patch=1,EE,00081D38,word,10200002   // beqz at,0x81d44
+patch=1,EE,00081D3C,word,00000000
+patch=1,EE,00081D40,word,00021040   // sll v0,v0,1
+patch=1,EE,00081D44,word,03E00008   // jr ra
+patch=1,EE,00081D48,word,00000000
+
+// The victory screen's update (FUN_00381e00) passes a timestep of 1 to everything it updates (the results window, the
+// characters' win poses, effects): pass 0.5, and set 0x815FD so that it runs at 60 FPS.
+patch=1,EE,00381E40,word,08020648   // j 0x81920
+patch=1,EE,00381E44,word,00000000
+patch=1,EE,00081920,word,3C010008   // lui at,0x8
+patch=1,EE,00081924,word,24020001   // li v0,1
+patch=1,EE,00081928,word,A02215FD   // sb v0,0x15FD(at)
+patch=1,EE,0008192C,word,3C023F00   // lui v0,0x3f00
+patch=1,EE,00081930,word,080E0792   // j 0x381e48
+patch=1,EE,00081934,word,44826000   // mtc1 v0,f12
+patch=1,EE,00381E50,word,3C023F00
+patch=1,EE,00381E60,word,3C023F00
+patch=1,EE,00381E70,word,3C023F00
+patch=1,EE,00381E80,word,3C023F00
+patch=1,EE,00381EA4,word,3C023F00
+patch=1,EE,00381ED4,word,3C023F00
+patch=1,EE,00381EE4,word,3C023F00
+
+// The battle's pause (state update FUN_00364c70) blends the "Pause" text's color back and forth by a step (1/15) times a
+// timestep of 1 per update (FUN_00366570): pass 0.5.
+patch=1,EE,00364CB4,word,3C023F00   // lui v0,0x3f00
+
+// Menu cursors (FUN_00365040) bob by advancing an angle 15 degrees per update: 7.5 at 60 FPS.
+patch=1,EE,0036512C,word,08020658   // j 0x81960
+patch=1,EE,00081960,word,3C030008   // lui v1,0x8
+patch=1,EE,00081964,word,906315FE   // lbu v1,0x15FE(v1)
+patch=1,EE,00081968,word,10600002   // beqz v1,0x81974
+patch=1,EE,0008196C,word,3C034170   // lui v1,0x4170
+patch=1,EE,00081970,word,3C0340F0   // lui v1,0x40f0
+patch=1,EE,00081974,word,080D944C   // j 0x365130
+patch=1,EE,00081978,word,00000000
+
+// The pad's key repeat (FUN_00152aa0) counts how long buttons are held in updates: at 60 FPS, on alternate updates
+// (0x815E4 and 0x815E5 are the toggles of the two pads) only report new presses and don't count.
+patch=1,EE,00152AA0,word,08020660   // j 0x81980
+patch=1,EE,00152AA4,word,00000000
+patch=1,EE,00081980,word,3C010008   // lui at,0x8
+patch=1,EE,00081984,word,902815FE   // lbu t0,0x15FE(at)
+patch=1,EE,00081988,word,11000015   // beqz t0,0x819e0
+patch=1,EE,0008198C,word,00044982   // srl t1,a0,6
+patch=1,EE,00081990,word,31290001   // andi t1,t1,1
+patch=1,EE,00081994,word,01214821   // addu t1,t1,at
+patch=1,EE,00081998,word,912A15E4   // lbu t2,0x15E4(t1)
+patch=1,EE,0008199C,word,394A0001   // xori t2,t2,1
+patch=1,EE,000819A0,word,1140000F   // beqz t2,0x819e0
+patch=1,EE,000819A4,word,A12A15E4   // sb t2,0x15E4(t1)
+patch=1,EE,000819A8,word,8C880110   // lw t0,0x110(a0)
+patch=1,EE,000819AC,word,AC880118   // sw t0,0x118(a0)
+patch=1,EE,000819B0,word,AC88011C   // sw t0,0x11c(a0)
+patch=1,EE,000819B4,word,00004821   // move t1,zero
+patch=1,EE,000819B8,word,248A0128   // addiu t2,a0,0x128
+patch=1,EE,000819BC,word,01285806   // srlv t3,t0,t1
+patch=1,EE,000819C0,word,316B0001   // andi t3,t3,1
+patch=1,EE,000819C4,word,11600002   // beqz t3,0x819d0
+patch=1,EE,000819C8,word,25290001   // addiu t1,t1,1
+patch=1,EE,000819CC,word,AD400000   // sw zero,0(t2)
+patch=1,EE,000819D0,word,292B0010   // slti t3,t1,0x10
+patch=1,EE,000819D4,word,1560FFF9   // bnez t3,0x819bc
+patch=1,EE,000819D8,word,254A0004   // addiu t2,t2,4
+patch=1,EE,000819DC,word,03E00008   // jr ra
+patch=1,EE,000819E0,word,00000000
+patch=1,EE,000819E4,word,0000582D   // dmove t3,zero
+patch=1,EE,000819E8,word,08054AAA   // j 0x152aa8
+patch=1,EE,000819EC,word,0000502D   // dmove t2,zero
+
+// 2D sprite animations (FUN_001efbe0, run every update by FUN_001ee060) advance 33.3 ms per update: 16.7 at 60 FPS.
+patch=1,EE,001EFE44,word,0802067C   // j 0x819f0
+patch=1,EE,000819F0,word,3C020008   // lui v0,0x8
+patch=1,EE,000819F4,word,904215FE   // lbu v0,0x15FE(v0)
+patch=1,EE,000819F8,word,10400002   // beqz v0,0x81a04
+patch=1,EE,000819FC,word,3C024205   // lui v0,0x4205
+patch=1,EE,00081A00,word,3C024185   // lui v0,0x4185
+patch=1,EE,00081A04,word,0807BF92   // j 0x1efe48
+patch=1,EE,00081A08,word,00000000
+
+// Menu tweens (FUN_00358100, e.g. windows fading in) count down by a step per update: half of it at 60 FPS.
+patch=1,EE,00358128,word,08020684   // j 0x81a10
+patch=1,EE,0035812C,word,C6000048   // lwc1 f0,0x48(s0)
+patch=1,EE,00081A10,word,3C010008   // lui at,0x8
+patch=1,EE,00081A14,word,902115FE   // lbu at,0x15FE(at)
+patch=1,EE,00081A18,word,10200004   // beqz at,0x81a2c
+patch=1,EE,00081A1C,word,3C013F00   // lui at,0x3f00
+patch=1,EE,00081A20,word,44811000   // mtc1 at,f2
+patch=1,EE,00081A24,word,00000000
+patch=1,EE,00081A28,word,46020002   // mul.s f0,f0,f2
+patch=1,EE,00081A2C,word,080D604C   // j 0x358130
+patch=1,EE,00081A30,word,46000801   // sub.s f0,f1,f0
+
+// The chapter title (FUN_0021ed50, a coroutine) waits and steps its animation once per update: at 60 FPS, double its waits
+// (30, 45 and 30 updates), and halve the line's growth (0.025), the text's fade in (alpha 4) and fade out (1/n, so 2/n).
+patch=1,EE,0021EDF4,word,080204C0   // j 0x81300
+patch=1,EE,00081300,word,26100001   // addiu s0,s0,0x1
+patch=1,EE,00081304,word,3C020008   // lui v0,0x8
+patch=1,EE,00081308,word,904215FE   // lbu v0,0x15FE(v0)
+patch=1,EE,0008130C,word,2401001E   // li at,0x1E
+patch=1,EE,00081310,word,00410804   // sllv at,at,v0
+patch=1,EE,00081314,word,0201102B   // sltu v0,s0,at
+patch=1,EE,00081318,word,08087B7F   // j 0x21edfc
+patch=1,EE,0008131C,word,00000000
+patch=1,EE,0021EE24,word,080204C8   // j 0x81320
+patch=1,EE,00081320,word,3C010008   // lui at,0x8
+patch=1,EE,00081324,word,902115FE   // lbu at,0x15FE(at)
+patch=1,EE,00081328,word,00010DC0   // sll at,at,23 (halve the float in a0)
+patch=1,EE,0008132C,word,00812023   // subu a0,a0,at
+patch=1,EE,00081330,word,44840000   // mtc1 a0,f0
+patch=1,EE,00081334,word,08087B8B   // j 0x21ee2c
+patch=1,EE,00081338,word,00000000
+patch=1,EE,0021EE94,word,080204D0   // j 0x81340
+patch=1,EE,00081340,word,3C010008   // lui at,0x8
+patch=1,EE,00081344,word,902115FE   // lbu at,0x15FE(at)
+patch=1,EE,00081348,word,02018023   // subu s0,s0,at
+patch=1,EE,0008134C,word,02018023   // subu s0,s0,at
+patch=1,EE,00081350,word,8E220010   // lw v0,0x10(s1)
+patch=1,EE,00081354,word,08087BA7   // j 0x21ee9c
+patch=1,EE,00081358,word,00000000
+patch=1,EE,0021EF3C,word,080204D8   // j 0x81360
+patch=1,EE,00081360,word,26100001   // addiu s0,s0,0x1
+patch=1,EE,00081364,word,3C020008   // lui v0,0x8
+patch=1,EE,00081368,word,904215FE   // lbu v0,0x15FE(v0)
+patch=1,EE,0008136C,word,2401002D   // li at,0x2D
+patch=1,EE,00081370,word,00410804   // sllv at,at,v0
+patch=1,EE,00081374,word,0201102B   // sltu v0,s0,at
+patch=1,EE,00081378,word,08087BD1   // j 0x21ef44
+patch=1,EE,0008137C,word,00000000
+patch=1,EE,0021EF6C,word,080204E0   // j 0x81380
+patch=1,EE,0021EF70,word,00000000
+patch=1,EE,00081380,word,3C023F80   // lui v0,0x3F80
+patch=1,EE,00081384,word,3C010008   // lui at,0x8
+patch=1,EE,00081388,word,902115FE   // lbu at,0x15FE(at)
+patch=1,EE,0008138C,word,00010DC0   // sll at,at,23 (double 1.0)
+patch=1,EE,00081390,word,00411021   // addu v0,v0,at
+patch=1,EE,00081394,word,44820800   // mtc1 v0,f1
+patch=1,EE,00081398,word,08087BDD   // j 0x21ef74
+patch=1,EE,0008139C,word,00000000
+patch=1,EE,0021EFE8,word,080204E8   // j 0x813a0
+patch=1,EE,000813A0,word,26100001   // addiu s0,s0,0x1
+patch=1,EE,000813A4,word,3C020008   // lui v0,0x8
+patch=1,EE,000813A8,word,904215FE   // lbu v0,0x15FE(v0)
+patch=1,EE,000813AC,word,2401001E   // li at,0x1E
+patch=1,EE,000813B0,word,00410804   // sllv at,at,v0
+patch=1,EE,000813B4,word,0201102B   // sltu v0,s0,at
+patch=1,EE,000813B8,word,08087BFC   // j 0x21eff0
+patch=1,EE,000813BC,word,00000000
+
+// The field's update (FUN_00167600) shows the area's name after entering it while a counter (+0x35) counts updates: it's
+// shown from 4 and hidden at 154. The counter is a byte, so at 60 FPS count on alternate updates (0x815E6 is the toggle).
+patch=1,EE,001679A4,word,08020430   // j 0x810c0
+patch=1,EE,001679A8,word,00000000
+patch=1,EE,000810C0,word,3C030008   // lui v1,0x8
+patch=1,EE,000810C4,word,906115F8   // lbu at,0x15F8(v1)
+patch=1,EE,000810C8,word,10200005   // beqz at,0x810e0
+patch=1,EE,000810CC,word,906115E6   // lbu at,0x15E6(v1)
+patch=1,EE,000810D0,word,38210001   // xori at,at,0x1
+patch=1,EE,000810D4,word,10200003   // beqz at,0x810e4
+patch=1,EE,000810D8,word,A06115E6   // sb at,0x15E6(v1)
+patch=1,EE,000810DC,word,00000000
+patch=1,EE,000810E0,word,24420001   // addiu v0,v0,0x1
+patch=1,EE,000810E4,word,08059E6B   // j 0x1679ac
+patch=1,EE,000810E8,word,A2820035   // sb v0,0x35(s4)
+
+// Fades of 2D layers (e.g. the area name shown when entering an area) step their alpha once per update (FUN_00283cb0), over the
+// number of updates (+0xc) their fade in (FUN_00283c70) or fade out (FUN_00283c90) is started with: at 60 FPS, start them with
+// 2n+1 (the fade takes n+1 updates).
+patch=1,EE,00283C70,word,24030001   // li v1,1
+patch=1,EE,00283C74,word,08020764   // j 0x81d90
+patch=1,EE,00283C78,word,00003021   // move a2,zero
+patch=1,EE,00283C90,word,24030003   // li v1,3
+patch=1,EE,00283C94,word,08020764   // j 0x81d90
+patch=1,EE,00283C98,word,3C063F80   // lui a2,0x3f80
+patch=1,EE,00081D90,word,3C010008   // lui at,0x8
+patch=1,EE,00081D94,word,902115FE   // lbu at,0x15FE(at)
+patch=1,EE,00081D98,word,24A50001   // addiu a1,a1,0x1
+patch=1,EE,00081D9C,word,00252804   // sllv a1,a1,at
+patch=1,EE,00081DA0,word,24A5FFFF   // addiu a1,a1,-0x1
+patch=1,EE,00081DA4,word,AC830008   // sw v1,0x8(a0)
+patch=1,EE,00081DA8,word,AC85000C   // sw a1,0xC(a0)
+patch=1,EE,00081DAC,word,8C830000   // lw v1,0x0(a0)
+patch=1,EE,00081DB0,word,03E00008   // jr ra
+patch=1,EE,00081DB4,word,AC66005C   // sw a2,0x5C(v1)
+
+// The sorcerer's ring's projectile (FUN_00229d20, called by the player's update FUN_001d1330) moves by its velocity (+0x100,
+// 0.375 per update), counts updates while charging (+4 bits 10-19), flying (+6 bits 4-15) and for its effects (+8, +9, +0xa),
+// and steps its effects with a timestep of 1 (f20, or a constant in the first two calls). At 60 FPS, step the effects by 0.5,
+// move by half the velocity, and count on alternate updates (0x815C0 is the toggle, 0x815C1 is the decrement): on the others,
+// return after updating the charge effect, which spawns effects at counts 10 and 0.
+patch=1,EE,00229D70,word,0C020380   // jal 0x80e00 (was mtc1 v0,f20)
+patch=1,EE,00229D88,word,4600A306   // mov.s f12,f20
+patch=1,EE,00229DAC,word,0C02038C   // jal 0x80e30
+patch=1,EE,00229DB0,word,00000000
+patch=1,EE,00229E08,word,4600A306   // mov.s f12,f20
+patch=1,EE,00229E18,word,0C020391   // jal 0x80e44
+patch=1,EE,00229E1C,word,00000000
+patch=1,EE,0022A004,word,0C020396   // jal 0x80e58
+patch=1,EE,0022A438,word,0C02039E   // jal 0x80e78
+patch=1,EE,0022A48C,word,0C0203A4   // jal 0x80e90
+patch=1,EE,00080E00,word,3C010008   // lui at,0x8
+patch=1,EE,00080E04,word,902315F8   // lbu v1,0x15F8(at)
+patch=1,EE,00080E08,word,3C023F80   // lui v0,0x3f80
+patch=1,EE,00080E0C,word,10600005   // beqz v1,0x80e24
+patch=1,EE,00080E10,word,24080001   // li t0,1
+patch=1,EE,00080E14,word,902815C0   // lbu t0,0x15C0(at)
+patch=1,EE,00080E18,word,39080001   // xori t0,t0,1
+patch=1,EE,00080E1C,word,A02815C0   // sb t0,0x15C0(at)
+patch=1,EE,00080E20,word,3C023F00   // lui v0,0x3f00
+patch=1,EE,00080E24,word,A02815C1   // sb t0,0x15C1(at)
+patch=1,EE,00080E28,word,03E00008   // jr ra
+patch=1,EE,00080E2C,word,4482A000   // mtc1 v0,f20
+// +8/+9
+patch=1,EE,00080E30,word,90830008   // lbu v1,0x8(a0)
+patch=1,EE,00080E34,word,3C010008   // lui at,0x8
+patch=1,EE,00080E38,word,902115C1   // lbu at,0x15C1(at)
+patch=1,EE,00080E3C,word,03E00008   // jr ra
+patch=1,EE,00080E40,word,00611823   // subu v1,v1,at
+// +0xa
+patch=1,EE,00080E44,word,9282000A   // lbu v0,0xA(s4)
+patch=1,EE,00080E48,word,3C010008   // lui at,0x8
+patch=1,EE,00080E4C,word,902115C1   // lbu at,0x15C1(at)
+patch=1,EE,00080E50,word,03E00008   // jr ra
+patch=1,EE,00080E54,word,00411023   // subu v0,v0,at
+// Charging (v0 is already decremented)
+patch=1,EE,00080E58,word,3C010008   // lui at,0x8
+patch=1,EE,00080E5C,word,902115C1   // lbu at,0x15C1(at)
+patch=1,EE,00080E60,word,14200003   // bnez at,0x80e70
+patch=1,EE,00080E64,word,00000000
+patch=1,EE,00080E68,word,0808A8E8   // j 0x22a3a0 (return -1)
+patch=1,EE,00080E6C,word,00000000
+patch=1,EE,00080E70,word,03E00008   // jr ra
+patch=1,EE,00080E74,word,8E850004   // lw a1,0x4(s4)
+// Flying (v1 is already decremented)
+patch=1,EE,00080E78,word,3C010008   // lui at,0x8
+patch=1,EE,00080E7C,word,902115C1   // lbu at,0x15C1(at)
+patch=1,EE,00080E80,word,24630001   // addiu v1,v1,1
+patch=1,EE,00080E84,word,00611823   // subu v1,v1,at
+patch=1,EE,00080E88,word,03E00008   // jr ra
+patch=1,EE,00080E8C,word,30630FFF   // andi v1,v1,0xfff
+// Velocity
+patch=1,EE,00080E90,word,D8420000   // lqc2 vf02,0x0(v0)
+patch=1,EE,00080E94,word,4401A000   // mfc1 at,f20
+patch=1,EE,00080E98,word,48A12000   // qmtc2 at,vf04
+patch=1,EE,00080E9C,word,03E00008   // jr ra
+patch=1,EE,00080EA0,word,4BC41098   // vmulx.xyz vf02,vf02,vf04x
+
+// Increase FPS if in battle, in the victory screen, or if the field or the world map updated this frame, and set 0x815FE if so
+patch=1,EE,001393F4,word,08020540
+patch=1,EE,00081500,word,9383848C
+patch=1,EE,00081504,word,3C0C0049
+patch=1,EE,00081508,word,8D8C7078
+patch=1,EE,0008150C,word,3C0D0008
+patch=1,EE,00081510,word,91AE15FC
+patch=1,EE,00081514,word,A1A015FC
+patch=1,EE,00081518,word,A1AE15F8
+patch=1,EE,0008151C,word,018E6025
+patch=1,EE,00081520,word,080206DD   // j 0x81b74
+patch=1,EE,00081524,word,00000000
+patch=1,EE,00081B74,word,91AF15FA   // lbu t7,0x15FA(t5)
+patch=1,EE,00081B78,word,A1A015FA   // sb zero,0x15FA(t5)
+patch=1,EE,00081B7C,word,A1AF15F9   // sb t7,0x15F9(t5)
+patch=1,EE,00081B80,word,91AE15FD   // lbu t6,0x15FD(t5)
+patch=1,EE,00081B84,word,0802054A   // j 0x81528
+patch=1,EE,00081B88,word,A1A015FD   // sb zero,0x15FD(t5)
+patch=1,EE,00081528,word,018E6025   // or t4,t4,t6
+patch=1,EE,0008152C,word,000C702B   // sltu t6,zero,t4
+patch=1,EE,00081530,word,15800003   // bnez t4,0x81540
+patch=1,EE,00081534,word,A1AE15FE   // sb t6,0x15FE(t5)
+patch=1,EE,00081538,word,0804E4FE   // j 0x1393f8
+patch=1,EE,0008153C,word,00000000
+patch=1,EE,00081540,word,0804E500   // j 0x139400
+patch=1,EE,00081544,word,00000000
+
+// Menus (FUN_0021f160, a coroutine) cover the screen with an opaque background, but the field is still drawn under them
+// every frame: at 60 FPS that took over a field's time on the EE and made PCSX2's GS thread fall behind (thousands of
+// draws). The menu's loop runs before the field each frame: set 0x811F0 before it draws and clear it when the loop ends,
+// and skip the field's draw (FUN_001eaa70) while it's set.
+patch=1,EE,001EAA7C,word,08020440   // j 0x81100
+patch=1,EE,001EAA80,word,00000000
+patch=1,EE,00081100,word,90830028   // lbu v1,0x28(a0)
+patch=1,EE,00081104,word,3C010008   // lui at,0x8
+patch=1,EE,00081108,word,902111F0   // lbu at,0x11F0(at)
+patch=1,EE,0008110C,word,0001180B   // movn v1,zero,at
+patch=1,EE,00081110,word,10600003   // beqz v1,0x81120
+patch=1,EE,00081114,word,0080802D   // dmove s0,a0
+patch=1,EE,00081118,word,0807AAA4   // j 0x1eaa90
+patch=1,EE,0008111C,word,00000000
+patch=1,EE,00081120,word,0807AAA2   // j 0x1eaa88
+patch=1,EE,00081124,word,00000000
+patch=1,EE,0021F3F8,word,0802044C   // j 0x81130
+patch=1,EE,0021F3FC,word,00000000
+patch=1,EE,00081130,word,24190001   // li t9,1
+patch=1,EE,00081134,word,3C010008   // lui at,0x8
+patch=1,EE,00081138,word,A03911F0   // sb t9,0x11F0(at)
+patch=1,EE,0008113C,word,8E990000   // lw t9,0(s4)
+patch=1,EE,00081140,word,08087D00   // j 0x21f400
+patch=1,EE,00081144,word,8F390038   // lw t9,0x38(t9)
+patch=1,EE,0021F42C,word,08020454   // j 0x81150
+patch=1,EE,0021F430,word,00000000
+patch=1,EE,00081150,word,3C010008   // lui at,0x8
+patch=1,EE,00081154,word,A02011F0   // sb zero,0x11F0(at)
+patch=1,EE,00081158,word,8E590000   // lw t9,0(s2)
+patch=1,EE,0008115C,word,08087D0D   // j 0x21f434
+patch=1,EE,00081160,word,8F39002C   // lw t9,0x2c(t9)
+
+// Likewise in battles: the battle's loop (FUN_00336080) draws the battle under the menu's submenus (artes, items...), whose
+// background is opaque once the battle menu (+0x54 of the battle's main state, whose vtable is 0x3da0e0) has opened one (+0x74),
+// while the command menu shows the battle. Skip the draw then.
+patch=1,EE,00336234,word,0C02045C   // jal 0x81170 (was jalr t9)
+patch=1,EE,00081170,word,8E080014   // lw t0,0x14(s0)
+patch=1,EE,00081174,word,3C09003D   // lui t1,0x3d
+patch=1,EE,00081178,word,3529A0E0   // ori t1,t1,-0x5f20
+patch=1,EE,0008117C,word,8D0A0000   // lw t2,0(t0)
+patch=1,EE,00081180,word,15490007   // bne t2,t1,0x811a0
+patch=1,EE,00081184,word,00000000
+patch=1,EE,00081188,word,8D080054   // lw t0,0x54(t0)
+patch=1,EE,0008118C,word,11000004   // beqz t0,0x811a0
+patch=1,EE,00081190,word,00000000
+patch=1,EE,00081194,word,8D080074   // lw t0,0x74(t0)
+patch=1,EE,00081198,word,15000003   // bnez t0,0x811a8
+patch=1,EE,0008119C,word,00000000
+patch=1,EE,000811A0,word,03200008   // jr t9 (draw)
+patch=1,EE,000811A4,word,00000000
+patch=1,EE,000811A8,word,03E00008   // jr ra (skip)
+patch=1,EE,000811AC,word,00000000
+
+// The play time and the time since boot (0x4a7e04, 0x4a7e08; FUN_001f96c0) tick a second every 30 updates (the update counter at gp-0x7a6c), which at 60 FPS is half a
+// second. Count vsyncs instead in 0x813C0, which FUN_001392d0 (sceGsSyncV, which the frame waits on) increments, and tick
+// every 60 of them.
+patch=1,EE,001392E0,word,080204F1   // j 0x813c4 (was sb v0,-0x7b74(gp))
+patch=1,EE,000813C4,word,A382848C   // sb v0,-0x7b74(gp)
+patch=1,EE,000813C8,word,3C010008   // lui at,0x8
+patch=1,EE,000813CC,word,8C2313C0   // lw v1,0x13c0(at)
+patch=1,EE,000813D0,word,24630001   // addiu v1,v1,1
+patch=1,EE,000813D4,word,0804E4B9   // j 0x1392e4
+patch=1,EE,000813D8,word,AC2313C0   // sw v1,0x13c0(at)
+patch=1,EE,001F96CC,word,0C0204F7   // jal 0x813dc (was jal 0x1516a0)
+patch=1,EE,000813DC,word,3C020008   // lui v0,0x8
+patch=1,EE,000813E0,word,03E00008   // jr ra
+patch=1,EE,000813E4,word,8C4213C0   // lw v0,0x13c0(v0)
+patch=1,EE,001F96E0,word,2C61003C   // sltiu at,v1,60
+
+[24 arte slots]
+description=Arte menu: left/right for pages 2-4 (L2, R2, L2+R2). Shortcuts are on the right stick.
+// Each character has a 0x54-byte struct at 0x4A7E4C + id * 0x54 (id 1-8; pointed to by the objects at 0x4E8C00[id]).
+// +0x36..+0x40 are six u16 slots, (arte owner id << 8) | (arte index + 1), 0 = empty:
+//   slot 0 X, slot 1 up+X, slot 2 left/right+X, slot 3 down+X, slot 4 R2 shortcut, slot 5 L2 shortcut,
+// and +0x42/+0x43 are the user (owner id) of the slot 4/5 shortcut, 0 = none. Everything reads and writes them through
+// FUN_0028e6a0 (get slot), FUN_0028e720 (set), FUN_0028e7a0 (clear), FUN_0028e830 (get user) and FUN_0028e870 (set user),
+// which take the character object (a pointer to the struct pointer) and the slot.
+//
+// When a battle starts or the menu opened from a battle closes, FUN_00367e40/FUN_00369040 copy them to the battle actor:
+// actor+4 is the character id, actor+0xAB8.. the arte index per direction (neutral, left/right, up, down), and
+// actor+0xAA0/+0xAAC the L2/R2 shortcut as (enabled, arte index, user id) words. With B = actor+0x598, FUN_0037c3c0 starts
+// the arte at B+0x520[direction] while X is held in semi-auto control mode (FUN_002a1360 is its copy for manual), and
+// FUN_002d38f0 starts the shortcut at B+0x508 (L2) or B+0x514 (R2) when L2 or R2 is pressed. Both read the pad through FUN_00152ff0 (held) and FUN_00153010 (pressed) of the pad struct at
+// 0x4969c0 + port * 0x1C0, which also has the analog sticks as floats (+0x168 RX, +0x16C RY, -1 = up).
+//
+// Pages 2-4
+// ---------
+// Pages 2-4 (L2, R2, L2+R2) are stored in the same format as the struct's +0x36..+0x43 in 16 bytes per page at
+// 0x4A8A10 + (id * 3 + page - 1) * 16. That's the unused tail of the 0x800-byte array of script variables at 0x4A88B0,
+// whose variable table (0x14B7E50) only uses bits 0-2815 (up to 0x4A8A0F), so the slots are saved with the game.
+//
+// The menu: left/right changes the page (0x80690); while it isn't 0, the slot accessors are redirected to the page's
+// storage, so the menu's display and assignment code work unchanged. The row icons are re-laid out per page from a table.
+// The page goes back to 0 when the menu is left or destroyed.
+//
+// Battle: L2/R2 held select the page; on pages 2-4 a held direction counts as X. The shortcuts are triggered by the right
+// stick (up = the old L2 slot, down = the old R2 slot) instead of L2/R2.
+
+patch=1,EE,0028E6A0,word,080201A8   // j 0x806a0
+patch=1,EE,0028E6A4,word,00000000   // nop
+patch=1,EE,0028E720,word,080201BF   // j 0x806fc
+patch=1,EE,0028E724,word,00000000   // nop
+patch=1,EE,0028E7A0,word,080201D6   // j 0x80758
+patch=1,EE,0028E7A4,word,00000000   // nop
+patch=1,EE,0028E830,word,080201ED   // j 0x807b4
+patch=1,EE,0028E834,word,00000000   // nop
+patch=1,EE,0028E870,word,08020205   // j 0x80814
+patch=1,EE,0028E874,word,00000000   // nop
+patch=1,EE,00152E98,word,0C02021D   // jal 0x80874
+patch=1,EE,0037C430,word,0C020238   // jal 0x808e0
+patch=1,EE,0037C434,word,00000000   // nop
+patch=1,EE,0037C470,word,0C020242   // jal 0x80908
+patch=1,EE,0037C474,word,00000000   // nop
+patch=1,EE,002A13BC,word,0C020238   // jal 0x808e0
+patch=1,EE,002A13C0,word,00000000   // nop
+patch=1,EE,002A13FC,word,0C020260   // jal 0x80980
+patch=1,EE,002A1400,word,00000000   // nop
+patch=1,EE,002D393C,word,0C020281   // jal 0x80a04
+patch=1,EE,002D3940,word,00000000   // nop
+patch=1,EE,002D3968,word,0C02028C   // jal 0x80a30
+patch=1,EE,0031A3E8,word,0C0202B2   // jal 0x80ac8
+patch=1,EE,0031A3EC,word,0040A02D   // daddu s4,v0,zero
+patch=1,EE,0031A448,word,0C0202B7   // jal 0x80adc
+patch=1,EE,0031A44C,word,0040A02D   // daddu s4,v0,zero
+patch=1,EE,0031A4A8,word,0C0202BC   // jal 0x80af0
+patch=1,EE,0031A4AC,word,0040A02D   // daddu s4,v0,zero
+patch=1,EE,0031A6F4,word,0C0202C1   // jal 0x80b04
+patch=1,EE,0031AA68,word,0C0202E6   // jal 0x80b98
+patch=1,EE,0031B074,word,080202EB   // j 0x80bac
+patch=1,EE,0031B078,word,27A3003D   // addiu v1,sp,0x3D
+patch=1,EE,0031B138,word,0C0202FC   // jal 0x80bf0
+patch=1,EE,0031B13C,word,00000000   // nop
+patch=1,EE,0031A198,word,0C020306   // jal 0x80c18
+
+// Constants: "default", battle direction -> slot, and the menu layout [page][row][sprite] (id, x, y, 0). The arte button icon is sprite 0x214 (0x215 in the Japanese version).
+patch=1,EE,00080320,word,61666564
+patch=1,EE,00080324,word,00746C75
+patch=1,EE,00080328,word,03010200
+patch=1,EE,00080390,word,000D021F
+patch=1,EE,00080394,word,0000FFFB
+patch=1,EE,00080398,word,0020021E
+patch=1,EE,0008039C,word,0000FFF7
+patch=1,EE,000803A0,word,002D0214
+patch=1,EE,000803A4,word,0000FFFB
+patch=1,EE,000803A8,word,00000000
+patch=1,EE,000803AC,word,00000000
+patch=1,EE,000803B0,word,000D021C
+patch=1,EE,000803B4,word,0000FFFB
+patch=1,EE,000803B8,word,0020021E
+patch=1,EE,000803BC,word,0000FFF7
+patch=1,EE,000803C0,word,002D0214
+patch=1,EE,000803C4,word,0000FFFB
+patch=1,EE,000803C8,word,00000000
+patch=1,EE,000803CC,word,00000000
+patch=1,EE,000803D0,word,000D021D
+patch=1,EE,000803D4,word,0000FFFB
+patch=1,EE,000803D8,word,0020021E
+patch=1,EE,000803DC,word,0000FFF7
+patch=1,EE,000803E0,word,002D0214
+patch=1,EE,000803E4,word,0000FFFB
+patch=1,EE,000803E8,word,00000000
+patch=1,EE,000803EC,word,00000000
+patch=1,EE,000803F0,word,000D021B
+patch=1,EE,000803F4,word,0000FFFB
+patch=1,EE,000803F8,word,0020021E
+patch=1,EE,000803FC,word,0000FFF7
+patch=1,EE,00080400,word,002D0214
+patch=1,EE,00080404,word,0000FFFB
+patch=1,EE,00080408,word,00000000
+patch=1,EE,0008040C,word,00000000
+patch=1,EE,00080410,word,000E024B
+patch=1,EE,00080414,word,0000FFF0
+patch=1,EE,00080418,word,0026021C
+patch=1,EE,0008041C,word,0000FFF2
+patch=1,EE,00080420,word,00000000
+patch=1,EE,00080424,word,00000000
+patch=1,EE,00080428,word,00000000
+patch=1,EE,0008042C,word,00000000
+patch=1,EE,00080430,word,000E024B
+patch=1,EE,00080434,word,0000FFF0
+patch=1,EE,00080438,word,0026021D
+patch=1,EE,0008043C,word,0000FFF2
+patch=1,EE,00080440,word,00000000
+patch=1,EE,00080444,word,00000000
+patch=1,EE,00080448,word,00000000
+patch=1,EE,0008044C,word,00000000
+patch=1,EE,00080450,word,000C021A
+patch=1,EE,00080454,word,0000FFFB
+patch=1,EE,00080458,word,0020021E
+patch=1,EE,0008045C,word,0000FFF7
+patch=1,EE,00080460,word,002D0214
+patch=1,EE,00080464,word,0000FFFB
+patch=1,EE,00080468,word,00000000
+patch=1,EE,0008046C,word,00000000
+patch=1,EE,00080470,word,000C021A
+patch=1,EE,00080474,word,0000FFFB
+patch=1,EE,00080478,word,0020021E
+patch=1,EE,0008047C,word,0000FFF7
+patch=1,EE,00080480,word,002D021C
+patch=1,EE,00080484,word,0000FFFB
+patch=1,EE,00080488,word,00000000
+patch=1,EE,0008048C,word,00000000
+patch=1,EE,00080490,word,000C021A
+patch=1,EE,00080494,word,0000FFFB
+patch=1,EE,00080498,word,0020021E
+patch=1,EE,0008049C,word,0000FFF7
+patch=1,EE,000804A0,word,002D021D
+patch=1,EE,000804A4,word,0000FFFB
+patch=1,EE,000804A8,word,00000000
+patch=1,EE,000804AC,word,00000000
+patch=1,EE,000804B0,word,000C021A
+patch=1,EE,000804B4,word,0000FFFB
+patch=1,EE,000804B8,word,0020021E
+patch=1,EE,000804BC,word,0000FFF7
+patch=1,EE,000804C0,word,002D021B
+patch=1,EE,000804C4,word,0000FFFB
+patch=1,EE,000804C8,word,00000000
+patch=1,EE,000804CC,word,00000000
+patch=1,EE,000804D0,word,000E021A
+patch=1,EE,000804D4,word,0000FFFB
+patch=1,EE,000804D8,word,0023021E
+patch=1,EE,000804DC,word,0000FFF7
+patch=1,EE,000804E0,word,000E024B
+patch=1,EE,000804E4,word,0000FFE8
+patch=1,EE,000804E8,word,0026021C
+patch=1,EE,000804EC,word,0000FFEA
+patch=1,EE,000804F0,word,000E021A
+patch=1,EE,000804F4,word,0000FFFB
+patch=1,EE,000804F8,word,0023021E
+patch=1,EE,000804FC,word,0000FFF7
+patch=1,EE,00080500,word,000E024B
+patch=1,EE,00080504,word,0000FFE8
+patch=1,EE,00080508,word,0026021D
+patch=1,EE,0008050C,word,0000FFEA
+patch=1,EE,00080510,word,000C0219
+patch=1,EE,00080514,word,0000FFFB
+patch=1,EE,00080518,word,0020021E
+patch=1,EE,0008051C,word,0000FFF7
+patch=1,EE,00080520,word,002D0214
+patch=1,EE,00080524,word,0000FFFB
+patch=1,EE,00080528,word,00000000
+patch=1,EE,0008052C,word,00000000
+patch=1,EE,00080530,word,000C0219
+patch=1,EE,00080534,word,0000FFFB
+patch=1,EE,00080538,word,0020021E
+patch=1,EE,0008053C,word,0000FFF7
+patch=1,EE,00080540,word,002D021C
+patch=1,EE,00080544,word,0000FFFB
+patch=1,EE,00080548,word,00000000
+patch=1,EE,0008054C,word,00000000
+patch=1,EE,00080550,word,000C0219
+patch=1,EE,00080554,word,0000FFFB
+patch=1,EE,00080558,word,0020021E
+patch=1,EE,0008055C,word,0000FFF7
+patch=1,EE,00080560,word,002D021D
+patch=1,EE,00080564,word,0000FFFB
+patch=1,EE,00080568,word,00000000
+patch=1,EE,0008056C,word,00000000
+patch=1,EE,00080570,word,000C0219
+patch=1,EE,00080574,word,0000FFFB
+patch=1,EE,00080578,word,0020021E
+patch=1,EE,0008057C,word,0000FFF7
+patch=1,EE,00080580,word,002D021B
+patch=1,EE,00080584,word,0000FFFB
+patch=1,EE,00080588,word,00000000
+patch=1,EE,0008058C,word,00000000
+patch=1,EE,00080590,word,000E0219
+patch=1,EE,00080594,word,0000FFFB
+patch=1,EE,00080598,word,0023021E
+patch=1,EE,0008059C,word,0000FFF7
+patch=1,EE,000805A0,word,000E024B
+patch=1,EE,000805A4,word,0000FFE8
+patch=1,EE,000805A8,word,0026021C
+patch=1,EE,000805AC,word,0000FFEA
+patch=1,EE,000805B0,word,000E0219
+patch=1,EE,000805B4,word,0000FFFB
+patch=1,EE,000805B8,word,0023021E
+patch=1,EE,000805BC,word,0000FFF7
+patch=1,EE,000805C0,word,000E024B
+patch=1,EE,000805C4,word,0000FFE8
+patch=1,EE,000805C8,word,0026021D
+patch=1,EE,000805CC,word,0000FFEA
+patch=1,EE,000805D0,word,000C021A
+patch=1,EE,000805D4,word,0000FFFB
+patch=1,EE,000805D8,word,001E0219
+patch=1,EE,000805DC,word,0000FFFB
+patch=1,EE,000805E0,word,00310214
+patch=1,EE,000805E4,word,0000FFFB
+patch=1,EE,000805E8,word,00000000
+patch=1,EE,000805EC,word,00000000
+patch=1,EE,000805F0,word,000C021A
+patch=1,EE,000805F4,word,0000FFFB
+patch=1,EE,000805F8,word,001E0219
+patch=1,EE,000805FC,word,0000FFFB
+patch=1,EE,00080600,word,0031021C
+patch=1,EE,00080604,word,0000FFFB
+patch=1,EE,00080608,word,00000000
+patch=1,EE,0008060C,word,00000000
+patch=1,EE,00080610,word,000C021A
+patch=1,EE,00080614,word,0000FFFB
+patch=1,EE,00080618,word,001E0219
+patch=1,EE,0008061C,word,0000FFFB
+patch=1,EE,00080620,word,0031021D
+patch=1,EE,00080624,word,0000FFFB
+patch=1,EE,00080628,word,00000000
+patch=1,EE,0008062C,word,00000000
+patch=1,EE,00080630,word,000C021A
+patch=1,EE,00080634,word,0000FFFB
+patch=1,EE,00080638,word,001E0219
+patch=1,EE,0008063C,word,0000FFFB
+patch=1,EE,00080640,word,0031021B
+patch=1,EE,00080644,word,0000FFFB
+patch=1,EE,00080648,word,00000000
+patch=1,EE,0008064C,word,00000000
+patch=1,EE,00080650,word,000E021A
+patch=1,EE,00080654,word,0000FFFB
+patch=1,EE,00080658,word,00220219
+patch=1,EE,0008065C,word,0000FFFB
+patch=1,EE,00080660,word,000E024B
+patch=1,EE,00080664,word,0000FFE8
+patch=1,EE,00080668,word,0026021C
+patch=1,EE,0008066C,word,0000FFEA
+patch=1,EE,00080670,word,000E021A
+patch=1,EE,00080674,word,0000FFFB
+patch=1,EE,00080678,word,00220219
+patch=1,EE,0008067C,word,0000FFFB
+patch=1,EE,00080680,word,000E024B
+patch=1,EE,00080684,word,0000FFE8
+patch=1,EE,00080688,word,0026021D
+patch=1,EE,0008068C,word,0000FFEA
+
+// ACC_GET
+patch=1,EE,000806A0,word,3C080008   // lui t0,0x8
+patch=1,EE,000806A4,word,91090690   // lbu t1,0x690(t0)
+patch=1,EE,000806A8,word,1120000D   // beqz t1,0x806e0
+patch=1,EE,000806AC,word,00000000   // nop
+patch=1,EE,000806B0,word,8C8A0000   // lw t2,0(a0)
+patch=1,EE,000806B4,word,8D4A0000   // lw t2,0(t2)
+patch=1,EE,000806B8,word,000A5840   // sll t3,t2,1
+patch=1,EE,000806BC,word,014B5021   // addu t2,t2,t3
+patch=1,EE,000806C0,word,01495021   // addu t2,t2,t1
+patch=1,EE,000806C4,word,254AFFFF   // addiu t2,t2,-1
+patch=1,EE,000806C8,word,000A5100   // sll t2,t2,4
+patch=1,EE,000806CC,word,3C0B004B   // lui t3,0x4b
+patch=1,EE,000806D0,word,256B89DA   // addiu t3,t3,-0x7626
+patch=1,EE,000806D4,word,014B5021   // addu t2,t2,t3
+patch=1,EE,000806D8,word,AD0A0698   // sw t2,0x698(t0)
+patch=1,EE,000806DC,word,25040698   // addiu a0,t0,0x698
+patch=1,EE,000806E0,word,2CA10006   // sltiu at,a1,0x6
+patch=1,EE,000806E4,word,14200003   // bnez at,0x806f4
+patch=1,EE,000806E8,word,00000000   // nop
+patch=1,EE,000806EC,word,080A39C4   // j 0x28e710
+patch=1,EE,000806F0,word,00000000   // nop
+patch=1,EE,000806F4,word,080A39AB   // j 0x28e6ac
+patch=1,EE,000806F8,word,00000000   // nop
+// ACC_SET
+patch=1,EE,000806FC,word,3C080008   // lui t0,0x8
+patch=1,EE,00080700,word,91090690   // lbu t1,0x690(t0)
+patch=1,EE,00080704,word,1120000D   // beqz t1,0x8073c
+patch=1,EE,00080708,word,00000000   // nop
+patch=1,EE,0008070C,word,8C8A0000   // lw t2,0(a0)
+patch=1,EE,00080710,word,8D4A0000   // lw t2,0(t2)
+patch=1,EE,00080714,word,000A5840   // sll t3,t2,1
+patch=1,EE,00080718,word,014B5021   // addu t2,t2,t3
+patch=1,EE,0008071C,word,01495021   // addu t2,t2,t1
+patch=1,EE,00080720,word,254AFFFF   // addiu t2,t2,-1
+patch=1,EE,00080724,word,000A5100   // sll t2,t2,4
+patch=1,EE,00080728,word,3C0B004B   // lui t3,0x4b
+patch=1,EE,0008072C,word,256B89DA   // addiu t3,t3,-0x7626
+patch=1,EE,00080730,word,014B5021   // addu t2,t2,t3
+patch=1,EE,00080734,word,AD0A0698   // sw t2,0x698(t0)
+patch=1,EE,00080738,word,25040698   // addiu a0,t0,0x698
+patch=1,EE,0008073C,word,2CA10006   // sltiu at,a1,0x6
+patch=1,EE,00080740,word,14200003   // bnez at,0x80750
+patch=1,EE,00080744,word,00000000   // nop
+patch=1,EE,00080748,word,080A39E3   // j 0x28e78c
+patch=1,EE,0008074C,word,00000000   // nop
+patch=1,EE,00080750,word,080A39CB   // j 0x28e72c
+patch=1,EE,00080754,word,00000000   // nop
+// ACC_CLR
+patch=1,EE,00080758,word,3C080008   // lui t0,0x8
+patch=1,EE,0008075C,word,91090690   // lbu t1,0x690(t0)
+patch=1,EE,00080760,word,1120000D   // beqz t1,0x80798
+patch=1,EE,00080764,word,00000000   // nop
+patch=1,EE,00080768,word,8C8A0000   // lw t2,0(a0)
+patch=1,EE,0008076C,word,8D4A0000   // lw t2,0(t2)
+patch=1,EE,00080770,word,000A5840   // sll t3,t2,1
+patch=1,EE,00080774,word,014B5021   // addu t2,t2,t3
+patch=1,EE,00080778,word,01495021   // addu t2,t2,t1
+patch=1,EE,0008077C,word,254AFFFF   // addiu t2,t2,-1
+patch=1,EE,00080780,word,000A5100   // sll t2,t2,4
+patch=1,EE,00080784,word,3C0B004B   // lui t3,0x4b
+patch=1,EE,00080788,word,256B89DA   // addiu t3,t3,-0x7626
+patch=1,EE,0008078C,word,014B5021   // addu t2,t2,t3
+patch=1,EE,00080790,word,AD0A0698   // sw t2,0x698(t0)
+patch=1,EE,00080794,word,25040698   // addiu a0,t0,0x698
+patch=1,EE,00080798,word,2CA10006   // sltiu at,a1,0x6
+patch=1,EE,0008079C,word,14200003   // bnez at,0x807ac
+patch=1,EE,000807A0,word,00000000   // nop
+patch=1,EE,000807A4,word,080A3A07   // j 0x28e81c
+patch=1,EE,000807A8,word,00000000   // nop
+patch=1,EE,000807AC,word,080A39EB   // j 0x28e7ac
+patch=1,EE,000807B0,word,00000000   // nop
+// ACC_GETU
+patch=1,EE,000807B4,word,3C080008   // lui t0,0x8
+patch=1,EE,000807B8,word,91090690   // lbu t1,0x690(t0)
+patch=1,EE,000807BC,word,1120000D   // beqz t1,0x807f4
+patch=1,EE,000807C0,word,00000000   // nop
+patch=1,EE,000807C4,word,8C8A0000   // lw t2,0(a0)
+patch=1,EE,000807C8,word,8D4A0000   // lw t2,0(t2)
+patch=1,EE,000807CC,word,000A5840   // sll t3,t2,1
+patch=1,EE,000807D0,word,014B5021   // addu t2,t2,t3
+patch=1,EE,000807D4,word,01495021   // addu t2,t2,t1
+patch=1,EE,000807D8,word,254AFFFF   // addiu t2,t2,-1
+patch=1,EE,000807DC,word,000A5100   // sll t2,t2,4
+patch=1,EE,000807E0,word,3C0B004B   // lui t3,0x4b
+patch=1,EE,000807E4,word,256B89DA   // addiu t3,t3,-0x7626
+patch=1,EE,000807E8,word,014B5021   // addu t2,t2,t3
+patch=1,EE,000807EC,word,AD0A0698   // sw t2,0x698(t0)
+patch=1,EE,000807F0,word,25040698   // addiu a0,t0,0x698
+patch=1,EE,000807F4,word,24020005   // addiu v0,zero,0x5
+patch=1,EE,000807F8,word,14A20004   // bne a1,v0,0x8080c
+patch=1,EE,000807FC,word,00000000   // nop
+patch=1,EE,00080800,word,8C820000   // lw v0,0(a0)
+patch=1,EE,00080804,word,080A3A16   // j 0x28e858
+patch=1,EE,00080808,word,00000000   // nop
+patch=1,EE,0008080C,word,080A3A0F   // j 0x28e83c
+patch=1,EE,00080810,word,00000000   // nop
+// ACC_SETU
+patch=1,EE,00080814,word,3C080008   // lui t0,0x8
+patch=1,EE,00080818,word,91090690   // lbu t1,0x690(t0)
+patch=1,EE,0008081C,word,1120000D   // beqz t1,0x80854
+patch=1,EE,00080820,word,00000000   // nop
+patch=1,EE,00080824,word,8C8A0000   // lw t2,0(a0)
+patch=1,EE,00080828,word,8D4A0000   // lw t2,0(t2)
+patch=1,EE,0008082C,word,000A5840   // sll t3,t2,1
+patch=1,EE,00080830,word,014B5021   // addu t2,t2,t3
+patch=1,EE,00080834,word,01495021   // addu t2,t2,t1
+patch=1,EE,00080838,word,254AFFFF   // addiu t2,t2,-1
+patch=1,EE,0008083C,word,000A5100   // sll t2,t2,4
+patch=1,EE,00080840,word,3C0B004B   // lui t3,0x4b
+patch=1,EE,00080844,word,256B89DA   // addiu t3,t3,-0x7626
+patch=1,EE,00080848,word,014B5021   // addu t2,t2,t3
+patch=1,EE,0008084C,word,AD0A0698   // sw t2,0x698(t0)
+patch=1,EE,00080850,word,25040698   // addiu a0,t0,0x698
+patch=1,EE,00080854,word,24030005   // addiu v1,zero,0x5
+patch=1,EE,00080858,word,14A30004   // bne a1,v1,0x8086c
+patch=1,EE,0008085C,word,00000000   // nop
+patch=1,EE,00080860,word,8C830000   // lw v1,0(a0)
+patch=1,EE,00080864,word,080A3A26   // j 0x28e898
+patch=1,EE,00080868,word,00000000   // nop
+patch=1,EE,0008086C,word,080A3A1F   // j 0x28e87c
+patch=1,EE,00080870,word,00000000   // nop
+// PAD
+patch=1,EE,00080874,word,C480016C   // lwc1 f0,0x16C(a0)
+patch=1,EE,00080878,word,3C08BF00   // lui t0,0xBF00
+patch=1,EE,0008087C,word,44880800   // mtc1 t0,f1
+patch=1,EE,00080880,word,3C093F00   // lui t1,0x3F00
+patch=1,EE,00080884,word,44891000   // mtc1 t1,f2
+patch=1,EE,00080888,word,00005021   // addu t2,zero,zero
+patch=1,EE,0008088C,word,46010034   // c.lt.s f0,f1
+patch=1,EE,00080890,word,45000002   // bc1f 0x8089c
+patch=1,EE,00080894,word,00000000   // nop
+patch=1,EE,00080898,word,354A0001   // ori t2,t2,0x1
+patch=1,EE,0008089C,word,46001034   // c.lt.s f2,f0
+patch=1,EE,000808A0,word,45000002   // bc1f 0x808ac
+patch=1,EE,000808A4,word,00000000   // nop
+patch=1,EE,000808A8,word,354A0002   // ori t2,t2,0x2
+patch=1,EE,000808AC,word,3C0B0049   // lui t3,0x49
+patch=1,EE,000808B0,word,256B69C0   // addiu t3,t3,0x69c0
+patch=1,EE,000808B4,word,3C080008   // lui t0,0x8
+patch=1,EE,000808B8,word,108B0002   // beq a0,t3,0x808c4
+patch=1,EE,000808BC,word,25080692   // addiu t0,t0,0x692
+patch=1,EE,000808C0,word,25080001   // addiu t0,t0,0x1
+patch=1,EE,000808C4,word,91090000   // lbu t1,0(t0)
+patch=1,EE,000808C8,word,A10A0000   // sb t2,0(t0)
+patch=1,EE,000808CC,word,01204827   // nor t1,t1,zero
+patch=1,EE,000808D0,word,012A4824   // and t1,t1,t2
+patch=1,EE,000808D4,word,A1090002   // sb t1,0x2(t0)
+patch=1,EE,000808D8,word,08054AA8   // j 0x152aa0
+patch=1,EE,000808DC,word,00000000   // nop
+// B_HELD
+patch=1,EE,000808E0,word,00621824   // and v1,v1,v0
+patch=1,EE,000808E4,word,00024202   // srl t0,v0,8
+patch=1,EE,000808E8,word,31080003   // andi t0,t0,0x3
+patch=1,EE,000808EC,word,11000004   // beqz t0,0x80900
+patch=1,EE,000808F0,word,306900F0   // andi t1,v1,0xF0
+patch=1,EE,000808F4,word,11200002   // beqz t1,0x80900
+patch=1,EE,000808F8,word,00000000   // nop
+patch=1,EE,000808FC,word,34634000   // ori v1,v1,0x4000
+patch=1,EE,00080900,word,03E00008   // jr ra
+patch=1,EE,00080904,word,30624000   // andi v0,v1,0x4000
+// B_OWN
+patch=1,EE,00080908,word,92480014   // lbu t0,0x14(s2)
+patch=1,EE,0008090C,word,000848C0   // sll t1,t0,3
+patch=1,EE,00080910,word,01284823   // subu t1,t1,t0
+patch=1,EE,00080914,word,00094980   // sll t1,t1,6
+patch=1,EE,00080918,word,3C0A0049   // lui t2,0x49
+patch=1,EE,0008091C,word,01495021   // addu t2,t2,t1
+patch=1,EE,00080920,word,8D4A6AC8   // lw t2,0x6ac8(t2)
+patch=1,EE,00080924,word,000A5202   // srl t2,t2,8
+patch=1,EE,00080928,word,314A0003   // andi t2,t2,0x3
+patch=1,EE,0008092C,word,15400003   // bnez t2,0x8093c
+patch=1,EE,00080930,word,00861821   // addu v1,a0,a2
+patch=1,EE,00080934,word,03E00008   // jr ra
+patch=1,EE,00080938,word,90750520   // lbu s5,0x520(v1)
+patch=1,EE,0008093C,word,8CCDFA6C   // lw t5,-0x594(a2)
+patch=1,EE,00080940,word,000D6040   // sll t4,t5,1
+patch=1,EE,00080944,word,01AC5821   // addu t3,t5,t4
+patch=1,EE,00080948,word,016A5821   // addu t3,t3,t2
+patch=1,EE,0008094C,word,256BFFFF   // addiu t3,t3,-1
+patch=1,EE,00080950,word,000B5900   // sll t3,t3,4
+patch=1,EE,00080954,word,3C0C004B   // lui t4,0x4b
+patch=1,EE,00080958,word,016C5821   // addu t3,t3,t4
+patch=1,EE,0008095C,word,3C0C0008   // lui t4,0x8
+patch=1,EE,00080960,word,01846021   // addu t4,t4,a0
+patch=1,EE,00080964,word,918C0328   // lbu t4,0x328(t4)
+patch=1,EE,00080968,word,000C6040   // sll t4,t4,1
+patch=1,EE,0008096C,word,016C5821   // addu t3,t3,t4
+patch=1,EE,00080970,word,91758A10   // lbu s5,-0x75f0(t3)
+patch=1,EE,00080974,word,26B5FFFF   // addiu s5,s5,-1
+patch=1,EE,00080978,word,03E00008   // jr ra
+patch=1,EE,0008097C,word,32B500FF   // andi s5,s5,0xFF
+// B_OWN2
+patch=1,EE,00080980,word,01003021   // addu a2,t0,zero
+patch=1,EE,00080984,word,92680014   // lbu t0,0x14(s3)
+patch=1,EE,00080988,word,000848C0   // sll t1,t0,3
+patch=1,EE,0008098C,word,01284823   // subu t1,t1,t0
+patch=1,EE,00080990,word,00094980   // sll t1,t1,6
+patch=1,EE,00080994,word,3C0A0049   // lui t2,0x49
+patch=1,EE,00080998,word,01495021   // addu t2,t2,t1
+patch=1,EE,0008099C,word,8D4A6AC8   // lw t2,0x6ac8(t2)
+patch=1,EE,000809A0,word,000A5202   // srl t2,t2,8
+patch=1,EE,000809A4,word,314A0003   // andi t2,t2,0x3
+patch=1,EE,000809A8,word,15400004   // bnez t2,0x809bc
+patch=1,EE,000809AC,word,00861821   // addu v1,a0,a2
+patch=1,EE,000809B0,word,00C04021   // addu t0,a2,zero
+patch=1,EE,000809B4,word,03E00008   // jr ra
+patch=1,EE,000809B8,word,90630520   // lbu v1,0x520(v1)
+patch=1,EE,000809BC,word,8CCDFA6C   // lw t5,-0x594(a2)
+patch=1,EE,000809C0,word,000D6040   // sll t4,t5,1
+patch=1,EE,000809C4,word,01AC5821   // addu t3,t5,t4
+patch=1,EE,000809C8,word,016A5821   // addu t3,t3,t2
+patch=1,EE,000809CC,word,256BFFFF   // addiu t3,t3,-1
+patch=1,EE,000809D0,word,000B5900   // sll t3,t3,4
+patch=1,EE,000809D4,word,3C0C004B   // lui t4,0x4b
+patch=1,EE,000809D8,word,016C5821   // addu t3,t3,t4
+patch=1,EE,000809DC,word,3C0C0008   // lui t4,0x8
+patch=1,EE,000809E0,word,01846021   // addu t4,t4,a0
+patch=1,EE,000809E4,word,918C0328   // lbu t4,0x328(t4)
+patch=1,EE,000809E8,word,000C6040   // sll t4,t4,1
+patch=1,EE,000809EC,word,016C5821   // addu t3,t3,t4
+patch=1,EE,000809F0,word,91638A10   // lbu v1,-0x75f0(t3)
+patch=1,EE,000809F4,word,2463FFFF   // addiu v1,v1,-1
+patch=1,EE,000809F8,word,306300FF   // andi v1,v1,0xFF
+patch=1,EE,000809FC,word,03E00008   // jr ra
+patch=1,EE,00080A00,word,00C04021   // addu t0,a2,zero
+// B_SCPRESS
+patch=1,EE,00080A04,word,92680014   // lbu t0,0x14(s3)
+patch=1,EE,00080A08,word,3C090008   // lui t1,0x8
+patch=1,EE,00080A0C,word,01284821   // addu t1,t1,t0
+patch=1,EE,00080A10,word,91290694   // lbu t1,0x694(t1)
+patch=1,EE,00080A14,word,00094A00   // sll t1,t1,8
+patch=1,EE,00080A18,word,240AFCFF   // addiu t2,zero,-0x301
+patch=1,EE,00080A1C,word,004A1024   // and v0,v0,t2
+patch=1,EE,00080A20,word,00491025   // or v0,v0,t1
+patch=1,EE,00080A24,word,00622024   // and a0,v1,v0
+patch=1,EE,00080A28,word,03E00008   // jr ra
+patch=1,EE,00080A2C,word,30830300   // andi v1,a0,0x300
+// B_SCENTRY
+patch=1,EE,00080A30,word,00058080   // sll s0,a1,2
+patch=1,EE,00080A34,word,92680014   // lbu t0,0x14(s3)
+patch=1,EE,00080A38,word,000848C0   // sll t1,t0,3
+patch=1,EE,00080A3C,word,01284823   // subu t1,t1,t0
+patch=1,EE,00080A40,word,00094980   // sll t1,t1,6
+patch=1,EE,00080A44,word,3C0A0049   // lui t2,0x49
+patch=1,EE,00080A48,word,01495021   // addu t2,t2,t1
+patch=1,EE,00080A4C,word,8D4A6AC8   // lw t2,0x6ac8(t2)
+patch=1,EE,00080A50,word,000A5202   // srl t2,t2,8
+patch=1,EE,00080A54,word,314A0003   // andi t2,t2,0x3
+patch=1,EE,00080A58,word,11400019   // beqz t2,0x80ac0
+patch=1,EE,00080A5C,word,00000000   // nop
+patch=1,EE,00080A60,word,8C8DFA6C   // lw t5,-0x594(a0)
+patch=1,EE,00080A64,word,000D6040   // sll t4,t5,1
+patch=1,EE,00080A68,word,01AC5821   // addu t3,t5,t4
+patch=1,EE,00080A6C,word,016A5821   // addu t3,t3,t2
+patch=1,EE,00080A70,word,256BFFFF   // addiu t3,t3,-1
+patch=1,EE,00080A74,word,000B5900   // sll t3,t3,4
+patch=1,EE,00080A78,word,3C0C004B   // lui t4,0x4b
+patch=1,EE,00080A7C,word,016C5821   // addu t3,t3,t4
+patch=1,EE,00080A80,word,14A00004   // bnez a1,0x80a94
+patch=1,EE,00080A84,word,00000000   // nop
+patch=1,EE,00080A88,word,916D8A1A   // lbu t5,-0x75e6(t3)
+patch=1,EE,00080A8C,word,10000003   // b 0x80a9c
+patch=1,EE,00080A90,word,916E8A1D   // lbu t6,-0x75e3(t3)
+patch=1,EE,00080A94,word,916D8A18   // lbu t5,-0x75e8(t3)
+patch=1,EE,00080A98,word,916E8A1C   // lbu t6,-0x75e4(t3)
+patch=1,EE,00080A9C,word,000E782B   // sltu t7,zero,t6
+patch=1,EE,00080AA0,word,25ADFFFF   // addiu t5,t5,-1
+patch=1,EE,00080AA4,word,3C180008   // lui t8,0x8
+patch=1,EE,00080AA8,word,AF0F0310   // sw t7,0x310(t8)
+patch=1,EE,00080AAC,word,AF0D0314   // sw t5,0x314(t8)
+patch=1,EE,00080AB0,word,AF0E0318   // sw t6,0x318(t8)
+patch=1,EE,00080AB4,word,27180310   // addiu t8,t8,0x310
+patch=1,EE,00080AB8,word,0304C023   // subu t8,t8,a0
+patch=1,EE,00080ABC,word,2710FAF8   // addiu s0,t8,-0x508
+patch=1,EE,00080AC0,word,03E00008   // jr ra
+patch=1,EE,00080AC4,word,00000000   // nop
+// REC_A
+patch=1,EE,00080AC8,word,3C080008   // lui t0,0x8
+patch=1,EE,00080ACC,word,00154900   // sll t1,s5,4
+patch=1,EE,00080AD0,word,01094021   // addu t0,t0,t1
+patch=1,EE,00080AD4,word,03E00008   // jr ra
+patch=1,EE,00080AD8,word,AD020330   // sw v0,0x330(t0)
+// REC_P
+patch=1,EE,00080ADC,word,3C080008   // lui t0,0x8
+patch=1,EE,00080AE0,word,00154900   // sll t1,s5,4
+patch=1,EE,00080AE4,word,01094021   // addu t0,t0,t1
+patch=1,EE,00080AE8,word,03E00008   // jr ra
+patch=1,EE,00080AEC,word,AD020334   // sw v0,0x334(t0)
+// REC_B
+patch=1,EE,00080AF0,word,3C080008   // lui t0,0x8
+patch=1,EE,00080AF4,word,00154900   // sll t1,s5,4
+patch=1,EE,00080AF8,word,01094021   // addu t0,t0,t1
+patch=1,EE,00080AFC,word,03E00008   // jr ra
+patch=1,EE,00080B00,word,AD020338   // sw v0,0x338(t0)
+// REC_SC
+patch=1,EE,00080B04,word,27BDFFC0   // addiu sp,sp,-0x40
+patch=1,EE,00080B08,word,FFBF0030   // sd ra,0x30(sp)
+patch=1,EE,00080B0C,word,7FB30000   // sq s3,0(sp)
+patch=1,EE,00080B10,word,7FB40010   // sq s4,0x10(sp)
+patch=1,EE,00080B14,word,0040A821   // addu s5,v0,zero
+patch=1,EE,00080B18,word,3C130008   // lui s3,0x8
+patch=1,EE,00080B1C,word,00164100   // sll t0,s6,4
+patch=1,EE,00080B20,word,02689821   // addu s3,s3,t0
+patch=1,EE,00080B24,word,26730370   // addiu s3,s3,0x370
+patch=1,EE,00080B28,word,AE620000   // sw v0,0(s3)
+patch=1,EE,00080B2C,word,24140003   // addiu s4,zero,0x3
+patch=1,EE,00080B30,word,0C040508   // jal 0x101420
+patch=1,EE,00080B34,word,24040050   // addiu a0,zero,0x50
+patch=1,EE,00080B38,word,1040000E   // beqz v0,0x80b74
+patch=1,EE,00080B3C,word,00402021   // addu a0,v0,zero
+patch=1,EE,00080B40,word,3C050001   // lui a1,0x1
+patch=1,EE,00080B44,word,34A5021E   // ori a1,a1,0x21e
+patch=1,EE,00080B48,word,6E2600D0   // ldr a2,0xD0(s1)
+patch=1,EE,00080B4C,word,6A2600D7   // ldl a2,0xD7(s1)
+patch=1,EE,00080B50,word,3C080008   // lui t0,0x8
+patch=1,EE,00080B54,word,0C0C9F2C   // jal 0x327cb0
+patch=1,EE,00080B58,word,DD070320   // ld a3,0x320(t0)
+patch=1,EE,00080B5C,word,AE620004   // sw v0,0x4(s3)
+patch=1,EE,00080B60,word,02002021   // addu a0,s0,zero
+patch=1,EE,00080B64,word,0C08E244   // jal 0x238910
+patch=1,EE,00080B68,word,00402821   // addu a1,v0,zero
+patch=1,EE,00080B6C,word,0C0592E4   // jal 0x164B90
+patch=1,EE,00080B70,word,8E640004   // lw a0,0x4(s3)
+patch=1,EE,00080B74,word,2694FFFF   // addiu s4,s4,-1
+patch=1,EE,00080B78,word,1680FFED   // bnez s4,0x80b30
+patch=1,EE,00080B7C,word,26730004   // addiu s3,s3,0x4
+patch=1,EE,00080B80,word,7BB30000   // lq s3,0(sp)
+patch=1,EE,00080B84,word,7BB40010   // lq s4,0x10(sp)
+patch=1,EE,00080B88,word,DFBF0030   // ld ra,0x30(sp)
+patch=1,EE,00080B8C,word,27BD0040   // addiu sp,sp,0x40
+patch=1,EE,00080B90,word,03E00008   // jr ra
+patch=1,EE,00080B94,word,02002021   // addu a0,s0,zero
+// CTOR_END
+patch=1,EE,00080B98,word,0C020310   // jal 0x80c40
+patch=1,EE,00080B9C,word,00000000   // nop
+patch=1,EE,00080BA0,word,DFBF0090   // ld ra,0x90(sp)
+patch=1,EE,00080BA4,word,080C6A9C   // j 0x31AA70
+patch=1,EE,00080BA8,word,00000000   // nop
+// MENU_LR
+patch=1,EE,00080BAC,word,93A8003C   // lbu t0,0x3C(sp)
+patch=1,EE,00080BB0,word,31090030   // andi t1,t0,0x30
+patch=1,EE,00080BB4,word,15200003   // bnez t1,0x80bc4
+patch=1,EE,00080BB8,word,00000000   // nop
+patch=1,EE,00080BBC,word,080C6C1F   // j 0x31B07C
+patch=1,EE,00080BC0,word,90620000   // lbu v0,0(v1)
+patch=1,EE,00080BC4,word,3C0A0008   // lui t2,0x8
+patch=1,EE,00080BC8,word,914B0690   // lbu t3,0x690(t2)
+patch=1,EE,00080BCC,word,31090010   // andi t1,t0,0x10
+patch=1,EE,00080BD0,word,11200002   // beqz t1,0x80bdc
+patch=1,EE,00080BD4,word,256B0001   // addiu t3,t3,0x1
+patch=1,EE,00080BD8,word,256BFFFE   // addiu t3,t3,-0x2
+patch=1,EE,00080BDC,word,316B0003   // andi t3,t3,0x3
+patch=1,EE,00080BE0,word,0C020310   // jal 0x80c40
+patch=1,EE,00080BE4,word,A14B0690   // sb t3,0x690(t2)
+patch=1,EE,00080BE8,word,080C6C30   // j 0x31B0C0
+patch=1,EE,00080BEC,word,00000000   // nop
+// MENU_CANCEL
+patch=1,EE,00080BF0,word,27BDFFF0   // addiu sp,sp,-0x10
+patch=1,EE,00080BF4,word,FFBF0000   // sd ra,0(sp)
+patch=1,EE,00080BF8,word,3C080008   // lui t0,0x8
+patch=1,EE,00080BFC,word,0C020310   // jal 0x80c40
+patch=1,EE,00080C00,word,A1000690   // sb zero,0x690(t0)
+patch=1,EE,00080C04,word,DFBF0000   // ld ra,0(sp)
+patch=1,EE,00080C08,word,27BD0010   // addiu sp,sp,0x10
+patch=1,EE,00080C0C,word,8E230068   // lw v1,0x68(s1)
+patch=1,EE,00080C10,word,03E00008   // jr ra
+patch=1,EE,00080C14,word,3C020001   // lui v0,0x1
+// MENU_DTOR
+patch=1,EE,00080C18,word,3C080008   // lui t0,0x8
+patch=1,EE,00080C1C,word,A1000690   // sb zero,0x690(t0)
+patch=1,EE,00080C20,word,25090330   // addiu t1,t0,0x330
+patch=1,EE,00080C24,word,252A0060   // addiu t2,t1,0x60
+patch=1,EE,00080C28,word,AD200000   // sw zero,0(t1)
+patch=1,EE,00080C2C,word,25290004   // addiu t1,t1,0x4
+patch=1,EE,00080C30,word,152AFFFD   // bne t1,t2,0x80c28
+patch=1,EE,00080C34,word,00000000   // nop
+patch=1,EE,00080C38,word,03E00008   // jr ra
+patch=1,EE,00080C3C,word,0000982D   // daddu s3,zero,zero
+// LAYOUT
+patch=1,EE,00080C40,word,27BDFFA0   // addiu sp,sp,-0x60
+patch=1,EE,00080C44,word,FFBF0050   // sd ra,0x50(sp)
+patch=1,EE,00080C48,word,7FB00000   // sq s0,0(sp)
+patch=1,EE,00080C4C,word,7FB10010   // sq s1,0x10(sp)
+patch=1,EE,00080C50,word,7FB20020   // sq s2,0x20(sp)
+patch=1,EE,00080C54,word,3C080008   // lui t0,0x8
+patch=1,EE,00080C58,word,91080690   // lbu t0,0x690(t0)
+patch=1,EE,00080C5C,word,00084980   // sll t1,t0,6
+patch=1,EE,00080C60,word,000851C0   // sll t2,t0,7
+patch=1,EE,00080C64,word,012A4821   // addu t1,t1,t2
+patch=1,EE,00080C68,word,3C100008   // lui s0,0x8
+patch=1,EE,00080C6C,word,26100390   // addiu s0,s0,0x390
+patch=1,EE,00080C70,word,02098021   // addu s0,s0,t1
+patch=1,EE,00080C74,word,3C110008   // lui s1,0x8
+patch=1,EE,00080C78,word,26310330   // addiu s1,s1,0x330
+patch=1,EE,00080C7C,word,24120018   // addiu s2,zero,0x18
+patch=1,EE,00080C80,word,8E240000   // lw a0,0(s1)
+patch=1,EE,00080C84,word,10800005   // beqz a0,0x80c9c
+patch=1,EE,00080C88,word,00000000   // nop
+patch=1,EE,00080C8C,word,96050000   // lhu a1,0(s0)
+patch=1,EE,00080C90,word,86060002   // lh a2,0x2(s0)
+patch=1,EE,00080C94,word,0C020331   // jal 0x80cc4
+patch=1,EE,00080C98,word,86070004   // lh a3,0x4(s0)
+patch=1,EE,00080C9C,word,26310004   // addiu s1,s1,0x4
+patch=1,EE,00080CA0,word,2652FFFF   // addiu s2,s2,-0x1
+patch=1,EE,00080CA4,word,1640FFF6   // bnez s2,0x80c80
+patch=1,EE,00080CA8,word,26100008   // addiu s0,s0,0x8
+patch=1,EE,00080CAC,word,7BB00000   // lq s0,0(sp)
+patch=1,EE,00080CB0,word,7BB10010   // lq s1,0x10(sp)
+patch=1,EE,00080CB4,word,7BB20020   // lq s2,0x20(sp)
+patch=1,EE,00080CB8,word,DFBF0050   // ld ra,0x50(sp)
+patch=1,EE,00080CBC,word,03E00008   // jr ra
+patch=1,EE,00080CC0,word,27BD0060   // addiu sp,sp,0x60
+// SETSPR
+patch=1,EE,00080CC4,word,27BDFF80   // addiu sp,sp,-0x80
+patch=1,EE,00080CC8,word,FFBF0070   // sd ra,0x70(sp)
+patch=1,EE,00080CCC,word,7FB00000   // sq s0,0(sp)
+patch=1,EE,00080CD0,word,7FB10010   // sq s1,0x10(sp)
+patch=1,EE,00080CD4,word,7FB20020   // sq s2,0x20(sp)
+patch=1,EE,00080CD8,word,7FB30030   // sq s3,0x30(sp)
+patch=1,EE,00080CDC,word,00808021   // addu s0,a0,zero
+patch=1,EE,00080CE0,word,84880014   // lh t0,0x14(a0)
+patch=1,EE,00080CE4,word,8C890040   // lw t1,0x40(a0)
+patch=1,EE,00080CE8,word,01094023   // subu t0,t0,t1
+patch=1,EE,00080CEC,word,AFA80050   // sw t0,0x50(sp)
+patch=1,EE,00080CF0,word,84880016   // lh t0,0x16(a0)
+patch=1,EE,00080CF4,word,8C890044   // lw t1,0x44(a0)
+patch=1,EE,00080CF8,word,01094023   // subu t0,t0,t1
+patch=1,EE,00080CFC,word,AFA80054   // sw t0,0x54(sp)
+patch=1,EE,00080D00,word,00C09021   // addu s2,a2,zero
+patch=1,EE,00080D04,word,14A00003   // bnez a1,0x80d14
+patch=1,EE,00080D08,word,00E09821   // addu s3,a3,zero
+patch=1,EE,00080D0C,word,10000024   // b 0x80da0
+patch=1,EE,00080D10,word,2412FC00   // addiu s2,zero,-0x400
+patch=1,EE,00080D14,word,3C080001   // lui t0,0x1
+patch=1,EE,00080D18,word,0C0BB634   // jal 0x2ED8D0
+patch=1,EE,00080D1C,word,00A88825   // or s1,a1,t0
+patch=1,EE,00080D20,word,00402021   // addu a0,v0,zero
+patch=1,EE,00080D24,word,0C0BB6E0   // jal 0x2EDB80
+patch=1,EE,00080D28,word,02202821   // addu a1,s1,zero
+patch=1,EE,00080D2C,word,02002021   // addu a0,s0,zero
+patch=1,EE,00080D30,word,00402821   // addu a1,v0,zero
+patch=1,EE,00080D34,word,0C08E6D8   // jal 0x239b60
+patch=1,EE,00080D38,word,24060001   // addiu a2,zero,0x1
+patch=1,EE,00080D3C,word,AE110034   // sw s1,0x34(s0)
+patch=1,EE,00080D40,word,0C0BB634   // jal 0x2ED8D0
+patch=1,EE,00080D44,word,00000000   // nop
+patch=1,EE,00080D48,word,00402021   // addu a0,v0,zero
+patch=1,EE,00080D4C,word,27A50040   // addiu a1,sp,0x40
+patch=1,EE,00080D50,word,02203021   // addu a2,s1,zero
+patch=1,EE,00080D54,word,3C080008   // lui t0,0x8
+patch=1,EE,00080D58,word,0C0BB6BC   // jal 0x2EDAF0
+patch=1,EE,00080D5C,word,DD070320   // ld a3,0x320(t0)
+patch=1,EE,00080D60,word,1040000F   // beqz v0,0x80da0
+patch=1,EE,00080D64,word,00000000   // nop
+patch=1,EE,00080D68,word,8FA70048   // lw a3,0x48(sp)
+patch=1,EE,00080D6C,word,8FA8004C   // lw t0,0x4C(sp)
+patch=1,EE,00080D70,word,AE070048   // sw a3,0x48(s0)
+patch=1,EE,00080D74,word,AE08004C   // sw t0,0x4C(s0)
+patch=1,EE,00080D78,word,02002021   // addu a0,s0,zero
+patch=1,EE,00080D7C,word,8FA50040   // lw a1,0x40(sp)
+patch=1,EE,00080D80,word,0C08E6F8   // jal 0x239be0
+patch=1,EE,00080D84,word,8FA60044   // lw a2,0x44(sp)
+patch=1,EE,00080D88,word,8E190000   // lw t9,0(s0)
+patch=1,EE,00080D8C,word,8F390010   // lw t9,0x10(t9)
+patch=1,EE,00080D90,word,02002021   // addu a0,s0,zero
+patch=1,EE,00080D94,word,8E050048   // lw a1,0x48(s0)
+patch=1,EE,00080D98,word,0320F809   // jalr t9
+patch=1,EE,00080D9C,word,8E06004C   // lw a2,0x4C(s0)
+patch=1,EE,00080DA0,word,AE120040   // sw s2,0x40(s0)
+patch=1,EE,00080DA4,word,AE130044   // sw s3,0x44(s0)
+patch=1,EE,00080DA8,word,8E190000   // lw t9,0(s0)
+patch=1,EE,00080DAC,word,8F39000C   // lw t9,0xC(t9)
+patch=1,EE,00080DB0,word,02002021   // addu a0,s0,zero
+patch=1,EE,00080DB4,word,8FA50050   // lw a1,0x50(sp)
+patch=1,EE,00080DB8,word,8FA60054   // lw a2,0x54(sp)
+patch=1,EE,00080DBC,word,00B22821   // addu a1,a1,s2
+patch=1,EE,00080DC0,word,0320F809   // jalr t9
+patch=1,EE,00080DC4,word,00D33021   // addu a2,a2,s3
+patch=1,EE,00080DC8,word,7BB00000   // lq s0,0(sp)
+patch=1,EE,00080DCC,word,7BB10010   // lq s1,0x10(sp)
+patch=1,EE,00080DD0,word,7BB20020   // lq s2,0x20(sp)
+patch=1,EE,00080DD4,word,7BB30030   // lq s3,0x30(sp)
+patch=1,EE,00080DD8,word,DFBF0070   // ld ra,0x70(sp)
+patch=1,EE,00080DDC,word,03E00008   // jr ra
+patch=1,EE,00080DE0,word,27BD0080   // addiu sp,sp,0x80
+
+// Re-fight bosses. Each cheat sets the encounter group, the stage, the BGM and
+flags. A flag value of 00000006 prevents escaping, and 00000004 also makes the
+fight end prematurely. Remove the 4th lines if you don't want that.
+[01 Mysterious Youth]
+patch=1,EE,104E91E4,extended,00000004
+patch=1,EE,204E91E8,extended,0004015F
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000004
+
+[02 Chloe]
+patch=1,EE,104E91E4,extended,0000004E
+patch=1,EE,204E91E8,extended,00040169
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000004
+
+[03 Moses & Giet]
+patch=1,EE,104E91E4,extended,00000005
+patch=1,EE,204E91E8,extended,00040174
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[04 Crystarantula]
+patch=1,EE,104E91E4,extended,00000006
+patch=1,EE,204E91E8,extended,0004016A
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[05 Mysterious Youth]
+patch=1,EE,104E91E4,extended,00000007
+patch=1,EE,204E91E8,extended,00040175
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000004
+
+[06 Dinowyrm]
+patch=1,EE,104E91E4,extended,00000008
+patch=1,EE,204E91E8,extended,000401A0
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[07 Melanie]
+patch=1,EE,104E91E4,extended,00000009
+patch=1,EE,204E91E8,extended,000401A0
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000004
+
+[08 Dinogorgon]
+patch=1,EE,104E91E4,extended,0000000A
+patch=1,EE,204E91E8,extended,0004016C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[09 Citadel Turtle]
+patch=1,EE,104E91E4,extended,0000000B
+patch=1,EE,204E91E8,extended,00040177
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[10 Grand Gaet]
+patch=1,EE,104E91E4,extended,0000000C
+patch=1,EE,204E91E8,extended,00040168
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[11 Gigant]
+patch=1,EE,104E91E4,extended,0000000D
+patch=1,EE,204E91E8,extended,00040180
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[12 Vaclav]
+patch=1,EE,104E91E4,extended,0000000E
+patch=1,EE,204E91E8,extended,00040181
+patch=1,EE,004E93FD,extended,00000061
+patch=1,EE,004E93FE,extended,00000004
+
+[13 Armored Angler]
+patch=1,EE,104E91E4,extended,0000000F
+patch=1,EE,204E91E8,extended,00040166
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[14 Diva & Mimic Bed]
+patch=1,EE,104E91E4,extended,00000010
+patch=1,EE,204E91E8,extended,0004019E
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[15 Pharaoh Gigant]
+patch=1,EE,104E91E4,extended,00000011
+patch=1,EE,204E91E8,extended,0004016F
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[16 Dragon]
+patch=1,EE,104E91E4,extended,00000012
+patch=1,EE,204E91E8,extended,00040170
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[17 Melanie & Fearful Bear X]
+patch=1,EE,104E91E4,extended,00000013
+patch=1,EE,204E91E8,extended,00040183
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[18 Cashel]
+patch=1,EE,104E91E4,extended,00000014
+patch=1,EE,204E91E8,extended,00040185
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[19 Stingle]
+patch=1,EE,104E91E4,extended,00000015
+patch=1,EE,204E91E8,extended,00040184
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[20 Vaclav]
+patch=1,EE,104E91E4,extended,00000016
+patch=1,EE,204E91E8,extended,00040186
+patch=1,EE,004E93FD,extended,00000061
+patch=1,EE,004E93FE,extended,00000006
+
+[21 Silver & Gold Galf]
+patch=1,EE,104E91E4,extended,00000017
+patch=1,EE,204E91E8,extended,00040179
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[22 Zephyr Mammon]
+patch=1,EE,104E91E4,extended,00000018
+patch=1,EE,204E91E8,extended,0004019D
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[23 Walter]
+patch=1,EE,104E91E4,extended,00000019
+patch=1,EE,204E91E8,extended,0004019D
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000004
+
+[24 Volcano Gaet]
+patch=1,EE,104E91E4,extended,0000001A
+patch=1,EE,204E91E8,extended,0004019C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[25 Glacier Gaet]
+patch=1,EE,104E91E4,extended,0000001B
+patch=1,EE,204E91E8,extended,0004019C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[26 Tempest Gaet]
+patch=1,EE,104E91E4,extended,0000001C
+patch=1,EE,204E91E8,extended,0004019C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[27 Earthquake Gaet]
+patch=1,EE,104E91E4,extended,0000001D
+patch=1,EE,204E91E8,extended,0004019C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[28 Zephyr Mammon]
+patch=1,EE,104E91E4,extended,0000001E
+patch=1,EE,204E91E8,extended,0004017B
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[29 Walter]
+patch=1,EE,104E91E4,extended,0000001F
+patch=1,EE,204E91E8,extended,0004017C
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[30 Royal Automaton]
+patch=1,EE,104E91E4,extended,00000020
+patch=1,EE,204E91E8,extended,00040193
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[31 Maurits]
+patch=1,EE,104E91E4,extended,00000021
+patch=1,EE,204E91E8,extended,00040194
+patch=1,EE,004E93FD,extended,00000062
+patch=1,EE,004E93FE,extended,00000006
+
+[32 Maurits]
+patch=1,EE,104E91E4,extended,00000022
+patch=1,EE,204E91E8,extended,00040194
+patch=1,EE,004E93FD,extended,00000062
+patch=1,EE,004E93FE,extended,00000006
+
+[33 Nelfes]
+patch=1,EE,104E91E4,extended,00000023
+patch=1,EE,204E91E8,extended,00040196
+patch=1,EE,004E93FD,extended,00000063
+patch=1,EE,004E93FE,extended,00000006
+
+[34 Moses]
+patch=1,EE,104E91E4,extended,00000027
+patch=1,EE,204E91E8,extended,0004019B
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[35 Rare Lizardman]
+patch=1,EE,104E91E4,extended,00000028
+patch=1,EE,204E91E8,extended,0004015F
+patch=1,EE,004E93FD,extended,0000005D
+patch=1,EE,004E93FE,extended,00000006
+
+[36 Fiend]
+patch=1,EE,104E91E4,extended,00000029
+patch=1,EE,204E91E8,extended,0004019F
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[37 Ancient Pup]
+patch=1,EE,104E91E4,extended,0000002A
+patch=1,EE,204E91E8,extended,00040168
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[38 Fafnir]
+patch=1,EE,104E91E4,extended,0000B320
+patch=1,EE,204E91E8,extended,F4DEDE73
+patch=1,EE,004E93FD,extended,00000033
+patch=1,EE,004E93FE,extended,00000001
+
+[39 Dark Will]
+patch=1,EE,104E91E4,extended,0000002C
+patch=1,EE,204E91E8,extended,00040177
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[40 Bloody Bed & Mindflayer]
+patch=1,EE,104E91E4,extended,0000002D
+patch=1,EE,204E91E8,extended,0004019E
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[41 Bear Fiend]
+patch=1,EE,104E91E4,extended,0000002E
+patch=1,EE,204E91E8,extended,0004018C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[42 Dark Norma]
+patch=1,EE,104E91E4,extended,0000002F
+patch=1,EE,204E91E8,extended,0004016A
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[43 Galf Fiend]
+patch=1,EE,104E91E4,extended,00000030
+patch=1,EE,204E91E8,extended,0004015F
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[44 Chariot Gaet]
+patch=1,EE,104E91E4,extended,00000031
+patch=1,EE,204E91E8,extended,00040179
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[45 Spider Fiend]
+patch=1,EE,104E91E4,extended,00000032
+patch=1,EE,204E91E8,extended,00040190
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[46 Chloe]
+patch=1,EE,104E91E4,extended,00000033
+patch=1,EE,204E91E8,extended,0004019A
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000016
+
+[47 Dark Chloe]
+patch=1,EE,104E91E4,extended,0000004F
+patch=1,EE,204E91E8,extended,0004016D
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[48 Sphinx]
+patch=1,EE,104E91E4,extended,00000034
+patch=1,EE,204E91E8,extended,00040169
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[49 Fenrir]
+patch=1,EE,104E91E4,extended,00000035
+patch=1,EE,204E91E8,extended,0004016B
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[50 Dark Moses & Rabid Giet]
+patch=1,EE,104E91E4,extended,00000036
+patch=1,EE,204E91E8,extended,00040174
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[51 Ninja]
+patch=1,EE,104E91E4,extended,00000037
+patch=1,EE,204E91E8,extended,00040175
+patch=1,EE,004E93FD,extended,0000005D
+patch=1,EE,004E93FE,extended,00000006
+
+[52 Beelzebub and Belladonna]
+patch=1,EE,104E91E4,extended,00000038
+patch=1,EE,204E91E8,extended,00040168
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[53 Dullahan]
+patch=1,EE,104E91E4,extended,00000039
+patch=1,EE,204E91E8,extended,00040180
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[54 Dark Jay & Solon]
+patch=1,EE,104E91E4,extended,0000003A
+patch=1,EE,204E91E8,extended,0004017C
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[55 Dark Vaclav]
+patch=1,EE,104E91E4,extended,0000003B
+patch=1,EE,204E91E8,extended,00040188
+patch=1,EE,004E93FD,extended,00000061
+patch=1,EE,004E93FE,extended,00000006
+
+[56 Anubis Megant]
+patch=1,EE,104E91E4,extended,0000003C
+patch=1,EE,204E91E8,extended,0004019D
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[57 Schwartz]
+patch=1,EE,104E91E4,extended,0000003D
+patch=1,EE,204E91E8,extended,00040196
+patch=1,EE,004E93FD,extended,00000064
+patch=1,EE,004E93FE,extended,00000004
+
+[58 Pandemonium Gaet]
+patch=1,EE,104E91E4,extended,0000003E
+patch=1,EE,204E91E8,extended,0004019C
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[59 Citadel Turtle]
+patch=1,EE,104E91E4,extended,0000003F
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[60 Zephyr Lucifer]
+patch=1,EE,104E91E4,extended,00000040
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[61 Chariot Gaet 2]
+patch=1,EE,104E91E4,extended,00000041
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[62 Silver & Gold Galf 2]
+patch=1,EE,104E91E4,extended,00000042
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[63 Diva]
+patch=1,EE,104E91E4,extended,00000043
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[64 Dinowyrm]
+patch=1,EE,104E91E4,extended,00000044
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[65 Dark Senel & Dark Shirley]
+patch=1,EE,104E91E4,extended,00000045
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000006
+
+[66 Fenrir]
+patch=1,EE,104E91E4,extended,00000046
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[67 Beelzebub]
+patch=1,EE,104E91E4,extended,00000047
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[68 Grand Gaet]
+patch=1,EE,104E91E4,extended,00000048
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[69 Dragon]
+patch=1,EE,104E91E4,extended,00000049
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[70 Crystarantula]
+patch=1,EE,104E91E4,extended,0000004A
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[71 Royal Automaton]
+patch=1,EE,104E91E4,extended,0000004B
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[72 Mimi]
+patch=1,EE,104E91E4,extended,00000392
+patch=1,EE,204E91E8,extended,0004019B
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000002
+
+[73 Curtiss & Isabella]
+patch=1,EE,104E91E4,extended,00000393
+patch=1,EE,204E91E8,extended,0004019B
+patch=1,EE,004E93FD,extended,00000060
+patch=1,EE,004E93FE,extended,00000002
+
+[74 Lizard Baker]
+patch=1,EE,104E91E4,extended,00000394
+patch=1,EE,204E91E8,extended,0004015F
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[75 Block Turtle]
+patch=1,EE,104E91E4,extended,000003A0
+patch=1,EE,204E91E8,extended,00040168
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[76 Siren]
+patch=1,EE,104E91E4,extended,0000039B
+patch=1,EE,204E91E8,extended,00040168
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[77 Rare Egg Bear]
+patch=1,EE,104E91E4,extended,00000399
+patch=1,EE,204E91E8,extended,00040177
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[78 Lovebird & Lovebird chick]
+patch=1,EE,104E91E4,extended,0000039E
+patch=1,EE,204E91E8,extended,0004019E
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[79 Kotatsu]
+patch=1,EE,104E91E4,extended,000003A8
+patch=1,EE,204E91E8,extended,0004016A
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[80 Woofer Chick]
+patch=1,EE,104E91E4,extended,000003A1
+patch=1,EE,204E91E8,extended,00040179
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[81 Quox]
+patch=1,EE,104E91E4,extended,000003A3
+patch=1,EE,204E91E8,extended,0004018F
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[82 Atlas Hopper]
+patch=1,EE,104E91E4,extended,0000039D
+patch=1,EE,204E91E8,extended,0004016D
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[83 Tempura Angler]
+patch=1,EE,104E91E4,extended,00000395
+patch=1,EE,204E91E8,extended,00040169
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[84 Watermelon Element + Piñata Lizard]
+patch=1,EE,104E91E4,extended,00000398
+patch=1,EE,204E91E8,extended,0004016B
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[85 Bomb Element]
+patch=1,EE,104E91E4,extended,000003A7
+patch=1,EE,204E91E8,extended,00040174
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[86 Nameko & Maitake]
+patch=1,EE,104E91E4,extended,00000396
+patch=1,EE,204E91E8,extended,00040175
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[87 Beebeep Chick]
+patch=1,EE,104E91E4,extended,0000039F
+patch=1,EE,204E91E8,extended,00040168
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[88 Two-Tailed Phynx]
+patch=1,EE,104E91E4,extended,0000039C
+patch=1,EE,204E91E8,extended,00040180
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[89 Gelures Scissors & Bacura]
+patch=1,EE,104E91E4,extended,000003A4
+patch=1,EE,204E91E8,extended,0004017B
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[90 Blue Ogre & Red Ogre]
+patch=1,EE,104E91E4,extended,000003A5
+patch=1,EE,204E91E8,extended,0004017D
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[91 Dried Shark]
+patch=1,EE,104E91E4,extended,000003A2
+patch=1,EE,204E91E8,extended,00040167
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[92 Party Panda]
+patch=1,EE,104E91E4,extended,000003A6
+patch=1,EE,204E91E8,extended,00040191
+patch=1,EE,004E93FD,extended,00000056
+patch=1,EE,004E93FE,extended,00000006
+
+[93 Schwartz]
+patch=1,EE,104E91E4,extended,0000004C
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000064
+patch=1,EE,004E93FE,extended,00000004
+
+[94 Schwartz]
+patch=1,EE,104E91E4,extended,0000004D
+patch=1,EE,204E91E8,extended,00040197
+patch=1,EE,004E93FD,extended,00000064
+patch=1,EE,004E93FE,extended,00000006
